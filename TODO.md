@@ -1,7 +1,7 @@
 # TODO
 
 ## Pendente
-- [ ] Ok do Humberto na v1 local → criar `Opresida/royals` no GitHub + projeto na Vercel e publicar
+- [x] Publicado em 16/10/2026 com o ok do Humberto: GitHub `Opresida/royalsentretenimento` (branch `main`) + Vercel `opresidas-projects/royalsentretenimento` → https://royalsentretenimento.vercel.app (push na `main` publica sozinho). OG novo (remotion-studio `Royals-OG`)
 - [ ] Domínio próprio e e-mail de contato da Royals (hoje o contato é só o Instagram)
 - [ ] Regras do programa de promoters e quem recebe os cadastros → abrir o formulário (e atualizar a política de privacidade antes)
 - [ ] Revisão jurídica de `/privacidade` e `/termos`

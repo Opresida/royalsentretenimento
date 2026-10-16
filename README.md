@@ -27,4 +27,4 @@ Lê @royalsentretenimento pela API oficial da Meta (token em `~/.claude/secrets/
 | `/sobre` · `/contato` · `/privacidade` · `/termos` | Institucional e legal |
 
 ## Estado
-v1 em desenvolvimento local (15/10/2026). Publicação (GitHub `Opresida/royals` + Vercel) só com o ok do Humberto.
+No ar desde 16/10/2026: **https://royalsentretenimento.vercel.app**. Código em GitHub `Opresida/royalsentretenimento` (branch `main`); projeto Vercel `opresidas-projects/royalsentretenimento`, conectado ao GitHub: todo push na `main` publica sozinho. Endereço oficial em `src/lib/site.ts` (`SITE_URL`, ou a variável `NEXT_PUBLIC_SITE_URL`).

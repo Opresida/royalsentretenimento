@@ -11,7 +11,7 @@ Royals Entretenimento, produtora de eventos de trap e funk em Manaus (cliente da
 - Site público agora; **painel /admin na 2ª etapa** (o conteúdo fica em arquivos que eu atualizo).
 - **Promoters:** página pronta, cadastro "em breve" até a Royals definir regras e quem recebe.
 - **Indicadores:** mostrar "10+ anos" e "100 mil+ ingressos" (ele confirmou). Observação: uma legenda de 30/09/2020 diz "a dois anos atrás começamos um sonho", o que aponta para início em 2018; avisado a ele.
-- Hospedagem: GitHub `Opresida/royals` + Vercel (conta opresida), endereço provisório `.vercel.app`; domínio próprio depois.
+- Hospedagem: GitHub `Opresida/royalsentretenimento` + Vercel (conta opresida, projeto `royalsentretenimento`), no ar em https://royalsentretenimento.vercel.app desde 16/10/2026; domínio próprio depois.
 
 ## Regras da marca (readme do design system)
 - Nunca inventar eventos, artistas, datas, números, links ou depoimentos. Dados de evento só se estiverem nas legendas do Instagram ou no site oficial do evento.
