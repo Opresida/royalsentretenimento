@@ -1,0 +1,766 @@
+/* Royals Entretenimento · estilos do site.
+   Os tokens vêm do design system aprovado (pasta do cliente → src/styles/tokens). Regras do readme da marca:
+   preto domina, ouro só em destaque, cantos retos, hierarquia por fios, sem sombra (exceto overlays), motion expo. */
+@import "../styles/tokens/colors.css";
+@import "../styles/tokens/typography.css";
+@import "../styles/tokens/spacing.css";
+@import "../styles/tokens/effects.css";
+@import "../styles/tokens/motion.css";
+
+*, *::before, *::after { box-sizing: border-box; }
+html { color-scheme: dark; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--surface-page); color: var(--text-body);
+  font-family: var(--font-sans); font-size: var(--text-md); line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+img, video { max-width: 100%; display: block; }
+a { color: var(--text-accent); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+a:hover { color: var(--accent-hover); }
+:focus-visible { outline: var(--focus-outline); outline-offset: var(--focus-offset); }
+::selection { background: var(--royal-gold); color: var(--royal-black); }
+button { font: inherit; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* ——— layout ——— */
+.container { width: 100%; max-width: var(--container-max); margin: 0 auto; padding: 0 var(--gutter); }
+.secao { padding: var(--section-gap) 0; }
+.secao--fio { border-top: var(--border-rule) solid var(--accent); }
+.secao--afundada { background: var(--surface-sunken); }
+.pilha { display: flex; flex-direction: column; }
+.grade { display: grid; gap: var(--space-6); }
+.grade--3 { grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.grade--4 { grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
+.grade--mosaico { grid-template-columns: repeat(auto-fill, minmax(min(46%, 220px), 1fr)); gap: var(--space-2); }
+.so-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+main { min-height: 60vh; }
+.pagina-topo { padding-top: calc(var(--header-height) + var(--space-16)); }
+
+/* ——— tipografia ——— */
+.display, .h1, .h2, .h3 { margin: 0; font-weight: var(--weight-extrabold); text-transform: uppercase; color: var(--text-primary); text-wrap: balance; }
+.display { font-size: var(--text-display); font-stretch: var(--stretch-display); line-height: var(--leading-tight); letter-spacing: var(--tracking-display); }
+.h1 { font-size: var(--text-h1); font-stretch: var(--stretch-display); line-height: var(--leading-tight); }
+.h2 { font-size: var(--text-h2); font-stretch: var(--stretch-display); line-height: var(--leading-title); }
+.h3 { font-size: var(--text-h3); font-stretch: var(--stretch-title); line-height: var(--leading-title); }
+.ouro-degrade { background: var(--gradient-gold); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.rotulo-texto { font-size: var(--text-label); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-accent); }
+.rotulo-texto--mudo { color: var(--text-muted); }
+.lead { margin: 0; font-size: var(--text-lead); line-height: var(--leading-body); color: var(--text-secondary); max-width: var(--measure); text-wrap: pretty; }
+.texto { max-width: var(--measure); }
+.texto p { margin: 0 0 1em; }
+
+/* ——— marcador (três barras do E do descritor) ——— */
+.marcador { display: inline-flex; flex-direction: column; gap: 3px; width: 28px; }
+.marcador > span { display: block; height: 4px; background: var(--accent); transform-origin: left; }
+.revela .marcador > span { transform: scaleX(0); transition: transform var(--dur-element) var(--ease-enter); }
+.revela.visivel .marcador > span { transform: scaleX(1); }
+.revela.visivel .marcador > span:nth-child(2) { transition-delay: 80ms; }
+.revela.visivel .marcador > span:nth-child(3) { transition-delay: 160ms; }
+
+/* ——— revelação por máscara, de baixo para cima ——— */
+.revela .sobe { display: block; overflow: hidden; }
+.revela .sobe > * { display: block; transform: translateY(105%); transition: transform var(--dur-title) var(--ease-enter); }
+.revela.visivel .sobe > * { transform: none; }
+.revela .surge { opacity: 0; transform: translateY(16px); transition: opacity var(--dur-element) linear, transform var(--dur-element) var(--ease-enter); }
+.revela.visivel .surge { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .revela .sobe > *, .revela .surge, .revela .marcador > span { transform: none !important; transition: opacity 160ms linear; }
+}
+
+/* ——— botão ——— */
+.botao {
+  --b-cor: var(--accent); --b-sobre: var(--text-on-accent);
+  display: inline-flex; align-items: center; justify-content: center; gap: 12px; height: var(--control-height-md); padding: 0 24px;
+  font-family: var(--font-sans); font-size: 14px; font-weight: var(--weight-bold); letter-spacing: var(--tracking-button); text-transform: uppercase;
+  text-decoration: none; white-space: nowrap; cursor: pointer; border-radius: 0; border: 2px solid var(--b-cor);
+  background: var(--b-cor); color: var(--b-sobre);
+  transition: background-size var(--dur-element) var(--ease-enter), background-color var(--dur-ui) linear, color var(--dur-ui) linear, transform var(--dur-ui) var(--ease-enter);
+}
+.botao:hover { background-color: var(--accent-hover); border-color: var(--accent-hover); color: var(--b-sobre); }
+.botao:active { transform: scale(0.97); }
+.botao .seta { display: inline-flex; transition: transform var(--dur-element) var(--ease-enter); }
+.botao:hover .seta { transform: translateX(4px); }
+.botao--evento { --b-cor: var(--event-accent); --b-sobre: var(--event-on-accent); }
+.botao--evento:hover { background-color: var(--event-accent); border-color: var(--event-accent); filter: brightness(1.08); }
+.botao--secundario { background: linear-gradient(var(--accent), var(--accent)) left / 0% 100% no-repeat transparent; color: var(--text-primary); }
+.botao--secundario:hover { background-size: 100% 100%; background-color: transparent; color: var(--text-on-accent); border-color: var(--accent); }
+.botao--fantasma { background: transparent; border-color: transparent; color: var(--text-primary); padding: 0 4px; }
+.botao--fantasma:hover { background: transparent; border-color: transparent; color: var(--accent-hover); }
+.botao--sm { height: var(--control-height-sm); padding: 0 16px; font-size: 12px; }
+.botao--lg { height: var(--control-height-lg); padding: 0 32px; font-size: 15px; }
+.botao--cheio { display: flex; width: 100%; }
+.botao[aria-disabled="true"] { background: var(--surface-raised); border-color: var(--border-default); color: var(--text-muted); cursor: not-allowed; }
+.botao[aria-disabled="true"]:hover { filter: none; }
+@media (prefers-reduced-motion: reduce) { .botao, .botao .seta { transition: none; } }
+
+/* ——— tag ——— */
+.tag { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; font-size: 11px; font-weight: var(--weight-bold); letter-spacing: 0.2em; text-transform: uppercase; white-space: nowrap; border: 1px solid var(--border-strong); color: var(--text-muted); background: transparent; }
+.tag--ouro { background: var(--accent); border-color: var(--accent); color: var(--text-on-accent); }
+.tag--evento { background: var(--event-accent); border-color: var(--event-accent); color: var(--event-on-accent); }
+.tag--marfim { background: var(--royal-ivory); border-color: var(--royal-ivory); color: var(--royal-black); }
+.tag--aovivo { color: var(--royal-gold-hi); border-color: var(--royal-gold-hi); }
+.tag--aovivo::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: currentColor; }
+
+/* ——— cabeçalho de seção ——— */
+.secao-cab { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-6); margin-bottom: var(--space-12); }
+.secao-cab__texto { display: flex; flex-direction: column; gap: var(--space-4); max-width: 880px; }
+.secao-cab__olho { display: flex; align-items: center; gap: 14px; }
+
+/* ——— link com sublinhado de ouro que cresce da esquerda ——— */
+.link { position: relative; color: var(--text-secondary); text-decoration: none; padding: 6px 0; }
+.link::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform var(--dur-element) var(--ease-enter); }
+.link:hover, .link[aria-current="page"] { color: var(--text-primary); }
+.link:hover::after, .link[aria-current="page"]::after { transform: scaleX(1); }
+
+/* ——— header ——— */
+.topo { position: fixed; inset: 0 0 auto; z-index: 50; height: var(--header-height); border-bottom: 1px solid transparent; transition: background-color var(--dur-element) linear, border-color var(--dur-element) linear; }
+.topo[data-solido="true"], .topo--solido { background: var(--surface-page); border-bottom-color: var(--border-subtle); }
+.topo:not([data-solido="true"]):not(.topo--solido) { background: linear-gradient(180deg, rgba(5,5,5,.8), rgba(5,5,5,0)); }
+.topo__barra { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); }
+.topo__logo { display: flex; flex: none; }
+.topo__logo img { width: 112px; height: auto; }
+.topo__nav { display: flex; align-items: center; gap: var(--space-8); }
+.topo__nav .link { font-size: 13px; font-weight: var(--weight-semibold); letter-spacing: 0.2em; text-transform: uppercase; }
+.topo__acoes { display: flex; align-items: center; gap: var(--space-4); }
+.topo__menu { display: none; width: 44px; height: 44px; align-items: center; justify-content: center; background: transparent; border: 0; cursor: pointer; padding: 0; }
+.topo__menu .marcador { width: 24px; }
+.topo__menu .marcador > span { background: var(--text-primary); height: 3px; }
+@media (max-width: 960px) {
+  .topo__nav, .topo__acoes .botao { display: none; }
+  .topo__menu { display: inline-flex; }
+}
+.menu-cheio { position: fixed; inset: 0; z-index: 60; background: var(--scrim-overlay); display: flex; flex-direction: column; padding: var(--space-6) var(--gutter); }
+.menu-cheio__topo { display: flex; justify-content: space-between; align-items: center; height: calc(var(--header-height) - var(--space-6)); }
+.menu-cheio__lista { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-12); }
+.menu-cheio__lista a { font-size: clamp(28px, 8vw, 44px); font-weight: var(--weight-extrabold); font-stretch: var(--stretch-display); text-transform: uppercase; color: var(--text-primary); text-decoration: none; line-height: 1.15; }
+.menu-cheio__lista a:hover { color: var(--accent-hover); }
+.fechar { width: 44px; height: 44px; flex: none; background: transparent; border: 1px solid var(--border-strong); color: var(--text-primary); font-size: 20px; cursor: pointer; }
+.fechar:hover { border-color: var(--accent); color: var(--accent-hover); }
+
+/* barra de ingressos fixa no rodapé (mobile) */
+.barra-ingressos { display: none; }
+@media (max-width: 960px) {
+  .barra-ingressos { display: flex; position: fixed; inset: auto 0 0; z-index: 40; gap: var(--space-3); align-items: center; padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom)); background: var(--surface-page); border-top: var(--border-rule) solid var(--accent); }
+  .barra-ingressos__info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .barra-ingressos__info strong { font-size: 14px; font-weight: var(--weight-extrabold); text-transform: uppercase; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .barra-ingressos__info span { font-size: 11px; font-weight: var(--weight-semibold); letter-spacing: 0.2em; text-transform: uppercase; color: var(--event-accent); }
+  body { padding-bottom: 76px; }
+}
+
+/* ——— hero ——— */
+.hero { position: relative; min-height: 100svh; display: flex; align-items: flex-end; overflow: hidden; background: var(--surface-page); }
+.hero__midia { position: absolute; inset: 0; }
+.hero__midia img, .hero__midia video { width: 100%; height: 100%; object-fit: cover; }
+.hero__midia::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,5,5,.55) 0%, rgba(5,5,5,0) 30%), var(--scrim-bottom); }
+.hero__conteudo { position: relative; width: 100%; padding-top: calc(var(--header-height) + var(--space-16)); padding-bottom: var(--space-16); display: flex; flex-direction: column; gap: var(--space-6); }
+.hero__logo-evento { width: min(560px, 82vw); height: auto; filter: drop-shadow(0 8px 40px rgba(0,0,0,.6)); }
+.hero__acoes { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; }
+.hero__pular { position: absolute; right: var(--gutter); bottom: var(--space-16); writing-mode: vertical-rl; font-size: 11px; letter-spacing: .35em; text-transform: uppercase; color: var(--text-muted); text-decoration: none; }
+@media (max-width: 720px) { .hero__pular { display: none; } }
+
+/* ——— régua de informações ——— */
+.regua { border-top: var(--border-rule) solid var(--event-accent); border-bottom: 1px solid var(--border-default); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); }
+.regua__item { display: flex; flex-direction: column; gap: 10px; padding: 18px 20px 18px 0; }
+.regua__rotulo { font-size: 12px; font-weight: var(--weight-semibold); letter-spacing: .35em; text-transform: uppercase; color: var(--text-muted); }
+.regua__valor { font-size: 22px; font-weight: var(--weight-extrabold); font-stretch: var(--stretch-title); line-height: 1.1; color: var(--text-primary); }
+.regua__nota { font-size: 14px; color: var(--text-secondary); }
+.regua--lg { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.regua--lg .regua__item { padding: 28px 24px 28px 0; }
+.regua--lg .regua__valor { font-size: clamp(28px, 3vw, 44px); }
+
+/* ——— cartão de evento ——— */
+.cartao-evento { display: flex; flex-direction: column; text-decoration: none; color: inherit; background: var(--surface-card); border: 1px solid var(--border-subtle); transition: border-color var(--dur-ui) linear; }
+.cartao-evento:hover { border-color: var(--event-accent); color: inherit; }
+.cartao-evento__img { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--placeholder-stripes); }
+.cartao-evento--paisagem .cartao-evento__img { aspect-ratio: 16 / 9; }
+.cartao-evento__img img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-brand) var(--ease-enter); }
+.cartao-evento:hover .cartao-evento__img img { transform: scale(1.04); }
+.cartao-evento__tag { position: absolute; top: 14px; left: 14px; }
+.cartao-evento__corpo { display: flex; flex-direction: column; gap: 10px; padding: 18px 20px 20px; flex: 1; }
+.cartao-evento__quando { font-size: 12px; font-weight: var(--weight-semibold); letter-spacing: .3em; text-transform: uppercase; color: var(--event-accent); }
+.cartao-evento__titulo { font-size: 24px; font-weight: var(--weight-extrabold); font-stretch: var(--stretch-title); line-height: 1.1; color: var(--text-primary); text-transform: uppercase; text-wrap: balance; }
+.cartao-evento__local { font-size: 15px; color: var(--text-secondary); }
+.cartao-evento__cta { margin-top: auto; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: var(--weight-bold); letter-spacing: var(--tracking-button); text-transform: uppercase; color: var(--text-primary); border-top: 1px solid var(--border-subtle); padding-top: 14px; }
+.cartao-evento__cta span { color: var(--event-accent); transition: transform var(--dur-element) var(--ease-enter); }
+.cartao-evento:hover .cartao-evento__cta span { transform: translateX(4px); }
+
+/* ——— mosaico de mídia ——— */
+.midia { position: relative; display: block; width: 100%; aspect-ratio: 4 / 5; padding: 0; border: 0; border-radius: 0; overflow: hidden; cursor: pointer; background: var(--placeholder-stripes); text-align: left; color: inherit; text-decoration: none; }
+.midia--9x16 { aspect-ratio: 9 / 16; }
+.midia--1x1 { aspect-ratio: 1; }
+.midia img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-brand) var(--ease-enter); }
+.midia:hover img { transform: scale(1.04); }
+.midia::after { content: ""; position: absolute; inset: 0; background: var(--scrim-bottom); opacity: .7; transition: opacity var(--dur-element) linear; }
+.midia--limpa::after { opacity: 0; }
+.midia:hover::after { opacity: 1; }
+.midia__play { position: absolute; top: 12px; right: 12px; z-index: 1; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(5,5,5,.6); color: var(--royal-ivory); border: 1px solid var(--accent); font-size: 13px; transition: all var(--dur-ui) linear; }
+.midia:hover .midia__play { background: var(--accent); color: var(--text-on-accent); }
+.midia__texto { position: absolute; left: 14px; right: 14px; bottom: 12px; z-index: 1; display: flex; flex-direction: column; gap: 6px; }
+.midia__meta { font-size: 11px; font-weight: var(--weight-semibold); letter-spacing: .3em; text-transform: uppercase; color: var(--royal-gold-hi); }
+.midia__titulo { font-size: 17px; font-weight: var(--weight-bold); line-height: 1.2; color: var(--royal-ivory); }
+
+/* ——— trilho horizontal (vídeos) ——— */
+.trilho { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(200px, 260px); gap: var(--space-3); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--space-4); scrollbar-width: thin; scrollbar-color: var(--accent) var(--surface-card); }
+.trilho > * { scroll-snap-align: start; }
+
+/* ——— abas ——— */
+.abas { display: flex; gap: 28px; border-bottom: 1px solid var(--border-default); overflow-x: auto; margin-bottom: var(--space-8); }
+.abas button { position: relative; padding: 14px 0; background: transparent; border: 0; cursor: pointer; white-space: nowrap; font-size: 13px; font-weight: var(--weight-bold); letter-spacing: .2em; text-transform: uppercase; color: var(--text-muted); transition: color var(--dur-ui) linear; }
+.abas button[aria-selected="true"] { color: var(--text-primary); }
+.abas button::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform var(--dur-element) var(--ease-enter); }
+.abas button[aria-selected="true"]::after { transform: scaleX(1); }
+.abas button span { margin-left: 8px; color: var(--text-accent); }
+
+/* ——— diálogo (lightbox) ——— */
+.dialogo { position: fixed; inset: 0; z-index: 100; background: var(--scrim-overlay); display: flex; align-items: center; justify-content: center; padding: var(--space-5); }
+.dialogo__caixa { position: relative; width: 100%; max-width: 1100px; max-height: 100%; display: flex; flex-direction: column; gap: var(--space-4); background: var(--surface-card); border-top: var(--border-rule) solid var(--accent); box-shadow: var(--shadow-overlay); padding: var(--space-5); }
+.dialogo__topo { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); }
+.dialogo__palco { position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; flex: 1; }
+.dialogo__palco img, .dialogo__palco video { max-height: calc(100svh - 220px); width: auto; max-width: 100%; object-fit: contain; background: #000; }
+.dialogo__nav { display: flex; gap: var(--space-2); }
+.dialogo__legenda { font-size: 15px; color: var(--text-secondary); max-height: 5.5em; overflow: auto; white-space: pre-line; }
+
+/* ——— indicadores ——— */
+.numeros { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: var(--space-10) var(--space-8); }
+.numero { display: flex; flex-direction: column; gap: var(--space-4); }
+.numero__valor { display: flex; align-items: baseline; gap: .1em; margin: 0; white-space: nowrap; font-size: clamp(48px, 4.8vw, 92px); font-weight: var(--weight-extrabold); font-stretch: var(--stretch-display); line-height: .9; letter-spacing: -0.01em; }
+.numero__num { background: var(--gradient-gold); -webkit-background-clip: text; background-clip: text; color: transparent; font-variant-numeric: tabular-nums; }
+.numero__sufixo { font-size: .34em; letter-spacing: .02em; color: var(--royal-gold-hi); }
+.numero__fio { display: block; height: 2px; width: 100%; background: linear-gradient(90deg, var(--accent), rgba(187,158,56,.15)); transform-origin: left; transform: scaleX(0); transition: transform var(--dur-brand) var(--ease-enter); }
+.revela.visivel .numero__fio { transform: scaleX(1); }
+.numero:nth-child(2) .numero__fio, .numero:nth-child(2) .surge { transition-delay: 80ms; }
+.numero:nth-child(3) .numero__fio, .numero:nth-child(3) .surge { transition-delay: 160ms; }
+.numero:nth-child(4) .numero__fio, .numero:nth-child(4) .surge { transition-delay: 240ms; }
+.numero__texto { font-size: var(--text-md); line-height: 1.4; color: var(--text-secondary); max-width: 24ch; }
+
+/* ——— manifesto ——— */
+.manifesto { position: relative; overflow: hidden; }
+.manifesto__logo { width: min(440px, 76vw); margin: 0 auto var(--space-12); }
+.manifesto__frase { margin: 0; text-align: center; font-size: clamp(34px, 6.6vw, 112px); font-weight: var(--weight-extrabold); font-stretch: var(--stretch-display); line-height: .92; letter-spacing: -0.015em; text-transform: uppercase; color: var(--text-primary); }
+.manifesto__frase .sobe:nth-child(2) > * { transition-delay: 80ms; }
+.manifesto__apoio { margin: var(--space-8) auto 0; max-width: 46ch; text-align: center; font-size: var(--text-lead); line-height: 1.5; color: var(--text-secondary); text-wrap: balance; }
+.pilares { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: var(--space-10) var(--space-8); margin-top: var(--space-20); }
+.pilar { display: flex; flex-direction: column; gap: var(--space-3); }
+.pilar__topo { display: flex; align-items: baseline; gap: var(--space-4); }
+.pilar__n { font-size: var(--text-label); font-weight: var(--weight-semibold); letter-spacing: .3em; color: var(--text-accent); }
+.pilar__nome { font-size: var(--text-h4); font-weight: var(--weight-extrabold); font-stretch: var(--stretch-display); letter-spacing: .02em; text-transform: uppercase; color: var(--text-primary); }
+.pilar__fio { display: block; height: 2px; background: var(--accent); transform-origin: left; transform: scaleX(0); transition: transform var(--dur-brand) var(--ease-enter); }
+.revela.visivel .pilar__fio { transform: scaleX(1); }
+.pilar em { font-style: normal; font-weight: var(--weight-semibold); color: var(--royal-gold-hi); }
+.pilar p { margin: 0; color: var(--text-secondary); line-height: 1.55; }
+.pilar:nth-child(2) .pilar__fio, .pilar:nth-child(2) .surge { transition-delay: 120ms; }
+.pilar:nth-child(3) .pilar__fio, .pilar:nth-child(3) .surge { transition-delay: 240ms; }
+
+/* ——— fundos em loop (biblioteca de motion · família 04) ——— */
+@property --orbita { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
+.secao--fundo { position: relative; isolation: isolate; overflow: hidden; background: var(--surface-page); }
+.secao--fundo > .container { position: relative; z-index: 1; }
+.fundo-loop { position: absolute; inset: 0; z-index: 0; pointer-events: none; animation: orbita 6s linear infinite; }
+.fundo-loop, .fundo-loop * { animation-play-state: running; }
+.fundo-loop[data-ativo="false"], .fundo-loop[data-ativo="false"] * { animation-play-state: paused; }
+@keyframes orbita { to { --orbita: 360deg; } }
+.fundo-loop__vinheta { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(5,5,5,0) 40%, rgba(5,5,5,.88) 100%); }
+/* F1 · Diagonais: linhas a 45° em duas velocidades, acesas por uma luz que circula */
+.fundo-loop--diagonais { --lx: calc(50% + 32% * cos(var(--orbita))); --ly: calc(50% + 22% * sin(var(--orbita))); }
+.fundo-loop__luz { position: absolute; inset: 0; opacity: .55; -webkit-mask-image: radial-gradient(circle at var(--lx) var(--ly), #000 0, rgba(0,0,0,.16) 620px); mask-image: radial-gradient(circle at var(--lx) var(--ly), #000 0, rgba(0,0,0,.16) 620px); }
+.fundo-loop__linhas { position: absolute; top: 0; bottom: 0; left: -130px; right: -130px; background: repeating-linear-gradient(45deg, transparent 0 42px, rgba(187,158,56,.6) 42px 44px); animation: linhas 3s linear infinite; }
+.fundo-loop__linhas--finas { background: repeating-linear-gradient(45deg, transparent 0 20.5px, rgba(161,134,30,.35) 20.5px 22px); animation: linhas-finas 1.5s linear infinite; }
+@keyframes linhas { to { transform: translateX(62.2px); } }
+@keyframes linhas-finas { to { transform: translateX(-31.1px); } }
+/* F2 · Brilho: duas luzes de ouro em órbitas opostas, reflexo horizontal e grão de filme */
+.fundo-loop--brilho {
+  --x1: calc(50% + 30% * cos(var(--orbita))); --y1: calc(45% + 18% * sin(var(--orbita)));
+  --x2: calc(50% - 30% * cos(var(--orbita))); --y2: calc(60% + 12% * sin(calc(2 * var(--orbita) + 1rad)));
+  background:
+    radial-gradient(circle at var(--x1) var(--y1), rgba(187,158,56,.13), rgba(187,158,56,0) min(360px, 70vw)),
+    radial-gradient(circle at var(--x2) var(--y2), rgba(161,134,30,.12), rgba(161,134,30,0) min(440px, 85vw));
+}
+.fundo-loop__reflexo { position: absolute; inset: 0; background: radial-gradient(ellipse 40% .9% at var(--x1) var(--y1), rgba(219,188,88,.12), rgba(219,188,88,0)); }
+.fundo-loop--brilho::after { content: ""; position: absolute; inset: 0; background: url(/marca/grao.png) 0 0 / 600px; opacity: .045; mix-blend-mode: screen; animation: grao 1s steps(12) infinite; }
+@keyframes grao { 0% { background-position: 0 0; } 100% { background-position: 411px 213px; } }
+@media (prefers-reduced-motion: reduce) {
+  .fundo-loop, .fundo-loop * , .fundo-loop::after { animation: none !important; }
+}
+
+/* ——— logo que se revela (brandbook: fio de ouro, coroa, letras sobem por máscara, descritor) ——— */
+.logo-revela { display: block; width: 100%; height: auto; overflow: visible; }
+.logo-revela .fio { transform-origin: center; transform: scaleX(0); }
+.logo-revela [id^="crown-"] { opacity: 0; transform: translateY(6px); transform-box: fill-box; transform-origin: center bottom; }
+.logo-revela [id^="letter-0"] { clip-path: inset(100% 0 0 0); transform: translateY(14px); transform-box: fill-box; }
+.logo-revela #logo-tagline { opacity: 0; letter-spacing: 0; }
+.revela.visivel .logo-revela .fio { animation: fio-ouro 900ms var(--ease-draw) forwards; }
+.revela.visivel .logo-revela [id^="crown-"] { animation: coroa 700ms var(--ease-enter) forwards; }
+.revela.visivel .logo-revela #crown-base { animation-delay: 500ms; }
+.revela.visivel .logo-revela #crown-left { animation-delay: 620ms; }
+.revela.visivel .logo-revela #crown-right { animation-delay: 740ms; }
+.revela.visivel .logo-revela #crown-peak { animation-delay: 860ms; }
+.revela.visivel .logo-revela [id^="letter-0"] { animation: letra 480ms var(--ease-enter) forwards; }
+.revela.visivel .logo-revela #letter-01-R { animation-delay: 1500ms; }
+.revela.visivel .logo-revela #letter-02-O { animation-delay: 1560ms; }
+.revela.visivel .logo-revela #letter-03-Y { animation-delay: 1620ms; }
+.revela.visivel .logo-revela #letter-04-A { animation-delay: 1680ms; }
+.revela.visivel .logo-revela #letter-05-L { animation-delay: 1740ms; }
+.revela.visivel .logo-revela #letter-06-S { animation-delay: 1800ms; }
+.revela.visivel .logo-revela #logo-tagline { animation: descritor 700ms var(--ease-enter) 2400ms forwards; }
+@keyframes fio-ouro { 0% { transform: scaleX(0); opacity: 1; } 60% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
+@keyframes coroa { to { opacity: 1; transform: none; } }
+@keyframes letra { to { clip-path: inset(0 0 0 0); transform: none; } }
+@keyframes descritor { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .logo-revela .fio { display: none; }
+  .logo-revela [id^="crown-"], .logo-revela [id^="letter-0"], .logo-revela #logo-tagline { opacity: 1; clip-path: none; transform: none; animation: none !important; }
+}
+
+/* ——— assinatura "Uma produção ROYALS" ——— */
+.assinatura { display: flex; flex-direction: column; gap: 14px; }
+.assinatura__fio { height: 1px; background: var(--royal-gold); opacity: .8; }
+.assinatura__linha { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.assinatura__linha span { font-size: 12px; font-weight: var(--weight-semibold); letter-spacing: .3em; text-transform: uppercase; color: var(--royal-silver); }
+.assinatura__linha img { width: 120px; height: auto; }
+
+/* ——— chamada (promoters) ——— */
+.chamada { position: relative; border: 1px solid var(--border-subtle); border-top: var(--border-rule) solid var(--accent); background: var(--surface-card); padding: clamp(32px, 6vw, 80px); display: grid; gap: var(--space-8); grid-template-columns: 1fr auto; align-items: end; overflow: hidden; }
+.chamada::before { content: ""; position: absolute; inset: 0; background: var(--pattern-diagonal); opacity: .07; pointer-events: none; }
+@media (max-width: 720px) { .chamada { grid-template-columns: 1fr; } }
+
+/* ——— linha do tempo ——— */
+.linha-tempo { display: flex; flex-direction: column; }
+.linha-tempo__item { display: grid; grid-template-columns: 140px 1fr; gap: var(--space-8); padding: var(--space-10) 0; border-top: 1px solid var(--border-subtle); }
+.linha-tempo__ano { font-size: var(--text-h3); font-weight: var(--weight-extrabold); font-stretch: var(--stretch-display); color: var(--text-accent); line-height: 1; }
+@media (max-width: 720px) { .linha-tempo__item { grid-template-columns: 1fr; gap: var(--space-4); } }
+
+/* ——— rodapé ——— */
+.rodape { background: var(--surface-page); border-top: var(--border-rule) solid var(--accent); padding: var(--space-16) 0 var(--space-8); }
+.rodape__grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: var(--space-10); }
+.rodape__col { display: flex; flex-direction: column; gap: var(--space-3); }
+.rodape__col a { font-size: 15px; color: var(--text-secondary); text-decoration: none; width: fit-content; }
+.rodape__col a:hover { color: var(--accent-hover); }
+.rodape__legal { margin-top: var(--space-12); border-top: 1px solid var(--border-subtle); padding-top: var(--space-5); font-size: 13px; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; }
+
+/* ——— página de evento (marca endossada: o evento lidera, a Royals assina) ——— */
+.evento-topo { position: relative; min-height: 88svh; display: flex; align-items: flex-end; overflow: hidden; }
+.evento-topo .hero__midia::after { background: linear-gradient(180deg, rgba(5,5,5,.5) 0%, rgba(5,5,5,0) 30%), var(--scrim-bottom); }
+
+/* ——— texto legal ——— */
+.legal h2 { font-size: var(--text-h4); font-weight: var(--weight-extrabold); text-transform: uppercase; color: var(--text-primary); margin: 2em 0 .6em; }
+.legal p, .legal li { color: var(--text-body); }
+
+/* no celular, a régua do topo fica em duas colunas e mais baixa, para os botões aparecerem sem rolar */
+@media (max-width: 720px) {
+  .hero .regua--lg { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero .regua--lg .regua__item { padding: 14px 12px 14px 0; gap: 6px; }
+  .hero .regua--lg .regua__valor { font-size: 20px; }
+  .hero .regua--lg .regua__rotulo { font-size: 10px; letter-spacing: .3em; }
+  .hero__logo-evento { width: min(230px, 56vw); } /* menor: o vídeo vertical aparece mais por cima dela */
+  .hero__conteudo { gap: var(--space-4); padding-bottom: var(--space-10); }
+}
+/* tiles com texto por cima de cartaz (muito texto na arte): scrim mais forte para o título ler */
+.midia--forte::after { opacity: 1; background: linear-gradient(180deg, rgba(5,5,5,0) 30%, rgba(5,5,5,.88) 68%, #050505 100%); }
+
+/* ——— spinner da marca: a coroa (vetor da marca) se desenha, enche de ouro, brilha e esvazia, em loop de 1,6 s ——— */
+.carregando { --tam: 36px; display: inline-flex; flex-direction: column; align-items: center; gap: calc(var(--tam) * .3); }
+.carregando__coroa { display: block; width: var(--tam); height: auto; aspect-ratio: 110 / 80; overflow: visible; }
+.carregando__contorno path { fill: none; stroke: #DBBC58; stroke-width: 1.8; stroke-linejoin: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: coroa-traco 1600ms var(--ease-draw) infinite; }
+.carregando__miolo { opacity: 0; animation: coroa-miolo 1600ms linear infinite; }
+.carregando__brilho { transform-box: fill-box; transform-origin: center; transform: skewX(-24deg); animation: coroa-brilho 1600ms var(--ease-enter) infinite; }
+.carregando__royals { display: block; width: calc(var(--tam) * 2.6); height: auto; animation: royals-enche 1600ms var(--ease-enter) infinite; }
+@keyframes coroa-traco { 0% { stroke-dashoffset: 1; opacity: 1; } 45% { stroke-dashoffset: 0; opacity: 1; } 72% { stroke-dashoffset: 0; opacity: .8; } 88%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes coroa-miolo { 0%, 26% { opacity: 0; } 50%, 80% { opacity: 1; } 96%, 100% { opacity: 0; } }
+@keyframes coroa-brilho { 0%, 46% { transform: translateX(0) skewX(-24deg); } 76%, 100% { transform: translateX(150px) skewX(-24deg); } }
+@keyframes royals-enche { 0% { clip-path: inset(0 100% 0 0); opacity: 1; } 55%, 82% { clip-path: inset(0 0 0 0); opacity: 1; } 100% { clip-path: inset(0 0 0 0); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .carregando__contorno, .carregando__brilho { display: none; }
+  .carregando__miolo { animation: carrega-suave 1600ms linear infinite; }
+  .carregando__royals { animation: none; }
+  @keyframes carrega-suave { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
+}
+.pagina-carregando { min-height: 100svh; display: flex; align-items: center; justify-content: center; }
+.hero__carregando { position: absolute; right: var(--gutter); bottom: var(--space-8); z-index: 1; }
+.dialogo__palco .carregando { position: absolute; inset: 0; margin: auto; width: fit-content; height: fit-content; }
+
+/* ——— topo com vídeo 16:9 (desktop): o vídeo deixa a metade esquerda livre; o degradê vem da esquerda ——— */
+@media (min-width: 900px) and (min-aspect-ratio: 6/5) {
+  .hero__midia--lateral::after {
+    background:
+      linear-gradient(90deg, rgba(5,5,5,.9) 0%, rgba(5,5,5,.72) 30%, rgba(5,5,5,.3) 46%, rgba(5,5,5,0) 58%),
+      linear-gradient(180deg, rgba(5,5,5,.6) 0%, rgba(5,5,5,0) 16%),
+      linear-gradient(0deg, rgba(5,5,5,.7) 0%, rgba(5,5,5,0) 20%);
+  }
+  .hero--lateral .hero__conteudo > * { max-width: min(640px, 46vw); }
+}
+.hero__regua { max-width: 880px; }
+@media (min-width: 900px) and (min-aspect-ratio: 6/5) {
+  .hero--lateral .regua--lg { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hero--lateral .regua--lg .regua__item { padding: 20px 16px 20px 0; }
+  .hero--lateral .regua--lg .regua__valor { font-size: clamp(22px, 2.1vw, 34px); }
+}
+
+/* ——— responsividade (varredura de 16/10 em 360 e 390 px) ———
+   Títulos: o mínimo dos tokens (40 px no h1) não cabia palavras longas da marca ("CONQUISTADA", "PRIVACIDADE")
+   em 320 px úteis. Aqui o mínimo desce no celular; no desktop os valores são os mesmos do design system. */
+:root {
+  --text-display: clamp(40px, 11vw, 144px);
+  --text-h1: clamp(30px, 8.2vw, 88px);
+  --text-h2: clamp(26px, 7vw, 64px);
+  --text-h3: clamp(22px, 5.6vw, 36px);
+}
+.secao-cab__texto, .chamada > *, .grade > *, .regua__item { min-width: 0; }
+@media (max-width: 720px) {
+  .chamada { padding: var(--space-8) var(--space-5); gap: var(--space-6); }
+  .chamada .botao { width: 100%; }
+  .botao { white-space: normal; text-align: center; height: auto; min-height: var(--control-height-md); padding-top: 12px; padding-bottom: 12px; line-height: 1.25; }
+  .botao--lg { min-height: var(--control-height-lg); }
+  .botao--fantasma { min-height: 0; padding: 8px 0; }
+}
+/* palavras longas sem espaço (ex.: @royalsentretenimento) quebram em vez de alargar a página */
+.regua__valor, .rotulo-texto, .cartao-evento__titulo, .midia__titulo { overflow-wrap: anywhere; }
+.secao-cab__olho { flex-wrap: wrap; }
+
+/* ——— capa padronizada de vídeo (molde do brandbook): rótulo do tipo, play, fio de ouro, evento, ano e duração ——— */
+.grade--mosaico:has(.midia--video) { gap: var(--space-3); }
+.midia--video::after { opacity: 1; background: linear-gradient(180deg, rgba(5,5,5,.5) 0%, rgba(5,5,5,0) 20%, rgba(5,5,5,0) 48%, rgba(5,5,5,.94) 100%); }
+.midia--video:hover::after { opacity: 1; }
+.midia__rotulo { position: absolute; top: 12px; left: 12px; z-index: 1; height: 24px; padding: 0 9px; display: inline-flex; align-items: center; font-size: 10.5px; font-weight: var(--weight-bold); letter-spacing: .2em; text-transform: uppercase; color: var(--text-on-accent); background: var(--accent); }
+.midia--video .midia__texto { gap: 8px; bottom: 14px; }
+.midia__fio { display: block; width: 28px; height: 2px; background: var(--accent); transition: width var(--dur-element) var(--ease-enter); }
+.midia--video:hover .midia__fio { width: 56px; }
+.midia--video .midia__titulo { font-size: clamp(15px, 1.3vw, 19px); font-weight: var(--weight-extrabold); font-stretch: var(--stretch-title); text-transform: uppercase; line-height: 1.08; }
+.midia--video .midia__meta { color: var(--text-secondary); letter-spacing: .24em; }
+
+/* ——— vitrines da home: colunas fixas, a quantidade de itens sempre fecha a grade (fileirasCheias) ——— */
+.grade--vitrine-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.grade--vitrine-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+@media (max-width: 1100px) { .grade--vitrine-6 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .grade--vitrine-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grade--vitrine-6 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .grade--vitrine-6 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* post do Instagram: a foto limpa; o nome do evento sobe no hover (no toque, fica sempre visível) */
+.midia--insta::after { opacity: 0; background: linear-gradient(180deg, rgba(5,5,5,0) 45%, rgba(5,5,5,.9) 100%); }
+.midia--insta .midia__texto { opacity: 0; transform: translateY(6px); transition: opacity var(--dur-ui) linear, transform var(--dur-element) var(--ease-enter); }
+.midia--insta .midia__titulo { font-size: 13px; }
+.midia--insta:hover::after, .midia--insta:focus-visible::after { opacity: 1; }
+.midia--insta:hover .midia__texto, .midia--insta:focus-visible .midia__texto { opacity: 1; transform: none; }
+@media (hover: none) { .midia--insta::after, .midia--insta .midia__texto { opacity: 1; transform: none; } }
+
+/* F2 na cor do evento (FundoLoop evento) */
+.fundo-loop--evento {
+  background:
+    radial-gradient(circle at var(--x1) var(--y1), color-mix(in srgb, var(--event-accent) 20%, transparent), transparent min(360px, 70vw)),
+    radial-gradient(circle at var(--x2) var(--y2), color-mix(in srgb, var(--event-accent) 13%, transparent), transparent min(440px, 85vw));
+}
+
+/* ——— transições de página (TransicaoPagina + src/lib/transicoes.ts), da biblioteca de motion da Royals ———
+   As peças andam pelas propriedades individuais (translate / scale), para o transform de cada uma (rotação, inclinação)
+   ficar fixo. "cobrindo" entra em expo-out; "revelando" sai em expo-in (a saída é mais rápida que a entrada, regra 07). */
+.transicao { position: fixed; inset: 0; z-index: 200; overflow: hidden; pointer-events: auto; }
+.transicao--revelando { pointer-events: none; }
+.transicao__palco { position: absolute; inset: 0; }
+.transicao__peca { position: absolute; display: block; background: var(--royal-gold); will-change: translate, scale; }
+.transicao__peca:nth-child(even) { background: var(--royal-gold-lo); }
+.transicao--cobrindo .transicao__peca { animation: var(--cobre) var(--dur) var(--ease-enter) calc(var(--i) * var(--passo)) both; }
+.transicao--coberto .transicao__peca { animation: none; translate: none; scale: none; opacity: 1; }
+.transicao--revelando .transicao__peca { animation: var(--revela) var(--dur) var(--ease-exit) calc(var(--i) * var(--passo)) both; }
+.transicao__carregando { position: absolute; inset: 0; margin: auto; width: fit-content; height: fit-content; opacity: 0; animation: transicao-aparece 200ms linear 300ms forwards; }
+.transicao:not(.transicao--glitch):not(.transicao--fade) .transicao__carregando { filter: brightness(0); }
+@keyframes transicao-aparece { to { opacity: 1; } }
+
+/* T1 · Diagonais: 12 faixas a 45° sobem e saem por cima · (inv) a −45°, descem do alto */
+.transicao--diagonais .transicao__palco, .transicao--diagonais-inv .transicao__palco { inset: auto; left: 50%; top: 50%; width: 150vmax; height: 150vmax; transform: translate(-50%, -50%) rotate(45deg); }
+.transicao--diagonais-inv .transicao__palco { transform: translate(-50%, -50%) rotate(-45deg); }
+.transicao--diagonais .transicao__peca, .transicao--diagonais-inv .transicao__peca { top: 0; height: 100%; left: calc(var(--i) * 100% / var(--n)); width: calc(100% / var(--n) + 1px); }
+.transicao--diagonais { --cobre: diag-cobre; --revela: diag-revela; }
+.transicao--diagonais-inv { --cobre: diag-inv-cobre; --revela: diag-inv-revela; }
+@keyframes diag-cobre { from { translate: 0 100%; } to { translate: 0 0; } }
+@keyframes diag-revela { from { translate: 0 0; } to { translate: 0 -100%; } }
+@keyframes diag-inv-cobre { from { translate: 0 -100%; } to { translate: 0 0; } }
+@keyframes diag-inv-revela { from { translate: 0 0; } to { translate: 0 100%; } }
+
+/* T2 · Três faixas: crescem da esquerda e saem pela direita · (colunas) giradas: sobem de baixo e saem por cima */
+.transicao--faixas .transicao__peca { left: 0; width: 100%; top: calc(var(--i) * 100% / 3); height: calc(100% / 3 + 1px); transform-origin: left center; }
+.transicao--faixas.transicao--revelando .transicao__peca { transform-origin: right center; }
+.transicao--faixas { --cobre: faixa-cobre; --revela: faixa-revela; }
+@keyframes faixa-cobre { from { scale: 0 1; } to { scale: 1 1; } }
+@keyframes faixa-revela { from { scale: 1 1; } to { scale: 0 1; } }
+.transicao--colunas .transicao__peca { top: 0; height: 100%; left: calc(var(--i) * 100% / 3); width: calc(100% / 3 + 1px); transform-origin: center bottom; }
+.transicao--colunas.transicao--revelando .transicao__peca { transform-origin: center top; }
+.transicao--colunas { --cobre: coluna-cobre; --revela: coluna-revela; }
+@keyframes coluna-cobre { from { scale: 1 0; } to { scale: 1 1; } }
+@keyframes coluna-revela { from { scale: 1 1; } to { scale: 1 0; } }
+
+/* 03 · Transição diagonal: 17 colunas inclinadas a 45° atravessam a tela · (inv) espelhada, da esquerda para a direita */
+.transicao--cortina-inv .transicao__palco { transform: scaleX(-1); }
+.transicao--cortina .transicao__peca, .transicao--cortina-inv .transicao__peca { top: 0; height: 100%; left: calc(-100vmax + var(--i) * (100vw + 200vmax) / var(--n)); width: calc((100vw + 200vmax) / var(--n) + 2px); transform: skewX(-45deg); }
+.transicao--cortina, .transicao--cortina-inv { --cobre: cortina-cobre; --revela: cortina-revela; }
+@keyframes cortina-cobre { from { translate: -110vmax 110vmax; } to { translate: 0 0; } }
+@keyframes cortina-revela { from { translate: 0 0; } to { translate: 110vmax -110vmax; } }
+
+/* T3 · Glitch: 8 fatias entram de lados alternados, em degraus; no corte, um flash; saem para o lado oposto */
+.transicao--glitch .transicao__peca { left: 0; width: 100%; top: calc(var(--i) * 100% / 8); height: calc(100% / 8 + 1px); background: #050505; box-shadow: inset 0 -1px 0 rgba(187,158,56,.35); --de: -104%; }
+.transicao--glitch .transicao__peca:nth-child(even) { background: #141311; --de: 104%; }
+.transicao--glitch .transicao__peca:nth-child(3n) { animation-duration: calc(var(--dur) * .7); }
+.transicao--glitch .transicao__peca:nth-child(4n+1) { animation-duration: calc(var(--dur) * 1.25); }
+.transicao--glitch.transicao--cobrindo .transicao__peca { animation-timing-function: steps(5, end); }
+.transicao--glitch { --cobre: glitch-cobre; --revela: glitch-revela; }
+@keyframes glitch-cobre { from { translate: var(--de) 0; } to { translate: 0 0; } }
+@keyframes glitch-revela { from { translate: 0 0; } to { translate: calc(var(--de) * -1) 0; } }
+.transicao__flash { position: absolute; inset: 0; background: #FFF8E6; opacity: 0; pointer-events: none; }
+.transicao--glitch.transicao--revelando .transicao__flash { animation: glitch-flash 160ms linear both; }
+@keyframes glitch-flash { 0% { opacity: .85; } 100% { opacity: 0; } }
+
+/* 07 · Saída: páginas institucionais (termos, privacidade, obrigado, 404) só escurecem e clareiam */
+.transicao--fade .transicao__peca { inset: 0; background: #050505; }
+.transicao--fade { --cobre: fade-cobre; --revela: fade-revela; }
+@keyframes fade-cobre { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-revela { from { opacity: 1; } to { opacity: 0; } }
+
+/* ——— abertura com a logo (AberturaMarca): sempre que o site é aberto na home · 3,4 s ———
+   Timeline (L1 do catálogo enxugada): fio 0–0,7 s · coroa 0,35–1,0 · ROYALS 0,9–1,6 · descritor 1,3–1,9 ·
+   logo completa parada 1,9–3,0 (pedido do Humberto, 16/10: +1 s com ENTRETENIMENTO na tela) · saída 3,0–3,45
+   (a logo sobe e some; a cortina abre de baixo para cima). Tudo em CSS: sem JavaScript, a cortina sai
+   sozinha. O JavaScript só pula (toque, clique, Esc), não repete ao voltar navegando e trava a rolagem. */
+html.abertura-ativa { overflow: hidden; }
+.abertura { position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center; background: #050505; cursor: pointer; animation: abertura-sai 450ms var(--ease-exit) 3000ms forwards; }
+.abertura[data-fim] { display: none; }
+.abertura[data-pular] { animation: abertura-pula 320ms var(--ease-exit) forwards; }
+.abertura__logo { width: min(520px, 72vw); animation: abertura-logo-sai 400ms var(--ease-exit) 3000ms forwards; }
+.abertura[data-pular] .abertura__logo { animation: abertura-logo-pula 240ms var(--ease-exit) forwards; }
+.abertura .logo-revela .fio { animation: fio-ouro 700ms var(--ease-draw) forwards; }
+.abertura .logo-revela [id^="crown-"] { animation: coroa 450ms var(--ease-enter) forwards; }
+.abertura .logo-revela #crown-base { animation-delay: 350ms; }
+.abertura .logo-revela #crown-left { animation-delay: 430ms; }
+.abertura .logo-revela #crown-right { animation-delay: 510ms; }
+.abertura .logo-revela #crown-peak { animation-delay: 590ms; }
+.abertura .logo-revela [id^="letter-0"] { animation: letra 400ms var(--ease-enter) forwards; }
+.abertura .logo-revela #letter-01-R { animation-delay: 900ms; }
+.abertura .logo-revela #letter-02-O { animation-delay: 960ms; }
+.abertura .logo-revela #letter-03-Y { animation-delay: 1020ms; }
+.abertura .logo-revela #letter-04-A { animation-delay: 1080ms; }
+.abertura .logo-revela #letter-05-L { animation-delay: 1140ms; }
+.abertura .logo-revela #letter-06-S { animation-delay: 1200ms; }
+.abertura .logo-revela #logo-tagline { animation: descritor 600ms var(--ease-enter) 1300ms forwards; }
+@keyframes abertura-sai { from { clip-path: inset(0 0 0 0); } to { clip-path: inset(0 0 100% 0); visibility: hidden; } }
+@keyframes abertura-pula { from { opacity: 1; } to { opacity: 0; visibility: hidden; } }
+@keyframes abertura-logo-sai { to { opacity: 0; translate: 0 -40px; } }
+@keyframes abertura-logo-pula { to { opacity: 0; translate: 0 -20px; } }
+@media (prefers-reduced-motion: reduce) {
+  .abertura { animation: abertura-pula 300ms linear 600ms forwards; }
+  .abertura__logo { animation: none; }
+}
+
+/* ——— F3 · Pulso (130 BPM = batida de 461,5 ms), versão escurecida para o site ———
+   Catálogo: luz central 0,18 + 0,30 na batida, faixa de luz a 45° (0,55) que salta 20% → 50% → 80%, coroa 1 + 0,08 na
+   batida, flash ouro de 0,2 a cada 4 batidas, grão 0,16. Aqui: luz 0,07 + 0,10, faixa 0,16, coroa a 13% de opacidade,
+   flash 0,04, grão 0,06. Tudo o que pulsa começa apagado: com movimento reduzido (sem animação), fica só a luz parada. */
+.fundo-loop--pulso { background: #050505; }
+.fundo-loop__halo { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(187,158,56,.07), rgba(187,158,56,0) min(460px, 70%)); }
+.fundo-loop__halo::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(187,158,56,.1), rgba(187,158,56,0) min(460px, 70%)); opacity: 0; animation: pulso-batida 461.5ms linear infinite; }
+.fundo-loop__faixa { position: absolute; top: 50%; left: 20%; width: 16%; height: 300%; translate: -50% -50%; rotate: 45deg; background: linear-gradient(90deg, rgba(219,188,88,0), rgba(255,236,170,.16), rgba(219,188,88,0)); opacity: 0; animation: pulso-batida 461.5ms linear infinite, pulso-faixa 1384.6ms linear infinite; }
+.fundo-loop__coroa { position: absolute; top: 50%; left: 50%; width: min(240px, 34%); height: auto; translate: -50% -50%; opacity: .13; animation: pulso-coroa 461.5ms var(--ease-enter) infinite; }
+.fundo-loop__flash { position: absolute; inset: 0; background: #DBBC58; opacity: 0; animation: pulso-flash 1846ms linear infinite; }
+.fundo-loop--pulso::after { content: ""; position: absolute; inset: 0; background: url(/marca/grao.png) 0 0 / 600px; opacity: .06; mix-blend-mode: screen; animation: grao 1s steps(12) infinite; pointer-events: none; }
+.fundo-loop--pulso .fundo-loop__vinheta { background: radial-gradient(ellipse at center, rgba(5,5,5,0) 30%, rgba(5,5,5,.92) 100%); }
+@keyframes pulso-batida { 0% { opacity: 1; } 47.7%, 100% { opacity: 0; } }
+@keyframes pulso-coroa { 0% { scale: 1.08; } 47.7%, 100% { scale: 1; } }
+@keyframes pulso-faixa { 0%, 33.32% { left: 20%; } 33.33%, 66.65% { left: 50%; } 66.66%, 100% { left: 80%; } }
+@keyframes pulso-flash { 0% { opacity: .04; } 11.9%, 100% { opacity: 0; } }
+.fundo-loop[data-ativo="false"] .fundo-loop__halo::after { animation-play-state: paused; }
+
+/* chamada com fundo em loop por trás (promoters: Pulso · contato: Diagonais): o fundo fica atrás do texto e dos botões */
+.chamada--loop { overflow: hidden; isolation: isolate; background: #050505; }
+.chamada--loop::before { z-index: 1; opacity: .04; }
+.chamada--loop > :not(.fundo-loop) { position: relative; z-index: 2; }
+.chamada--loop .fundo-loop--diagonais ~ * { text-shadow: 0 1px 18px rgba(5,5,5,.6); }
+.chamada--diagonais::before { display: none; } /* a textura diagonal parada some: as diagonais agora andam */
+@media (prefers-reduced-motion: reduce) { .fundo-loop__halo::after { animation: none; } }
+/* no desktop, a coroa e a luz do Pulso ficam no vão entre o texto e o botão (no centro, a coroa caía atrás do título) */
+@media (min-width: 721px) {
+  .chamada--pulso .fundo-loop__coroa { left: 66%; }
+  .chamada--pulso .fundo-loop__halo { background: radial-gradient(circle at 66% 50%, rgba(187,158,56,.07), rgba(187,158,56,0) min(460px, 70%)); }
+  .chamada--pulso .fundo-loop__halo::after { background: radial-gradient(circle at 66% 50%, rgba(187,158,56,.1), rgba(187,158,56,0) min(460px, 70%)); }
+}
+@media (max-width: 720px) { .chamada--pulso .fundo-loop__coroa { opacity: .09; } }
+
+/* ——— carrossel infinito (Carrossel): a fileira duplicada anda metade do trilho em loop, em velocidade constante ———
+   Ocupa a largura toda da tela (sai do container) e some nas bordas por máscara. A seção corta o que passa da tela
+   (overflow-x: clip), para não criar rolagem lateral. Para no hover / foco e fora da tela (data-ativo). */
+.secao--carrossel { overflow-x: clip; }
+.carrossel { --gap: var(--space-6); --item: clamp(250px, 23vw, 330px); position: relative; width: 100vw; margin-left: calc(50% - 50vw); overflow: hidden; padding-block: 4px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); }
+.carrossel--midia { --gap: var(--space-3); --item: clamp(210px, 18vw, 280px); }
+.carrossel__trilho { display: flex; width: max-content; animation: carrossel-esquerda var(--duracao) linear infinite; }
+.carrossel--direita .carrossel__trilho { animation-name: carrossel-direita; }
+.carrossel__grupo { display: flex; gap: var(--gap); padding-right: var(--gap); }
+.carrossel__grupo > * { flex: 0 0 var(--item); width: var(--item); }
+.carrossel:hover .carrossel__trilho, .carrossel:focus-within .carrossel__trilho, .carrossel[data-ativo="false"] .carrossel__trilho { animation-play-state: paused; }
+@keyframes carrossel-esquerda { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes carrossel-direita { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+@media (max-width: 720px) {
+  .carrossel { --item: 74vw; --gap: var(--space-4); -webkit-mask-image: none; mask-image: none; }
+  .carrossel--midia { --item: 58vw; --gap: var(--space-3); }
+}
+/* movimento reduzido: fileira parada, arrastável, começando alinhada ao container */
+@media (prefers-reduced-motion: reduce) {
+  .carrossel { overflow-x: auto; scroll-snap-type: x mandatory; -webkit-mask-image: none; mask-image: none; }
+  .carrossel__trilho, .carrossel--direita .carrossel__trilho { animation: none; }
+  .carrossel__grupo { padding-inline: var(--gutter); }
+  .carrossel__grupo--copia { display: none; }
+  .carrossel__grupo > * { scroll-snap-align: start; }
+}
+
+/* ——— fio de luz na logo (menu e rodapé): o `Shine` das revelações do remotion-studio ———
+   Faixa fina branco-quente (#FFF4D6 → #FFFDF4 no miolo), inclinada −18° (108°), recortada no formato da logo pela
+   própria imagem (mask). Cruza em 1,3 s com ease-in-out e volta a passar a cada 6 s; no menu, passa também no hover.
+   O fundo tem 300% da largura: em 85% a faixa está antes da logo, em 15% já saiu pela direita. */
+.logo-brilho { position: relative; display: inline-flex; width: max-content; max-width: 100%; align-self: flex-start; justify-self: start; line-height: 0; } /* do tamanho da logo: se esticar (coluna flex do rodapé), o recorte estica junto */
+.logo-brilho::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  -webkit-mask: var(--logo) center / 100% 100% no-repeat; mask: var(--logo) center / 100% 100% no-repeat;
+  background: linear-gradient(108deg, rgba(255,244,214,0) 42%, rgba(255,244,214,.55) 47.5%, rgba(255,253,244,.98) 50%, rgba(255,244,214,.55) 52.5%, rgba(255,244,214,0) 58%) no-repeat;
+  background-size: 300% 100%; background-position: 85% 0;
+  animation: logo-varre 6s linear 1.2s infinite;
+}
+.rodape__logo .logo-brilho::after { animation-delay: 4s; }
+.topo__logo:hover .logo-brilho::after, .topo__logo:focus-visible .logo-brilho::after { animation: logo-varre-hover 1100ms cubic-bezier(.65, 0, .35, 1) both; }
+@keyframes logo-varre {
+  0% { background-position: 85% 0; animation-timing-function: cubic-bezier(.65, 0, .35, 1); }
+  21.7% { background-position: 15% 0; }
+  100% { background-position: 15% 0; }
+}
+@keyframes logo-varre-hover { from { background-position: 85% 0; } to { background-position: 15% 0; } }
+@media (prefers-reduced-motion: reduce) { .logo-brilho::after { animation: none !important; display: none; } }
+
+/* ——— chamada com uma pessoa (promoters): a influencer recortada à direita, ancorada na base, ATRÁS do botão ———
+   A foto entra limpa, sem efeito (sem sombra nem degradê: a sombra dourada desfocada formava uma aura em volta dela).
+   A coroa do Pulso é o charme da chamada (pedido do Humberto, 16/10): no desktop, pulsando bem no centro da caixa, entre
+   o texto e a pessoa; no celular, onde o centro cai atrás do rosto dela, centralizada logo acima da cabeça (a coroa
+   "coroando" a promoter: A coroa também é sua). A luz do Pulso acompanha a coroa. */
+.chamada--pessoa { min-height: clamp(420px, 38vw, 500px); }
+.chamada--loop > .chamada__pessoa { position: absolute; z-index: 1; right: clamp(16px, 6%, 100px); bottom: 0; height: calc(100% - 24px); width: auto; max-width: none; pointer-events: none; }
+.chamada--pessoa .pilha { max-width: min(480px, 36vw); } /* em vw: em % ele mediria a coluna da grade, não a caixa */
+.chamada--pessoa > .surge:last-child { position: relative; z-index: 3; }
+.chamada--pessoa .fundo-loop__coroa { left: 50%; top: 50%; width: clamp(150px, 17vw, 240px); opacity: .26; }
+.chamada--pessoa .fundo-loop__halo { background: radial-gradient(circle at 50% 50%, rgba(187,158,56,.12), rgba(187,158,56,0) min(380px, 45%)); }
+.chamada--pessoa .fundo-loop__halo::after { background: radial-gradient(circle at 50% 50%, rgba(219,188,88,.16), rgba(219,188,88,0) min(380px, 45%)); }
+@media (max-width: 720px) {
+  .chamada--pessoa { min-height: 0; padding-bottom: var(--space-6); }
+  .chamada--pessoa .pilha { max-width: none; }
+  .chamada--loop > .chamada__pessoa { right: auto; left: 50%; translate: -50% 0; height: 330px; }
+  .chamada--pessoa > .surge:last-child { margin-top: 390px; }
+  .chamada--pessoa .fundo-loop__coroa { top: auto; bottom: 360px; translate: -50% 0; width: 116px; opacity: .34; } /* no vão entre o texto e a modelo, ~30 px acima da cabeça */
+  .chamada--pessoa .fundo-loop__halo { background: radial-gradient(circle at 50% calc(100% - 400px), rgba(187,158,56,.12), rgba(187,158,56,0) 150px); }
+  .chamada--pessoa .fundo-loop__halo::after { background: radial-gradient(circle at 50% calc(100% - 400px), rgba(219,188,88,.16), rgba(219,188,88,0) 150px); }
+}
+.chamada--pessoa .h1 { font-size: clamp(30px, 4.2vw, 62px); } /* com a pessoa ao lado, o título fica em 2 linhas sem cortar palavra */
+/* contato com a influencer de imprensa (16/10): o mesmo encaixe dos promoters, com dois botões em vez de um. No desktop o
+   título fica menor para caber ao lado da foto sem perder a vírgula; no celular, onde os dois botões ficam um embaixo do
+   outro, a foto sobe e termina atrás do primeiro botão (encostada no fundo ela sumia atrás dos dois). */
+@media (min-width: 721px) { .chamada--contato .h2 { font-size: clamp(30px, 3.6vw, 52px); } }
+.chamada--contato .botao--secundario { background: rgba(5,5,5,.78); } /* o botão vazado fica por cima da foto: fundo escuro para ler */
+@media (max-width: 720px) {
+  .chamada--loop.chamada--contato > .chamada__pessoa { bottom: 84px; }
+  .chamada--contato > .surge:last-child { margin-top: 260px; }
+}
+/* logo do manifesto: ~80% da largura de "CONQUISTADA" (que mede ~9,5 x o tamanho da fonte, clamp(34px, 6,6vw, 112px));
+   o seletor duplo vence o .logo-revela { width: 100% }, que antes deixava a logo do tamanho da coluna inteira */
+.logo-revela.manifesto__logo { width: clamp(250px, 50vw, 820px); }
+/* fio de luz na logo do manifesto: o invólucro centraliza (a margem sai da logo e vai para ele) e o brilho só começa
+   depois da revelação da logo (fio 0,9 s → coroa → ROYALS → descritor termina em ~3,1 s) */
+.logo-brilho.manifesto__brilho { display: flex; margin: 0 auto var(--space-12); }
+.manifesto__brilho .manifesto__logo { margin: 0; }
+.manifesto__brilho::after { animation: none; }
+.revela.visivel .manifesto__brilho::after { animation: logo-varre 6s linear 3.4s infinite; }
+
+/* topo no celular, com o vídeo 9:16 atrás (conteúdo do vídeo no alto): o bloco do evento fica enxuto para começar perto
+   da metade da tela. Régua só com data e local (a atração aparece no vídeo), botões lado a lado, sem a assinatura
+   (a Royals já está no cabeçalho, logo acima). */
+@media (max-width: 720px) {
+  .hero .hero__regua .regua__item:nth-child(n+3) { display: none; }
+  .hero__acoes { flex-wrap: nowrap; gap: var(--space-3); }
+  .hero__acoes .botao { flex: 1 1 0; justify-content: center; padding-inline: 10px; font-size: 12px; }
+  .hero__assinatura { display: none; }
+}
+
+/* barra de ingressos do celular: desliza para fora enquanto os botões do topo estão na tela (BarraFixa) */
+.barra-ingressos { transition: translate var(--dur-element) var(--ease-enter); }
+.barra-ingressos[data-oculta="true"] { translate: 0 110%; }
+/* topo no celular com o vídeo 9:16 montado para o site: o conteúdo do vídeo (metade de cima) fica sem véu; só uma faixa
+   leve sob o menu e o degradê forte a partir da metade, onde fica o bloco do evento */
+.hero__midia--celular::after { background: linear-gradient(180deg, rgba(5,5,5,.55) 0%, rgba(5,5,5,0) 8%), linear-gradient(0deg, #050505 0%, rgba(5,5,5,.9) 34%, rgba(5,5,5,.55) 46%, rgba(5,5,5,0) 54%); }
+
+/* ——— botão de som do vídeo do topo (BotaoSom): na fileira de botões do evento ———
+   Desligado: ícone de alto-falante mudo e um anel na cor do evento que pulsa de leve, chamando o toque.
+   Ligado: as três barras da marca (o E do descritor) viram equalizador. No celular, só o ícone, quadrado. */
+.botao-som { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: var(--control-height-lg); padding: 0 22px;
+  font-family: var(--font-sans); font-size: 13px; font-weight: var(--weight-bold); letter-spacing: var(--tracking-button); text-transform: uppercase; white-space: nowrap;
+  color: var(--royal-ivory); background: rgba(5,5,5,.45); border: 2px solid rgba(242,238,228,.28); border-radius: 0; cursor: pointer;
+  transition: border-color var(--dur-ui) linear, background-color var(--dur-ui) linear, transform var(--dur-ui) var(--ease-enter); }
+.botao-som:hover { border-color: var(--event-accent); }
+.botao-som:active { transform: scale(0.97); }
+.botao-som:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+.botao-som[aria-pressed="true"] { border-color: var(--event-accent); }
+.botao-som[aria-pressed="false"]::after { content: ""; position: absolute; inset: -2px; border: 2px solid var(--event-accent); pointer-events: none; animation: som-chama 2.4s var(--ease-enter) infinite; }
+@keyframes som-chama { 0% { opacity: .85; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(1.08, 1.3); } }
+.botao-som__icone { width: 20px; height: 20px; flex: none; }
+.botao-som__barras { display: inline-flex; align-items: flex-end; gap: 3px; width: 18px; height: 16px; flex: none; }
+.botao-som__barras > span { flex: 1; height: 100%; background: var(--event-accent); transform-origin: bottom; animation: som-barra 900ms ease-in-out infinite; }
+.botao-som__barras > span:nth-child(2) { animation-duration: 700ms; animation-delay: -200ms; }
+.botao-som__barras > span:nth-child(3) { animation-duration: 1100ms; animation-delay: -450ms; }
+@keyframes som-barra { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
+@media (max-width: 720px) {
+  .hero__acoes .botao-som { flex: 0 0 auto; width: var(--control-height-lg); padding: 0; }
+  .botao-som__texto { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .botao-som[aria-pressed="false"]::after { animation: none; opacity: 0; }
+  .botao-som__barras > span { animation: none; transform: scaleY(.7); }
+}
+@media (max-width: 720px) {
+  .hero__acoes { gap: var(--space-2); }
+  .hero__acoes .botao .seta { display: none; } /* com o botão de som na fileira, a seta não cabe no celular */
+  .hero__acoes .botao-som { width: 52px; }
+}
+/* assinatura de evento coproduzido: "Apresentam" + Royals | 100 Mídia | Baile do Poderoso (marfim, fios entre elas) */
+.assinatura--varias .assinatura__linha { flex-wrap: wrap; row-gap: 12px; }
+.assinatura__marcas { display: flex; align-items: center; gap: 16px; }
+.assinatura__marcas > * + * { padding-left: 16px; border-left: 1px solid rgba(242,238,228,.28); }
+.assinatura__marcas img { width: auto; display: block; }
+.assinatura__marcas img:first-child { width: 104px; height: auto; }
+.assinatura__marcas .assinatura__parceiro { height: 30px; width: auto; }
+.assinatura__marcas .assinatura__parceiro[alt="Baile do Poderoso"] { height: 26px; }
+
+/* topo no desktop (vídeo 16:9 ao lado): o bloco do evento precisa CABER na altura da tela. Se passa, o topo cresce além
+   de 100svh e o vídeo é ampliado ("cover"), cortando as laterais. Logo limitado pela altura, espaçamentos que encolhem
+   em tela baixa e os três botões sempre numa linha (o de som vira só ícone abaixo de 1360 px). */
+@media (min-width: 900px) and (min-aspect-ratio: 6/5) {
+  .hero--lateral .hero__conteudo { padding-top: calc(var(--header-height) + clamp(16px, 4svh, 64px)); padding-bottom: clamp(24px, 5svh, 64px); gap: clamp(12px, 2.2svh, 24px); }
+  .hero--lateral .hero__logo-evento { width: min(560px, 82vw, 48svh); }
+  .hero--lateral .hero__acoes { flex-wrap: nowrap; gap: 12px; }
+  .hero--lateral .hero__acoes .botao--lg { padding: 0 clamp(16px, 1.6vw, 32px); }
+}
+@media (min-width: 900px) and (max-width: 1359px) and (min-aspect-ratio: 6/5) {
+  .hero--lateral .botao-som { width: var(--control-height-lg); padding: 0; }
+  .hero--lateral .botao-som__texto { display: none; }
+}
+@media (min-width: 900px) and (max-height: 680px) and (min-aspect-ratio: 6/5) { .hero--lateral .hero__assinatura { display: none; } } /* tela muito baixa: a assinatura sai do topo para o bloco caber */
+
+/* ——— varredura do celular (16/10, 320–414 px) ———
+   1. palavras longas da marca ("CONQUISTADA", "PRIVACIDADE", "O.C.U.L.T.O") cortavam em 320–360 px: os títulos
+      descem um pouco abaixo de ~380 px; a frase do manifesto acompanha a largura e a logo continua em ~80% dela.
+   2. nos botões do topo (3 lado a lado), o texto pode quebrar em 2 linhas em vez de empurrar a página para o lado
+      ("Site do evento" na página do Baile). */
+@media (max-width: 380px) {
+  :root { --text-display: 9.5vw; --text-h1: clamp(24px, 8.2vw, 88px); }
+}
+@media (max-width: 480px) {
+  .manifesto__frase { font-size: 8vw; }
+  .logo-revela.manifesto__logo { width: 61vw; }
+}
+@media (max-width: 720px) {
+  .hero__acoes .botao { min-width: 0; white-space: normal; text-align: center; line-height: 1.15; }
+}
+@media (max-width: 420px) { /* assinatura com parceiros: as três logos menores para caber em 320 px */
+  .assinatura__marcas { gap: 12px; }
+  .assinatura__marcas > * + * { padding-left: 12px; }
+  .assinatura__marcas img:first-child { width: 76px; }
+  .assinatura__marcas .assinatura__parceiro { height: 22px; }
+  .assinatura__marcas .assinatura__parceiro[alt="Baile do Poderoso"] { height: 19px; }
+}

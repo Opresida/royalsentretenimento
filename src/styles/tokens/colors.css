@@ -1,0 +1,84 @@
+:root {
+  /* Base — medidas no logo */
+  --royal-black: #050505;
+  --royal-gold: #BB9E38;
+  --royal-gold-lo: #A1861E;
+  --royal-gold-hi: #DBBC58;
+  --royal-silver: #949597;
+  /* Base — derivadas (brandbook) */
+  --royal-ivory: #F2EEE4;
+  --royal-graphite: #141311;
+  --royal-gold-deep: #6B5A1A;
+
+  /* Escala neutra (quente) */
+  --neutral-950: #050505;
+  --neutral-900: #0D0C0B;
+  --neutral-850: #141311;
+  --neutral-800: #1A1916;
+  --neutral-700: #24221E;
+  --neutral-600: #2E2C27;
+  --neutral-500: #4A4A4C;
+  --neutral-400: #949597;
+  --neutral-300: #A8A59D;
+  --neutral-200: #D9D5CB;
+  --neutral-100: #F2EEE4;
+
+  --gradient-gold: linear-gradient(180deg, #A1861E 0%, #DBBC58 100%);
+
+  /* Semânticos — tema escuro (padrão) */
+  --surface-page: var(--neutral-950);
+  --surface-sunken: var(--neutral-900);
+  --surface-card: var(--neutral-850);
+  --surface-raised: var(--neutral-800);
+  --surface-inverse: var(--neutral-100);
+  --border-subtle: var(--neutral-700);
+  --border-default: var(--neutral-600);
+  --border-strong: var(--neutral-500);
+  --border-accent: var(--royal-gold);
+
+  --text-primary: var(--neutral-100);
+  --text-body: var(--neutral-200);
+  --text-secondary: var(--neutral-300);
+  --text-muted: var(--neutral-400);
+  --text-accent: var(--royal-gold);
+  --text-on-accent: var(--royal-black);
+  --text-inverse: var(--royal-black);
+
+  --accent: var(--royal-gold);
+  --accent-hover: var(--royal-gold-hi);
+  --accent-press: var(--royal-gold-lo);
+  --focus-ring: var(--royal-gold-hi);
+
+  /* Estados */
+  --success: #7FA36A;
+  --danger: #D2694F;
+  --warning: var(--royal-gold-hi);
+
+  /* Token de evento: páginas de evento sobrescrevem só estes (marca endossada) */
+  --event-accent: var(--royal-gold);
+  --event-on-accent: var(--royal-black);
+}
+
+/* Tema claro — documentos, patrocinadores */
+[data-theme="light"] {
+  --surface-page: var(--neutral-100);
+  --surface-sunken: #E6E1D5;
+  --surface-card: #FFFFFF;
+  --surface-raised: #FFFFFF;
+  --surface-inverse: var(--neutral-950);
+  --border-subtle: #DDD7CA;
+  --border-default: #C9C4B8;
+  --border-strong: #8C877C;
+  --border-accent: var(--royal-gold-deep);
+  --text-primary: var(--royal-black);
+  --text-body: var(--neutral-700);
+  --text-secondary: #4A4740;
+  --text-muted: #5E5B55;
+  --text-accent: var(--royal-gold-deep);
+  --text-on-accent: var(--neutral-100);
+  --text-inverse: var(--neutral-100);
+  --accent: var(--royal-gold-deep);
+  --accent-hover: #57490F;
+  --accent-press: #463B0C;
+  --focus-ring: var(--royal-gold-deep);
+}

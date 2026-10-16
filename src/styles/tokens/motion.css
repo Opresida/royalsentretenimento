@@ -1,0 +1,24 @@
+:root {
+  --ease-enter: cubic-bezier(.16, 1, .3, 1);
+  --ease-exit: cubic-bezier(.7, 0, .84, 0);
+  --ease-draw: cubic-bezier(.65, 0, .35, 1);
+
+  --dur-ui: 160ms;
+  --dur-element: 320ms;
+  --dur-title: 480ms;
+  --dur-brand: 960ms;
+
+  --stagger-letter: 60ms;
+  --stagger-item: 80ms;
+  --beat-130: 461ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-element: 160ms;
+    --dur-title: 160ms;
+    --dur-brand: 160ms;
+    --stagger-letter: 0ms;
+    --stagger-item: 0ms;
+  }
+}

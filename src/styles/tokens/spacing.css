@@ -1,0 +1,30 @@
+:root {
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  --gutter: clamp(20px, 4vw, 64px);
+  --section-gap: clamp(64px, 10vw, 160px);
+  --container-max: 1440px;
+  --header-height: 72px;
+
+  /* Cantos retos são a regra; raio só em pílulas de status e foco */
+  --radius-0: 0;
+  --radius-xs: 2px;
+  --radius-pill: 999px;
+
+  --control-height-sm: 36px;
+  --control-height-md: 48px;
+  --control-height-lg: 56px;
+}
