@@ -29,3 +29,9 @@
 - [x] 15/10/2026 · Sincronização do Instagram pela API oficial → R2 `royals-acervo`
 - [x] 15/10/2026 · 14 eventos levantados das legendas (2019–2026)
 - [x] 15/10/2026 · Todas as páginas do sitemap do brandbook
+
+## Royals Tickets
+- [x] Checkout em prévia: /eventos/baile-das-bruxas/checkout (16/10), banner nos 3 tamanhos
+- [ ] Confirmar com a produção: lotes, meia-entrada, taxa de serviço (hoje 10% do modelo), parcelamento e classificação
+- [ ] Pagar.me: chaves (sandbox → produção), cobrança Pix/cartão no servidor, webhook, banco de pedidos/estoque por lote, reserva de 10 min, e-mail com ingresso (QR Code)
+- [ ] Abrir a venda: vendasAbertas = true, botões do site apontando para o checkout, tirar o noindex
