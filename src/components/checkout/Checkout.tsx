@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import type { DadosCheckout } from '@/data/ingressos';
+import { Assinatura } from '@/components/Marca';
 import './checkout.css';
 
 // Royals Tickets · checkout de um evento, portado do modelo aprovado (D:\CLIENTES BRANDSQUADS\Royals Tickets\Checkout)
@@ -10,7 +11,7 @@ import './checkout.css';
 // Pagamento: será processado pelo Pagar.me (Pix e cartão). Enquanto `vendasAbertas` for false (prévia), o "Pagar" valida
 // tudo e abre o aviso de que a venda pelo site abre em breve, com o botão para o canal atual (Igarê).
 
-export type EventoCheckout = { nome: string; dataCurta: string; diaSemana: string; abertura?: string; local?: string; cidade: string; cor?: string; sobreCor?: string;
+export type EventoCheckout = { nome: string; logo?: string; parceiros?: { nome: string; logo: string }[]; dataCurta: string; diaSemana: string; abertura?: string; local?: string; cidade: string; cor?: string; sobreCor?: string;
   banner: { desktop: string; tablet: string; celular: string } };
 
 type Metodo = 'pix' | 'cartao';
@@ -109,10 +110,16 @@ export function Checkout({ evento, dados }: { evento: EventoCheckout; dados: Dad
             {dados.lote && <span className="ck-selo ck-selo--cheio">{dados.lote.nome}</span>}
             {dados.classificacao && <span className="ck-selo">{dados.classificacao}</span>}
           </div>
-          <h1 className="ck-titulo">{evento.nome}</h1>
+          {evento.logo
+            // eslint-disable-next-line @next/next/no-img-element
+            ? <h1 className="ck-titulo ck-titulo--logo"><img src={evento.logo} alt={evento.nome} /></h1>
+            : <h1 className="ck-titulo">{evento.nome}</h1>}
           <p className="ck-meta"><strong>{evento.diaSemana} · {evento.dataCurta}</strong>{evento.abertura && <span>Abertura {evento.abertura}</span>}<span>{[evento.local, evento.cidade].filter(Boolean).join(' · ')}</span></p>
+          <div className="ck-produz"><Assinatura parceiros={evento.parceiros} /></div>
         </div>
       </section>
+      {/* no celular a área do texto do banner é curta: quem produz fica logo abaixo dele */}
+      <div className="ck-produz-celular"><Assinatura parceiros={evento.parceiros} /></div>
 
       {dados.lote && fim && (
         <section className="ck-lote">

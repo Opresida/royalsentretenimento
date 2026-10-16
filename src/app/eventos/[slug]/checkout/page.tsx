@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import fs from 'fs';
+import path from 'path';
 import { notFound } from 'next/navigation';
 import { Checkout } from '@/components/checkout/Checkout';
 import { checkoutDo, CHECKOUT } from '@/data/ingressos';
@@ -25,11 +27,14 @@ export default async function PaginaCheckout({ params }: { params: Promise<{ slu
   if (!e || !dados || !proximos().some((x) => x.slug === slug)) notFound();
   const dia = diaSemana(e.data);
   const base = `/eventos/${e.slug}/banner`;
+  // a logo do evento vira o título do banner; usa a versão leve (.webp) quando existe ao lado da original
+  const leve = e.logo?.replace(/\.png$/, '.webp');
+  const logo = leve && fs.existsSync(path.join(process.cwd(), 'public', leve)) ? leve : e.logo;
   return (
     <Checkout
       dados={dados}
       evento={{
-        nome: nomeCompleto(e), dataCurta: `${dataCurta(e.data)}.${ano(e.data)}`, diaSemana: dia.charAt(0).toUpperCase() + dia.slice(1),
+        nome: nomeCompleto(e), logo, parceiros: e.parceiros, dataCurta: `${dataCurta(e.data)}.${ano(e.data)}`, diaSemana: dia.charAt(0).toUpperCase() + dia.slice(1),
         abertura: e.hora ?? dados.abertura, local: e.local, cidade: e.cidade, cor: e.cor, sobreCor: e.sobreCor,
         banner: { desktop: `${base}/desktop.webp`, tablet: `${base}/tablet.webp`, celular: `${base}/celular.webp` },
       }}

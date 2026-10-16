@@ -151,3 +151,17 @@ body:has(.ck) .topo, body:has(.ck) .rodape, body:has(.ck) .barra-ingressos { dis
 .ck-modal__caixa h2 { margin: 0; font-size: 24px; font-weight: var(--weight-extrabold); font-stretch: var(--stretch-display); text-transform: uppercase; color: var(--royal-ivory); }
 .ck-modal__caixa p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--text-secondary); }
 .ck-voltar { border: 0; background: transparent; color: var(--text-secondary); font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; }
+
+/* título = logo do evento (quando existe) e, embaixo, quem produz (a mesma assinatura do site, com os parceiros):
+   ocupam o lado escuro do banner. A logo é limitada pela largura e pela altura do banner em cada tela. */
+.ck-titulo--logo { line-height: 0; }
+.ck-titulo--logo img { display: block; width: min(240px, 62vw); height: auto; filter: drop-shadow(0 8px 30px rgba(0,0,0,.6)); }
+.ck-produz { width: min(100%, 520px); margin-top: 4px; }
+@media (min-width: 640px) { .ck-titulo--logo img { width: min(400px, 44vw); } }
+@media (min-width: 1024px) { .ck-titulo--logo img { width: clamp(260px, 21vw, 420px); } }
+/* no celular a área do texto do banner é curta: a assinatura sai dele e entra logo abaixo */
+.ck-produz-celular { display: none; }
+@media (max-width: 639px) {
+  .ck-produz { display: none; }
+  .ck-produz-celular { display: block; padding: 18px var(--gutter) 4px; }
+}
