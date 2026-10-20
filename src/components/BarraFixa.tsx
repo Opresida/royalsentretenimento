@@ -4,10 +4,12 @@ import { usePathname } from 'next/navigation';
 
 /** A casca da barra de ingressos do celular: sai de cena enquanto os botões do topo (`.hero__acoes`, que já têm
  *  "Ingressos") estão na tela, para não cobri-los, e volta assim que a pessoa rola para baixo. Sem esses botões na
- *  página, fica sempre. */
-export function BarraFixa({ children, estilo }: { children: React.ReactNode; estilo?: React.CSSProperties }) {
+ *  página, fica sempre. Na página de OUTRO evento (ex.: /eventos/varandinha) não aparece: venderia um evento por cima
+ *  da página de outro. */
+export function BarraFixa({ children, estilo, slug }: { children: React.ReactNode; estilo?: React.CSSProperties; slug?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const caminho = usePathname();
+  const outroEvento = !!slug && /^\/(eventos|relembre-momentos)\/[^/]+/.test(caminho) && !caminho.split('/').includes(slug);
   useEffect(() => {
     const barra = ref.current;
     if (!barra) return;
@@ -19,5 +21,6 @@ export function BarraFixa({ children, estilo }: { children: React.ReactNode; est
     if (!liga()) mo.observe(document.body, { childList: true, subtree: true });
     return () => { io.disconnect(); mo.disconnect(); };
   }, [caminho]);
+  if (outroEvento) return null;
   return <div ref={ref} className="barra-ingressos" style={estilo} data-oculta="false">{children}</div>;
 }

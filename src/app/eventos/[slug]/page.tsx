@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const e = evento((await params).slug);
   if (!e) return {};
   const capa = capaDoEvento(e);
-  const descricao = `${nomeCompleto(e)}, ${dataExtensa(e.data)}${e.local ? `, no ${e.local}` : ''}, ${e.cidade}. ${e.atracoes.join(', ')}. Uma produção Royals.`;
+  const descricao = `${nomeCompleto(e)}, ${dataExtensa(e.data)}${e.local ? `, no ${e.local}` : ''}, ${e.cidade}. ${e.atracoes.length ? e.atracoes.join(', ') : e.estilo ?? ''}. ${e.parceiros?.length ? `${e.rotuloAssinatura ?? 'Apresentam'}: Royals e ${e.parceiros.map((p) => p.nome).join(', ')}` : 'Uma produção Royals'}.`;
   return { title: nomeCompleto(e), description: descricao, alternates: { canonical: `/eventos/${e.slug}` }, openGraph: { title: nomeCompleto(e), description: descricao, images: capa ? [capa.g] : undefined } };
 }
 

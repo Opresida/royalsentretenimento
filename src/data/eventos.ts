@@ -40,9 +40,39 @@ export type Evento = {
   videoCelular?: { video: string; capa: string; som?: boolean };
   /** site oficial do evento, quando existe */
   site?: string;
+  /** perfil do evento no Instagram (botão no topo da página quando ainda não há ingresso) */
+  instagram?: string;
+  /** sem atração anunciada: a régua mostra o estilo musical no lugar (texto do próprio evento) */
+  estilo?: string;
+  /** ingressos ainda não abertos: a página mostra a chamada "em breve" (nada de link inventado) */
+  ingressosEmBreve?: boolean;
+  /** rótulo da assinatura com os parceiros (padrão: "Apresentam") */
+  rotuloAssinatura?: string;
+  /** evento próximo que NÃO assume o topo da home (decisão do Humberto: o Baile segue no topo) */
+  foraDoTopoHome?: boolean;
+  /** fotos que não estão no Instagram da Royals (ex.: perfil do próprio evento), já no R2 (scripts/galeria-externa.mjs) */
+  galeriaExterna?: { olho: string; titulo: string; descricao: string; itens: { id: string; w: number; h: number; p: string; g: string; link?: string }[] };
 };
 
 export const EVENTOS: Evento[] = [
+  {
+    // Varandinha (19/10/2026): Royals × Cúpulla. Data, horário, local, endereço e slogan passados pelo Humberto; estilo e
+    // "uma experiência fora do comum" vêm da bio do @_varandiinha. As fotos são das edições de 2024 (perfil do evento).
+    slug: 'varandinha', nome: 'Varandinha', edicao: 'Manaus', data: '2026-11-01', hora: 'a partir das 16h', local: 'Cúpulla', cidade: 'Manaus',
+    atracoes: [], estilo: 'Pagode · Sertanejo · Eletrônica',
+    resumo: 'A Varandinha mais charmosa da cidade. Pagode, sertanejo e eletrônica numa experiência fora do comum, na Cúpulla, Av. João Valério, 209.',
+    janela: ['2026-10-19', '2026-11-30'], palavras: /varandinha|varandiinha/i, cor: '#B9C6A8', sobreCor: '#24361D',
+    ingressosEmBreve: true, instagram: 'https://www.instagram.com/_varandiinha/', foraDoTopoHome: true,
+    rotuloAssinatura: 'Realização', apresentam: ['Royals', 'Cúpulla'],
+    parceiros: [{ nome: 'Cúpulla', logo: '/eventos/varandinha/parceiros/cupulla.webp' }], logo: '/eventos/varandinha/logo.webp', capaImagem: '/eventos/varandinha/capa',
+    videoDesktop: { video: 'https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha-16x9.mp4', capa: 'https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha-16x9-capa.webp' },
+    videoCelular: { video: 'https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha-9x16.mp4', capa: 'https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha-9x16-capa.webp' },
+    galeriaExterna: {
+      olho: 'Edições anteriores', titulo: 'Como é a Varandinha',
+      descricao: 'Fotos das edições de 2024, do Instagram oficial @_varandiinha.',
+      itens: [{"id":"varandinha-edicao-01","w":1350,"h":1687,"p":"https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha/edicao-01-600.webp","g":"https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha/edicao-01-1600.webp","link":"https://www.instagram.com/_varandiinha/"},{"id":"varandinha-edicao-02","w":1440,"h":1800,"p":"https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha/edicao-02-600.webp","g":"https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha/edicao-02-1600.webp","link":"https://www.instagram.com/_varandiinha/"},{"id":"varandinha-edicao-03","w":1440,"h":1800,"p":"https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha/edicao-03-600.webp","g":"https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha/edicao-03-1600.webp","link":"https://www.instagram.com/_varandiinha/"},{"id":"varandinha-edicao-05","w":1080,"h":1080,"p":"https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha/edicao-05-600.webp","g":"https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha/edicao-05-1600.webp","link":"https://www.instagram.com/_varandiinha/"}],
+    },
+  },
   {
     slug: 'baile-das-bruxas', nome: 'Baile das Bruxas', data: '2026-11-13', hora: '21h00', local: 'Tarumã Fest', cidade: 'Manaus',
     atracoes: ['Chefin'], resumo: 'O último baile do ano. Chefin desembarca no Tarumã Fest.',

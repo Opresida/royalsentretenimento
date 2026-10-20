@@ -22,3 +22,8 @@ Royals Entretenimento, produtora de eventos de trap e funk em Manaus (cliente da
 - O logo nunca é digitado em fonte: sempre os SVGs de `public/marca/`.
 - No máximo um ponto de exclamação por página; sem emoji.
 - Telefones de camarote do Baile das Bruxas NÃO confirmados para site (ver `D:\dev\bailedasbruxas`): não publicar.
+
+## Varandinha (19/10/2026)
+- Evento recorrente, **realização Royals + Cúpulla** (a Cúpulla é sócia da Royals no evento e dona do local). 1ª edição em Manaus: domingo 01/11/2026, a partir das 16h, na Cúpulla (Av. João Valério, 209 · Nossa Sra. das Graças). Slogan: "A Varandinha mais charmosa da cidade". Instagram oficial @_varandiinha.
+- Sem atrações nem link de ingresso ainda (Humberto, 19/10): página com "Ingressos em breve". Topo da home continua no Baile das Bruxas (escolha dele).
+- Fotos da página: edições de 2024 (perfil do evento), sempre rotuladas "Edições anteriores".

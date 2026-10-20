@@ -8,7 +8,7 @@ export function BarraIngressos({ e }: { e?: Evento }) {
   if (!e?.ingressos) return null;
   const estilo = e.cor ? ({ '--event-accent': e.cor, '--event-on-accent': e.sobreCor ?? '#050505' } as React.CSSProperties) : undefined;
   return (
-    <BarraFixa estilo={estilo}>
+    <BarraFixa estilo={estilo} slug={e.slug}>
       <div className="barra-ingressos__info">
         <span>{dataCurta(e.data)} · {e.local ?? e.cidade}</span>
         <strong>{nomeCompleto(e)}</strong>

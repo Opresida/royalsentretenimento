@@ -34,10 +34,12 @@ export function PaginaEvento({ e, passado }: { e: Evento; passado: boolean }) {
             ? <h1 className="surge" style={{ margin: 0 }}><img className="hero__logo-evento" src={e.logo} alt={nomeCompleto(e)} /></h1>
             : <h1 className="display"><span className="sobe"><span>{e.nome}</span></span>{e.edicao && <span className="sobe"><span className="rotulo-texto" style={{ fontSize: 'var(--text-h4)' }}>{e.edicao}</span></span>}</h1>}
           {e.resumo && <p className="lead surge">{e.resumo}</p>}
-          {!passado && (e.ingressos || e.site) && (
+          {!passado && (e.ingressos || e.site || e.instagram) && (
             <div className="hero__acoes surge">
               {e.ingressos && <Botao href={e.ingressos} externo variante="evento" tamanho="lg">Ingressos</Botao>}
               {e.site && <Botao href={e.site} externo variante="secundario" tamanho="lg">Site do evento</Botao>}
+              {!e.ingressos && e.ingressosEmBreve && <span className="tag tag--evento hero__em-breve">Ingressos em breve</span>}
+              {e.instagram && <Botao href={e.instagram} externo variante={e.ingressos ? 'secundario' : 'evento'} tamanho="lg">Instagram do evento</Botao>}
               <BotaoSom />
             </div>
           )}
@@ -50,7 +52,7 @@ export function PaginaEvento({ e, passado }: { e: Evento; passado: boolean }) {
             <Regua grande itens={[
               { rotulo: 'Data', valor: `${diaSemana(e.data).toUpperCase()} · ${dataCurta(e.data)}.${ano(e.data)}`, nota: [dataExtensa(e.data), e.hora].filter(Boolean).join(' · ') },
               { rotulo: 'Local', valor: e.local ?? e.cidade, nota: e.local ? e.cidade : undefined },
-              { rotulo: e.atracoes.length > 1 ? 'Atrações' : 'Atração', valor: e.atracoes.join(' · ') },
+              e.atracoes.length ? { rotulo: e.atracoes.length > 1 ? 'Atrações' : 'Atração', valor: e.atracoes.join(' · ') } : { rotulo: 'Estilo', valor: e.estilo ?? 'Em breve', nota: e.estilo ? 'Line-up em breve' : undefined },
             ]} />
           </Revela>
           {!passado && e.ingressos && (
@@ -63,10 +65,20 @@ export function PaginaEvento({ e, passado }: { e: Evento; passado: boolean }) {
               <div className="surge"><Botao href={e.ingressos} externo variante="evento" tamanho="lg">Comprar ingresso</Botao></div>
             </Revela>
           )}
+          {!passado && !e.ingressos && e.ingressosEmBreve && (
+            <Revela className="chamada">
+              <div className="pilha" style={{ gap: 12 }}>
+                <span className="rotulo-texto surge">Ingressos</span>
+                <h2 className="h2"><span className="sobe"><span>Vendas em breve</span></span></h2>
+                <p className="lead surge">O link oficial sai primeiro no Instagram do evento. Ative as notificações para não perder a abertura.</p>
+              </div>
+              {e.instagram && <div className="surge"><Botao href={e.instagram} externo variante="evento" tamanho="lg">Seguir no Instagram</Botao></div>}
+            </Revela>
+          )}
           {e.apresentam && !e.parceiros && (
             <Revela className="surge"><p className="rotulo-texto rotulo-texto--mudo" style={{ margin: 0 }}>Apresentam · {e.apresentam.join(' · ')}</p></Revela>
           )}
-          <div style={{ maxWidth: e.parceiros ? 560 : 480 }}><Assinatura parceiros={e.parceiros} /></div>
+          <div style={{ maxWidth: e.parceiros ? 560 : 480 }}><Assinatura parceiros={e.parceiros} rotulo={e.rotuloAssinatura} /></div>
         </div>
       </section>
 
@@ -79,6 +91,15 @@ export function PaginaEvento({ e, passado }: { e: Evento; passado: boolean }) {
               { rotulo: 'Fotos', valor: 'fotos', ids: fotos.map((m) => m.id) },
               { rotulo: 'Vídeos', valor: 'videos', ids: videos.map((m) => m.id) },
             ] : undefined} />
+          </div>
+        </section>
+      )}
+
+      {e.galeriaExterna && (
+        <section className="secao">
+          <div className="container">
+            <CabecalhoSecao olho={e.galeriaExterna.olho} titulo={e.galeriaExterna.titulo} descricao={e.galeriaExterna.descricao} />
+            <Galeria itens={e.galeriaExterna.itens.map((m) => ({ ...m, tipo: 'imagem' as const, link: m.link ?? e.instagram ?? '' }))} colunas={4} />
           </div>
         </section>
       )}

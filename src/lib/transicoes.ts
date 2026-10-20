@@ -3,7 +3,7 @@
 // (03 · Transição diagonal). São 4 movimentos para 7 páginas: as outras 3 são esses mesmos movimentos em outra direção.
 // Cada uma tem a metade "cobrir" (antes de trocar a rota) e a metade "revelar" (com a página nova já pintada).
 
-export type Transicao = 'diagonais' | 'faixas' | 'cortina' | 'glitch' | 'colunas' | 'diagonais-inv' | 'cortina-inv' | 'fade';
+export type Transicao = 'diagonais' | 'faixas' | 'cortina' | 'glitch' | 'colunas' | 'diagonais-inv' | 'cortina-inv' | 'fade' | 'ondas';
 
 /** Peças, intervalo entre elas e duração de cada uma (ms). O tempo total de cada metade é dur + (pecas - 1) * passo. */
 export const TRANSICOES: Record<Transicao, { pecas: number; passo: number; dur: number }> = {
@@ -15,6 +15,7 @@ export const TRANSICOES: Record<Transicao, { pecas: number; passo: number; dur: 
   'diagonais-inv': { pecas: 12, passo: 25, dur: 450 }, // T1 espelhada · faixas a −45° descem do alto
   'cortina-inv': { pecas: 17, passo: 18, dur: 420 },   // 03 espelhada · da esquerda para a direita
   fade: { pecas: 1, passo: 0, dur: 260 },             // 07 · Saída: escurece e clareia
+  ondas: { pecas: 3, passo: 90, dur: 520 },           // Varandinha · 3 ondas do calçadão (sálvia, oliva, verde) sobem da base
 };
 
 export const duracao = (t: Transicao) => { const x = TRANSICOES[t]; return x.dur + (x.pecas - 1) * x.passo; };
@@ -22,6 +23,8 @@ export const duracao = (t: Transicao) => { const x = TRANSICOES[t]; return x.dur
 /** A transição de cada página é a do DESTINO. */
 export function transicaoDe(caminho: string): Transicao {
   if (caminho === '/') return 'diagonais';
+  // página de evento com transição própria (marca endossada: o movimento vem da identidade do evento)
+  if (caminho.startsWith('/eventos/varandinha')) return 'ondas';
   if (caminho.startsWith('/eventos')) return 'faixas';
   if (caminho.startsWith('/relembre-momentos')) return 'cortina';
   if (caminho.startsWith('/melhores-momentos')) return 'glitch';

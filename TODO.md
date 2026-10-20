@@ -35,3 +35,8 @@
 - [ ] Confirmar com a produção: lotes, meia-entrada, taxa de serviço (hoje 10% do modelo), parcelamento e classificação
 - [ ] Pagar.me: chaves (sandbox → produção), cobrança Pix/cartão no servidor, webhook, banco de pedidos/estoque por lote, reserva de 10 min, e-mail com ingresso (QR Code)
 - [ ] Abrir a venda: vendasAbertas = true, botões do site apontando para o checkout, tirar o noindex
+
+## Varandinha (19/10/2026)
+- [ ] Link oficial de ingressos (trocar `ingressosEmBreve` por `ingressos` + `ingressosOnde` em eventos.ts).
+- [ ] Atrações/line-up quando forem anunciadas (`atracoes`).
+- [ ] Depois de 01/11: a página vai para /relembre-momentos no próximo build; avaliar se a Varandinha (recorrente) ganha a próxima edição.

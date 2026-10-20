@@ -27,7 +27,8 @@ const PILARES = [
 
 export default function Home() {
   const agenda = proximos();
-  const destaque = agenda[0];
+  // o topo é do próximo evento, menos os marcados com foraDoTopoHome (Varandinha: o Baile segue no topo, decisão de 19/10)
+  const destaque = agenda.find((e) => !e.foraDoTopoHome) ?? agenda[0];
   const anteriores = passados();
   const capa = destaque ? capaDoEvento(destaque) : undefined;
   const reel = destaque ? destaqueDoEvento(destaque) : undefined;
@@ -72,7 +73,7 @@ export default function Home() {
               <Regua grande itens={[
                 { rotulo: 'Data', valor: `${diaSemana(destaque.data).toUpperCase()} · ${dataCurta(destaque.data)}`, nota: destaque.hora },
                 ...(destaque.local ? [{ rotulo: 'Local', valor: destaque.local, nota: destaque.cidade }] : []),
-                { rotulo: destaque.atracoes.length > 1 ? 'Atrações' : 'Atração', valor: destaque.atracoes.join(' · ') },
+                destaque.atracoes.length ? { rotulo: destaque.atracoes.length > 1 ? 'Atrações' : 'Atração', valor: destaque.atracoes.join(' · ') } : { rotulo: 'Estilo', valor: destaque.estilo ?? 'Em breve' },
               ]} />
             </div>
             <div className="hero__acoes surge">
