@@ -9,8 +9,11 @@ export function CartaoEvento({ e, href, cta = 'Ver evento', tag, paisagem }: { e
   return (
     <Link href={href} className={`cartao-evento ${paisagem ? 'cartao-evento--paisagem' : ''}`} style={estilo}>
       <div className="cartao-evento__img">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        {capa && <img src={capa.p} alt="" loading="lazy" />}
+        {e.cartaoImagem
+          // eslint-disable-next-line @next/next/no-img-element
+          ? <img src={`${e.cartaoImagem}-600.webp`} srcSet={`${e.cartaoImagem}-600.webp 600w, ${e.cartaoImagem}-1200.webp 1200w`} sizes="(max-width: 640px) 100vw, 400px" alt="" loading="lazy" />
+          // eslint-disable-next-line @next/next/no-img-element
+          : capa && <img src={capa.p} alt="" loading="lazy" />}
         {tag && <span className={`tag tag--${tag.tom ?? 'ouro'} cartao-evento__tag`}>{tag.texto}</span>}
       </div>
       <div className="cartao-evento__corpo">
