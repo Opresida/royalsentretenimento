@@ -40,6 +40,8 @@ export type Evento = {
   videoCelular?: { video: string; capa: string; som?: boolean };
   /** site oficial do evento, quando existe */
   site?: string;
+  /** imagem de compartilhamento (Open Graph, 1200×630) exclusiva do evento, em public/ */
+  og?: string;
   /** perfil do evento no Instagram (botão no topo da página quando ainda não há ingresso) */
   instagram?: string;
   /** sem atração anunciada: a régua mostra o estilo musical no lugar (texto do próprio evento) */
@@ -64,7 +66,7 @@ export const EVENTOS: Evento[] = [
     janela: ['2026-10-19', '2026-11-30'], palavras: /varandinha|varandiinha/i, cor: '#B9C6A8', sobreCor: '#24361D',
     ingressosEmBreve: true, instagram: 'https://www.instagram.com/_varandiinha/', foraDoTopoHome: true,
     rotuloAssinatura: 'Realização', apresentam: ['Royals', 'Cúpulla'],
-    parceiros: [{ nome: 'Cúpulla', logo: '/eventos/varandinha/parceiros/cupulla.webp' }], logo: '/eventos/varandinha/logo.webp', capaImagem: '/eventos/varandinha/capa',
+    parceiros: [{ nome: 'Cúpulla', logo: '/eventos/varandinha/parceiros/cupulla.webp' }], logo: '/eventos/varandinha/logo.webp', capaImagem: '/eventos/varandinha/capa', og: '/eventos/varandinha/og.jpg',
     videoDesktop: { video: 'https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha-16x9.mp4', capa: 'https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha-16x9-capa.webp' },
     videoCelular: { video: 'https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha-9x16.mp4', capa: 'https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos/varandinha-9x16-capa.webp' },
     galeriaExterna: {

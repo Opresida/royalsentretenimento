@@ -71,3 +71,4 @@ Vitrines da home (vídeos e "No Instagram"): `umPorEvento` (uma peça por evento
 - Vídeo do topo: remotion-studio `Varandinha-Topo-16x9` / `-9x16` (`src/varandinha/TopoSite.tsx`): a varanda ao pôr do sol + janela em ARCO (monograma da marca) com as fotos das edições trocando por uma onda do calçadão; mudo, loop de 416 quadros. Preparado por `video-desktop.mjs` / `video-celular.mjs` → R2 `eventos/varandinha-16x9|9x16`.
 - Transição própria: `ondas` (`src/lib/transicoes.ts`, destino `/eventos/varandinha`): 3 camadas sálvia/oliva/verde com borda em onda (máscara SVG) sobem da base e saem por cima.
 - `BarraFixa` recebe o `slug` do evento da barra e some nas páginas de OUTRO evento (/eventos/<x> e /relembre-momentos/<x>).
+- OG exclusivo (19/10/2026): campo `og` em eventos.ts (1200×630 em public/) vira og:image e twitter:image da página do evento; Varandinha = `public/eventos/varandinha/og.jpg`, gerado por `D:/dev/remotion-studio/scripts/varandinha-og.py`.

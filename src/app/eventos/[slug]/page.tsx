@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!e) return {};
   const capa = capaDoEvento(e);
   const descricao = `${nomeCompleto(e)}, ${dataExtensa(e.data)}${e.local ? `, no ${e.local}` : ''}, ${e.cidade}. ${e.atracoes.length ? e.atracoes.join(', ') : e.estilo ?? ''}. ${e.parceiros?.length ? `${e.rotuloAssinatura ?? 'Apresentam'}: Royals e ${e.parceiros.map((p) => p.nome).join(', ')}` : 'Uma produção Royals'}.`;
-  return { title: nomeCompleto(e), description: descricao, alternates: { canonical: `/eventos/${e.slug}` }, openGraph: { title: nomeCompleto(e), description: descricao, images: capa ? [capa.g] : undefined } };
+  return { title: nomeCompleto(e), description: descricao, alternates: { canonical: `/eventos/${e.slug}` }, openGraph: { title: nomeCompleto(e), description: descricao, images: e.og ? [{ url: e.og, width: 1200, height: 630, alt: nomeCompleto(e) }] : capa ? [capa.g] : undefined }, ...(e.og ? { twitter: { card: 'summary_large_image', title: nomeCompleto(e), description: descricao, images: [e.og] } } : {}) };
 }
 
 export default async function PaginaProximo({ params }: { params: Promise<{ slug: string }> }) {
