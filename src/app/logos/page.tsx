@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   description: 'Logos oficiais da Royals Entretenimento para parceiros: SVG, PNG e JPEG.',
   alternates: { canonical: '/logos' },
   robots: { index: false, follow: false },
+  // a imagem vem de opengraph-image.jpg nesta pasta (Still Royals-OG-Logos do remotion-studio)
+  openGraph: { title: 'Kit de logos · Royals Entretenimento', description: 'As versões oficiais da logo da Royals em SVG, PNG e JPEG, e a logo animada em vídeo, GIF e código.', url: '/logos', siteName: 'Royals Entretenimento', locale: 'pt_BR', type: 'website' },
+  twitter: { card: 'summary_large_image', title: 'Kit de logos · Royals Entretenimento', description: 'As versões oficiais da logo da Royals em SVG, PNG e JPEG, e a logo animada em vídeo, GIF e código.' },
 };
 
 type Versao = { arq: string; nome: string; uso: string; fundo: 'escuro' | 'claro'; previa?: 'quadro'; png: string; jpg: string; pngTransparente: boolean };
