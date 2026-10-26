@@ -21,6 +21,7 @@ export function BarraFixa({ children, estilo, slug }: { children: React.ReactNod
     if (!liga()) mo.observe(document.body, { childList: true, subtree: true });
     return () => { io.disconnect(); mo.disconnect(); };
   }, [caminho]);
-  if (outroEvento) return null;
+  // /produtores fala com o produtor, não com o público: a barra de ingressos distrairia do formulário
+  if (outroEvento || caminho.startsWith('/produtores')) return null;
   return <div ref={ref} className="barra-ingressos" style={estilo} data-oculta="false">{children}</div>;
 }

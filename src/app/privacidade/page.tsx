@@ -4,7 +4,8 @@ import { INSTAGRAM_URL } from '@/lib/acervo';
 
 export const metadata: Metadata = { title: 'Privacidade', alternates: { canonical: '/privacidade' } };
 
-// Texto honesto para o estado atual do site (sem formulário, sem cookie de rastreamento). Revisão jurídica pendente (TODO).
+// Texto honesto para o estado atual do site (um formulário só, o de /produtores; sem cookie de rastreamento).
+// Revisão jurídica pendente (TODO).
 export default function Privacidade() {
   return (
     <main className="pagina-topo">
@@ -14,8 +15,11 @@ export default function Privacidade() {
           <div className="texto legal">
             <p>Este site apresenta os eventos da Royals Entretenimento. Esta página explica, em linguagem simples, como ele trata dados pessoais, conforme a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).</p>
             <h2>O que coletamos</h2>
-            <p>Hoje o site não tem cadastro, formulário nem login, e não usa cookies de rastreamento ou de publicidade. Navegar por ele não exige nenhum dado pessoal.</p>
+            <p>O site não tem cadastro nem login e não usa cookies de rastreamento ou de publicidade. Navegar por ele não exige nenhum dado pessoal.</p>
+            <p>O único formulário é o da página <a href="/produtores">Para produtores</a>, preenchido por quem quer fazer um evento em parceria com a Royals. Ele pede nome, WhatsApp e, se você quiser, Instagram e informações do evento (nome, data prevista, público esperado, estilo e observações). Esses dados servem só para a equipe da parceria entrar em contato sobre o seu evento.</p>
             <p>Como qualquer site, o provedor de hospedagem registra dados técnicos de acesso (como endereço IP e tipo de navegador) para segurança e funcionamento, pelo tempo exigido em lei.</p>
+            <h2>Com quem os dados do formulário são compartilhados</h2>
+            <p>A parceria para produtores reúne a Royals Entretenimento, a agência BrandSquad e a Royals Tickets. Os dados do formulário ficam guardados no sistema de atendimento da BrandSquad, que avisa a equipe e organiza o contato. Eles não são vendidos nem usados para publicidade, e são apagados a seu pedido.</p>
             <h2>Ingressos e links externos</h2>
             <p>Os ingressos são vendidos em plataformas de terceiros, indicadas na página de cada evento. Ao comprar, você passa a seguir a política de privacidade da plataforma escolhida. O mesmo vale para o Instagram e outros sites para os quais este site aponta.</p>
             <h2>Imagens</h2>

@@ -30,6 +30,13 @@
 - [x] 15/10/2026 · 14 eventos levantados das legendas (2019–2026)
 - [x] 15/10/2026 · Todas as páginas do sitemap do brandbook
 
+## Parceria para produtores (/produtores)
+- [x] 26/10/2026 · Página de captura com 10 seções, simulador e formulário; privacidade atualizada; sitemap
+- [ ] VSL: a Royals grava a narração (roteiro em `...\Parceria Produtor\ROTEIRO-VSL.md`) → motion no remotion-studio → preencher `VSL` em src/data/parceria.ts
+- [ ] Imagem de compartilhamento (OG) própria da /produtores
+- [ ] Link para /produtores no rodapé ou no menu, se o Humberto quiser
+- [ ] Confirmar com a Royals: quem custeia atração e estrutura em cada modelo (a página não fala disso)
+
 ## Royals Tickets
 - [x] Checkout em prévia: /eventos/baile-das-bruxas/checkout (16/10), banner nos 3 tamanhos
 - [ ] Confirmar com a produção: lotes, meia-entrada, taxa de serviço (hoje 10% do modelo), parcelamento e classificação
