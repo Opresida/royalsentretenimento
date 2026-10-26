@@ -1,0 +1,37 @@
+/* Kit de logos para parceiros (/logos) */
+.logos-kit { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-6); }
+
+.logos-grade { display: grid; gap: var(--space-6); grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); }
+
+.logos-cartao { display: flex; flex-direction: column; background: var(--surface-card); border: 1px solid var(--border-subtle); }
+
+/* prévia no fundo em que a versão deve ser usada */
+/* a imagem fica presa numa caixa fixa: a original (quadrada) não estica o cartão */
+.logos-previa { position: relative; aspect-ratio: 16 / 10; border-bottom: 1px solid var(--border-subtle); }
+.logos-previa img { position: absolute; left: 9%; top: 14%; width: 82%; height: 72%; object-fit: contain; }
+.logos-previa--escuro { background: var(--royal-black); }
+.logos-previa--claro { background: var(--royal-ivory); }
+/* a original já vem num quadro preto: um cinza em volta deixa ver o quadro */
+.logos-previa--quadro { background: var(--neutral-700); }
+
+.logos-info { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-6) var(--space-6) var(--space-4); }
+.logos-info p { margin: 0; color: var(--text-secondary); }
+
+.logos-formatos { display: flex; flex-direction: column; margin-top: auto; padding: 0 var(--space-6) var(--space-6); gap: var(--space-2); }
+
+.logos-baixar {
+  display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: var(--space-3);
+  min-height: var(--control-height-md); padding: 0 var(--space-4);
+  border: 1px solid var(--border-default); color: var(--text-primary); text-decoration: none;
+  transition: border-color var(--dur-ui) linear, background-color var(--dur-ui) linear, color var(--dur-ui) linear;
+}
+.logos-baixar__formato { font-weight: var(--weight-bold); letter-spacing: var(--tracking-button); color: var(--accent); }
+.logos-baixar__detalhe { font-size: 13px; color: var(--text-muted); }
+.logos-baixar__seta { font-weight: var(--weight-bold); transition: transform var(--dur-element) var(--ease-enter); }
+.logos-baixar:hover { border-color: var(--accent); background: var(--surface-raised); }
+.logos-baixar:hover .logos-baixar__seta { transform: translateY(3px); color: var(--accent-hover); }
+.logos-baixar:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+.logos-nota { margin: 0; max-width: 72ch; color: var(--text-muted); font-size: 14px; }
+
+@media (prefers-reduced-motion: reduce) { .logos-baixar, .logos-baixar__seta { transition: none; } }
