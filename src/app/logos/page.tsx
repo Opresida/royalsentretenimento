@@ -27,6 +27,11 @@ const VERSOES: Versao[] = [
   { arq: 'royals-symbol-gold', nome: 'Símbolo', uso: 'Só a coroa, para espaços pequenos e ícones.', fundo: 'escuro', png: '2000 × 1434', jpg: '2480 × 1914', pngTransparente: true },
 ];
 
+const ANIMADAS = [
+  { v: '16x9', nome: 'Horizontal 16:9', uso: 'Telão, YouTube e abertura de vídeo.', px: '1920 × 1080', gif: '960 × 540' },
+  { v: '9x16', nome: 'Vertical 9:16', uso: 'Reels, stories e TikTok.', px: '1080 × 1920', gif: '540 × 960' },
+];
+
 const PASTA = path.join(process.cwd(), 'public', 'marca', 'download');
 const peso = (arquivo: string) => {
   const b = fs.statSync(path.join(PASTA, arquivo)).size;
@@ -78,6 +83,68 @@ export default function Logos() {
           </div>
 
           <p className="logos-nota">Use os arquivos como estão: sem esticar, girar, trocar as cores ou aplicar efeitos. Dúvidas sobre a aplicação da marca, fale com a equipe da Royals.</p>
+        </div>
+      </section>
+
+      {/* logo animada: vídeos com fundo preto e transparente, GIF e o código (scripts/logo-animada-pacote.py) */}
+      <section className="secao secao--afundada">
+        <div className="container pilha" style={{ gap: 'var(--space-12)' }}>
+          <CabecalhoSecao olho="Para abrir vídeos e telões" titulo="Logo animada" descricao="A coroa se monta, ROYALS sobe letra a letra e um brilho dourado atravessa a marca. Na horizontal e na vertical, com fundo preto ou transparente, em GIF e em código." />
+          <div className="logos-kit">
+            <a className="botao botao--lg" href={url('animada/royals-logo-animada-completo.zip')} download="royals-logo-animada-completo.zip">
+              Baixar tudo da animação<span className="seta" aria-hidden="true">↓</span>
+            </a>
+            <span className="rotulo-texto rotulo-texto--mudo">ZIP com vídeos, GIFs, código e o leia-me · {peso('animada/royals-logo-animada-completo.zip')}</span>
+          </div>
+
+          <div className="logos-grade logos-grade--animada">
+            {ANIMADAS.map((a) => (
+              <article key={a.v} className="logos-cartao">
+                <div className={`logos-video logos-video--${a.v}`}>
+                  <video src={url(`animada/royals-logo-animada-${a.v}.mp4`)} autoPlay muted loop playsInline preload="metadata" aria-label={`Logo Royals animada, ${a.nome.toLowerCase()}`} />
+                </div>
+                <div className="logos-info">
+                  <h3 className="h3">{a.nome}</h3>
+                  <p>{a.uso}</p>
+                </div>
+                <div className="logos-formatos">
+                  <Baixar arquivo={`animada/royals-logo-animada-${a.v}.mp4`} formato="MP4" detalhe={`${a.px} px, fundo preto, 5 s`} />
+                  <Baixar arquivo={`animada/royals-logo-animada-${a.v}-transparente.webm`} formato="WEBM" detalhe={`${a.px} px, fundo transparente`} />
+                  <Baixar arquivo={`animada/royals-logo-animada-${a.v}.gif`} formato="GIF" detalhe={`${a.gif} px, para site e apresentação`} />
+                </div>
+              </article>
+            ))}
+            <article className="logos-cartao">
+              <div className="logos-codigo" aria-hidden="true">
+                <pre>{`<RoyalsLogoAnimada />\n\n.animada #crown-peak {\n  animation: pico .4s .43s both;\n}`}</pre>
+              </div>
+              <div className="logos-info">
+                <h3 className="h3">Código</h3>
+                <p>A mesma animação para editar ou levar ao seu site: uma versão em HTML e CSS, sem biblioteca, e o componente Remotion (React) que gerou os vídeos.</p>
+              </div>
+              <div className="logos-formatos">
+                <Baixar arquivo="animada/royals-logo-animada-codigo.zip" formato="ZIP" detalhe="HTML/CSS + Remotion + leia-me" />
+                <a className="logos-baixar" href={url('animada/codigo/web/royals-logo-animada.html')} target="_blank" rel="noopener noreferrer">
+                  <span className="logos-baixar__formato">HTML</span>
+                  <span className="logos-baixar__detalhe">Ver a versão web funcionando</span>
+                  <span className="logos-baixar__seta" aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </article>
+          </div>
+
+          <p className="logos-nota">O WebM com fundo transparente abre direto no CapCut, no DaVinci Resolve e nos navegadores. No Premiere e no After Effects, use o MP4 com o modo de mesclagem “Tela” (Screen), que some com o preto.</p>
+        </div>
+      </section>
+
+      {/* assinatura do kit (pedido do Humberto, 26/10/2026) */}
+      <section className="logos-assinatura">
+        <div className="container">
+          <a href="https://www.brandsquad.com.br" target="_blank" rel="noopener noreferrer" className="logos-assinatura__link">
+            <span className="rotulo-texto rotulo-texto--mudo">Kit de marca desenvolvido por</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/parceiros/brandsquad-claro.png" alt="BrandSquad" width={160} height={32} />
+          </a>
         </div>
       </section>
     </main>

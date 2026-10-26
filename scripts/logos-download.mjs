@@ -36,7 +36,7 @@ for (const v of VERSOES) {
   console.log(`${v.arq}: png ${v.larg}×${alt}`);
 }
 // JPEG: o PNG sobre o fundo, com margem de 12% em volta; e o ZIP com tudo
-const py = `
+const pyCorpo = `
 import json, sys, zipfile, os
 from PIL import Image
 saida, versoes = sys.argv[1], json.loads(sys.argv[2])
@@ -51,8 +51,25 @@ with zipfile.ZipFile(os.path.join(saida, 'royals-kit-de-logos.zip'), 'w', zipfil
     for v in versoes:
         for ext in ('svg', 'png', 'jpg'):
             z.write(os.path.join(saida, v['arq'] + '.' + ext), f"{ext.upper()}/{v['arq']}.{ext}")
+    z.writestr('LEIA-ME.txt', LEIA_ME)
 print('zip ok')
 `;
+// vai dentro do ZIP do kit; assinatura pedida pelo Humberto (26/10/2026)
+const LEIA_ME = `ROYALS ENTRETENIMENTO · KIT DE LOGOS
+Desenvolvido por BrandSquad · brandsquad.com.br
+
+SVG  vetor, qualquer tamanho (sites, impressão, telão)
+PNG  alta resolução; fundo transparente (a original já vem no quadro preto)
+JPEG alta resolução, com fundo (branco ou preto) e margem
+
+Versões: original, dourada (fundo escuro), dourada para fundo claro, branca, preta e símbolo (só a coroa).
+Use os arquivos como estão: sem esticar, girar, trocar as cores ou aplicar efeitos.
+Dúvidas sobre a aplicação da marca: fale com a equipe da Royals.
+
+Desenvolvido por BrandSquad · brandsquad.com.br
+`;
+const py = `LEIA_ME = ${JSON.stringify(LEIA_ME)}
+` + pyCorpo;
 const r = spawnSync('python', ['-I', '-c', py, SAIDA, JSON.stringify(VERSOES)], { encoding: 'utf8' });
 process.stdout.write(r.stdout); if (r.status !== 0) { console.error(r.stderr); process.exit(1); }
 fs.rmSync(tmp, { recursive: true, force: true });

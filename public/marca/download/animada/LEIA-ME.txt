@@ -1,0 +1,39 @@
+ROYALS ENTRETENIMENTO · LOGO ANIMADA
+Desenvolvido por BrandSquad · brandsquad.com.br
+
+A logo oficial da Royals se monta em 5 segundos: a coroa (base, asas e pico), os raios dourados,
+R O Y A L S letra a letra, ENTRETENIMENTO e um brilho metálico; depois fica respirando.
+
+VÍDEOS
+  royals-logo-animada-16x9.mp4                1920×1080, fundo preto. Para telão, YouTube, abertura de vídeo.
+  royals-logo-animada-9x16.mp4                1080×1920, fundo preto. Para Reels, stories e TikTok.
+  royals-logo-animada-16x9-transparente.webm  1920×1080, FUNDO TRANSPARENTE. Para pôr por cima de outro vídeo.
+  royals-logo-animada-9x16-transparente.webm  1080×1920, FUNDO TRANSPARENTE.
+    O WebM com transparência abre direto no CapCut, no DaVinci Resolve e nos navegadores.
+    No Premiere e no After Effects, use o MP4 com o modo de mesclagem "Tela" (Screen), que some com o preto.
+
+GIF
+  royals-logo-animada-16x9.gif  960×540    royals-logo-animada-9x16.gif  540×960
+  Para sites, e-mail e apresentações (PowerPoint, Keynote, Google Slides).
+
+CÓDIGO
+  codigo/web/royals-logo-animada.html
+    Versão para site: só HTML e CSS, sem biblioteca. Abra no navegador para ver.
+    Na URL: ?transparente (sem fundo) e ?loop (repete a cada 5 s).
+    Para levar ao seu site: copie o <style> e o bloco <div class="cena">.
+  codigo/remotion/LogoAnimada.tsx + RoyalsLogo.tsx
+    Versão Remotion (React), a mesma que gerou os vídeos. Num projeto Remotion:
+      1. copie os dois arquivos para src/;
+      2. no Root.tsx: import { RoyalsLogoAnimadaComposicoes } from './LogoAnimada';
+         e coloque <RoyalsLogoAnimadaComposicoes /> dentro do RemotionRoot;
+      3. renderize:
+         npx remotion render Royals-Logo-Animada-16x9 royals-16x9.mp4
+         npx remotion render Royals-Logo-Animada-9x16-Alfa royals-9x16.webm --codec=vp9 --pixel-format=yuva420p --image-format=png
+    Composições: Royals-Logo-Animada-16x9, -9x16, -16x9-Alfa e -9x16-Alfa (transparentes).
+    Tempo, cores e tamanho estão no topo do LogoAnimada.tsx (30 qps, 150 quadros).
+
+USO DA MARCA
+  Use a logo como está: sem esticar, girar, trocar as cores ou aplicar efeitos por cima.
+  Dúvidas sobre a aplicação da marca: fale com a equipe da Royals.
+
+Desenvolvido por BrandSquad · brandsquad.com.br
