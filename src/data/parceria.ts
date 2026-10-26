@@ -60,6 +60,7 @@ export const PLANOS = [
 
 export const FAQ = [
   { p: 'O que entra na conta da bilheteria e do bar?', r: 'Todo o faturamento de ingressos e do bar do evento. A divisão do modelo escolhido vale para os dois.' },
+  { p: 'Quem paga a atração?', r: 'O produtor. A atração é sua: você contrata e paga. A parceria cuida da organização, do marketing e da bilheteria.' },
   { p: 'Quando eu recebo?', r: 'No Pix, a sua parte cai na hora, já dividida pelo split da Pagar.me. No cartão, a Royals antecipa e o dinheiro cai no dia seguinte ao evento.' },
   { p: 'Quem paga a antecipação do cartão?', r: 'O custo da antecipação sai da parte do produtor. Ele aparece no painel, venda por venda, sem letra miúda.' },
   { p: 'Qual modelo é melhor para mim?', r: 'Depende do tamanho do evento. Use o simulador acima e, se o seu evento for grande, peça o modelo sob medida.' },

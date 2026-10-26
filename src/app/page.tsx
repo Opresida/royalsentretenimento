@@ -165,7 +165,25 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 08 · PROMOTERS */}
+      {/* 08 · PARA PRODUTORES: chamada da parceria (Royals + BrandSquad + Royals Tickets), página /produtores */}
+      <section className="secao">
+        <div className="container">
+          <Revela className="chamada chamada--loop">
+            <FundoLoop tipo="diagonais" />
+            <div className="pilha" style={{ gap: 16 }}>
+              <span className="rotulo-texto surge">Para produtores</span>
+              <h2 className="h1"><span className="sobe"><span>O seu evento</span></span><span className="sobe"><span className="ouro-degrade">já nasce grande</span></span></h2>
+              <p className="lead surge">Organização Royals, marketing BrandSquad e a bilheteria da Royals Tickets, com o Pix na hora e o cartão no dia seguinte ao evento. Tudo o que o produtor precisa, num lugar só.</p>
+            </div>
+            <div className="surge pilha" style={{ gap: 12 }}>
+              <Botao href="/produtores" tamanho="lg">Quero fazer meu evento</Botao>
+              <Botao href="/produtores#modelos" variante="secundario">Ver os modelos</Botao>
+            </div>
+          </Revela>
+        </div>
+      </section>
+
+      {/* 09 · PROMOTERS */}
       <section className="secao">
         <div className="container">
           <Revela className="chamada chamada--loop chamada--pulso chamada--pessoa">

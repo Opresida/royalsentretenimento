@@ -8,5 +8,6 @@ export const MENU = [
   { rotulo: 'Relembre momentos', href: '/relembre-momentos' },
   { rotulo: 'Vídeos', href: '/melhores-momentos' },
   { rotulo: 'Promoters', href: '/promoters' },
+  { rotulo: 'Para produtores', href: '/produtores' },
   { rotulo: 'Sobre', href: '/sobre' },
 ];
