@@ -3,8 +3,12 @@
 // sem número que não esteja aprovado, sem prazo inventado, sem nome de ticketeira concorrente.
 // Roteiro da VSL: D:\CLIENTES BRANDSQUADS\Royals Entretenimento\Parceria Produtor\ROTEIRO-VSL.md
 
-/** Vídeo de vendas (VSL). Vazio até a narração ser gravada: o topo funciona sem ele. */
-export const VSL: { youtube?: string; capa?: string } = {};
+/** Vídeo de vendas (VSL): o MP4 fica no R2 público da Royals (bucket royals-acervo, pasta vsl/). Com `video`, a página
+ *  vira página de VSL (só o vídeo; o resto aparece 2 s antes do fim). Sem ele, o topo mostra as três forças. */
+export const VSL: { video?: string; capa?: string } = {
+  video: 'https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/vsl/royals-vsl-produtores.mp4',
+  capa: 'https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/vsl/royals-vsl-produtores-capa.jpg',
+};
 
 export const DORES = [
   { n: '01', titulo: 'Vender', texto: 'Arte feita às pressas, post na hora errada, comentário "quanto é?" sem resposta e influenciador que cobra e não vende. O primeiro lote anda devagar.' },

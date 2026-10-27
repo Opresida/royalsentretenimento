@@ -4,9 +4,11 @@
 /* ——— topo ——— */
 .prod-topo { min-height: min(86vh, 900px); display: flex; align-items: center; }
 .prod-topo__grade { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-12); align-items: center; padding-top: calc(var(--header-height) + var(--space-12)); }
-.prod-topo__grade:has(.prod-vsl) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
 .prod-topo__grade:has(.prod-topo__lado) { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
-@media (max-width: 960px) { .prod-topo__grade:has(.prod-vsl), .prod-topo__grade:has(.prod-topo__lado) { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 960px) { .prod-topo__grade:has(.prod-topo__lado) { grid-template-columns: minmax(0, 1fr); } }
+/* com a VSL no ar, a promessa vem depois do vídeo: sem o espaço do cabeçalho em cima */
+.prod-topo--depois { min-height: auto; }
+.prod-topo--depois .prod-topo__grade { padding-top: 0; }
 .prod-topo__lado { list-style: none; margin: 0; padding: 0; border-top: var(--border-rule) solid var(--accent); }
 .prod-topo__lado li { display: grid; grid-template-columns: 44px 1fr; gap: 4px var(--space-4); padding: var(--space-6) 0; border-bottom: 1px solid var(--border-subtle); }
 .prod-topo__lado .prod-pilar__n { grid-row: span 2; padding-top: 6px; }
@@ -16,8 +18,49 @@
 .prod-topo__titulo { font-size: clamp(48px, 7.4vw, 128px); display: flex; flex-direction: column; }
 .prod-topo__marcas { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .prod-topo__acoes { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-2); }
-.prod-vsl { position: relative; aspect-ratio: 16 / 9; border: 1px solid var(--border-subtle); border-top: var(--border-rule) solid var(--accent); background: var(--surface-card); }
-.prod-vsl iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+/* ——— página de VSL: primeiro só o vídeo; o resto (.prod-trava) abre 2 s antes do fim (Vsl.tsx põe html[data-vsl=livre]) ——— */
+.pagina-topo.prod--vsl { padding-top: 0; }
+.prod-palco { min-height: 100svh; display: flex; align-items: center; padding-top: calc(var(--header-height) + var(--space-8)); padding-bottom: var(--space-12); }
+.prod-palco__miolo { display: flex; flex-direction: column; align-items: center; gap: var(--space-6); }
+.prod-palco__rotulo { margin: 0; text-align: center; }
+.prod-vsl-bloco { width: min(100%, 1180px, calc((100svh - var(--header-height) - 190px) * 16 / 9)); min-width: min(100%, 560px); display: flex; flex-direction: column; align-items: center; gap: var(--space-5); }
+.prod-vsl-bloco .prod-vsl { width: 100%; }
+.prod-vsl__aviso { margin: 0; color: var(--text-secondary); text-align: center; font-size: var(--text-sm); }
+.prod-vsl__aviso--livre { border: 0; background: none; color: var(--accent); font: inherit; font-weight: var(--weight-bold, 700); text-transform: uppercase; letter-spacing: .14em; cursor: pointer; animation: prod-chama 1.6s var(--ease-enter, ease) infinite; }
+.prod-vsl__aviso--livre span { display: inline-block; margin-right: 8px; }
+@keyframes prod-chama { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+.prod-trava { height: 0; overflow: hidden; visibility: hidden; }
+html[data-vsl='livre'] .prod-trava { height: auto; overflow: visible; visibility: visible; animation: prod-libera .9s var(--ease-enter, ease) both; }
+@keyframes prod-libera { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+/* enquanto a página está trancada, o rodapé do site também espera */
+html:not([data-vsl='livre']) body:has(.prod-trava) .rodape { display: none; }
+@media (prefers-reduced-motion: reduce) { html[data-vsl='livre'] .prod-trava, .prod-vsl__aviso--livre { animation: none; } }
+
+.prod-vsl { position: relative; aspect-ratio: 16 / 9; border: 1px solid var(--border-subtle); background: var(--royal-black); }
+.prod-vsl video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: var(--royal-black); cursor: pointer; }
+.prod-vsl:fullscreen { aspect-ratio: auto; border: 0; }
+.prod-vsl:fullscreen video { object-fit: contain; }
+/* a linha que percorre o contorno no tempo do vídeo */
+.prod-vsl__contorno { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); pointer-events: none; overflow: visible; }
+.prod-vsl__contorno rect { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.prod-vsl__controles { position: absolute; right: var(--space-3); bottom: var(--space-3); display: flex; gap: var(--space-2); opacity: 0; transition: opacity var(--dur-ui) linear; }
+.prod-vsl:hover .prod-vsl__controles, .prod-vsl:not(.prod-vsl--tocando) .prod-vsl__controles, .prod-vsl__controles:focus-within { opacity: 1; }
+@media (hover: none) { .prod-vsl__controles { opacity: 1; } }
+.prod-vsl__controles button { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid rgba(242,238,228,.25); background: rgba(5,5,5,.7); color: var(--text-primary); cursor: pointer; }
+.prod-vsl__controles button:hover { border-color: var(--accent); }
+.prod-vsl__controles svg { width: 22px; height: 22px; fill: currentColor; stroke: currentColor; stroke-width: 1.8; stroke-linecap: square; }
+.prod-vsl__play { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); border: 0; background: rgba(5,5,5,.35); cursor: pointer; color: inherit; font: inherit; }
+.prod-vsl__circulo { display: grid; place-items: center; width: clamp(72px, 9vw, 112px); aspect-ratio: 1; border-radius: 50%; background: var(--gradient-gold); transition: transform var(--dur-ui) var(--ease-enter); }
+.prod-vsl__play:hover .prod-vsl__circulo { transform: scale(1.06); }
+/* antes do play, o botão fica no canto livre da capa (o título da capa ocupa o lado esquerdo) */
+.prod-vsl__play--capa { flex-direction: row; flex-wrap: wrap; align-content: flex-end; align-items: center; justify-content: flex-end; padding: 0 7% 8% 0; background: none; }
+.prod-vsl__play--capa .prod-vsl__circulo { width: clamp(56px, 7vw, 96px); }
+/* no quadro final (logo no centro, marcas embaixo) o canto livre é o de cima, à direita */
+.prod-vsl__play--fim { align-content: flex-start; padding: 5% 5% 0 0; }
+.prod-vsl__play--fim .prod-vsl__circulo { width: clamp(48px, 5vw, 72px); }
+.prod-vsl__play--fim .prod-vsl__triangulo { border-top-width: 13px; border-bottom-width: 13px; border-left-width: 20px; }
+@media (max-width: 640px) { .prod-vsl__play--capa { padding: 0 5% 6% 0; } .prod-vsl__play--fim { padding: 4% 4% 0 0; } .prod-vsl__play--capa .rotulo-texto { display: none; } .prod-vsl__play--capa .prod-vsl__circulo { width: 52px; } .prod-vsl__play--capa .prod-vsl__triangulo { border-top-width: 10px; border-bottom-width: 10px; border-left-width: 15px; } }
+.prod-vsl__triangulo { width: 0; height: 0; margin-left: 8%; border-top: 18px solid transparent; border-bottom: 18px solid transparent; border-left: 28px solid var(--royal-black); }
 
 /* ——— dor ——— */
 .prod-dores { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: var(--space-10) var(--space-8); margin-top: var(--space-12); }

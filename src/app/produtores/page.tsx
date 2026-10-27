@@ -11,6 +11,7 @@ import { COMPARATIVO, DORES, FAQ, JORNADA, PILARES, PLANOS, RECEBIMENTO, VSL } f
 import { passados } from '@/lib/acervo';
 import { Formulario } from './Formulario';
 import { Simulador } from './Simulador';
+import { Vsl } from './Vsl';
 import './produtores.css';
 
 export const metadata: Metadata = {
@@ -25,31 +26,28 @@ const real = (n: number) => n.toLocaleString('pt-BR', { style: 'currency', curre
 
 export default function Produtores() {
   const anteriores = passados();
-  return (
-    <main className="pagina-topo prod">
-      {/* 01 · TOPO: a promessa (e a VSL quando estiver gravada) */}
-      <section className="secao secao--fundo prod-topo" style={{ paddingTop: 0 }}>
+  const Titulo = VSL.video ? 'h2' : 'h1';
+  const pagina = (
+    <>
+      {/* 01 · TOPO: a promessa (com a VSL no ar, vem logo depois do vídeo; sem ela, ao lado das três forças) */}
+      <section className={`secao secao--fundo prod-topo${VSL.video ? ' prod-topo--depois' : ''}`} style={VSL.video ? undefined : { paddingTop: 0 }}>
         <FundoLoop tipo="diagonais" />
         <div className="container">
           <Revela className="prod-topo__grade">
             <div className="pilha prod-topo__texto">
               <span className="rotulo-texto surge">Para produtores de evento</span>
-              <h1 className="display prod-topo__titulo">
+              <Titulo className="display prod-topo__titulo">
                 <span className="sobe"><span>O seu evento</span></span>
                 <span className="sobe"><span className="ouro-degrade">já nasce grande.</span></span>
-              </h1>
+              </Titulo>
               <p className="lead surge">Organização, marketing e bilheteria com o dinheiro na hora. Tudo o que o produtor precisa, num lugar só.</p>
               <div className="prod-topo__acoes surge">
                 <Botao href="#contato" tamanho="lg">Quero fazer meu evento</Botao>
                 <Botao href="#dinheiro" variante="secundario" tamanho="lg">Como eu recebo</Botao>
               </div>
             </div>
-            {VSL.youtube ? (
-              <div className="prod-vsl surge">
-                <iframe src={`https://www.youtube-nocookie.com/embed/${VSL.youtube}?rel=0`} title="Parceria Royals para produtores" allow="accelerometer; encrypted-media; picture-in-picture" allowFullScreen loading="lazy" />
-              </div>
-            ) : (
-              // sem a VSL gravada, o lado direito mostra as três forças da parceria
+            {!VSL.video && (
+              // sem a VSL, o lado direito mostra as três forças da parceria
               <ol className="prod-topo__lado surge">
                 {PILARES.map((p, i) => (
                   <li key={p.marca}>
@@ -227,6 +225,26 @@ export default function Produtores() {
           </Revela>
         </div>
       </section>
+    </>
+  );
+
+  if (!VSL.video) return <main className="pagina-topo prod">{pagina}</main>;
+
+  // Página de VSL (pedido do Humberto, 26/10/2026): primeiro só o vídeo; o resto (.prod-trava) aparece 2 s antes do
+  // vídeo acabar. Quem já chegou ao fim antes abre a página inteira (o script abaixo roda antes da pintura, sem piscar).
+  return (
+    <main className="pagina-topo prod prod--vsl">
+      <section className="secao secao--fundo prod-palco">
+        <FundoLoop tipo="diagonais" />
+        <div className="container prod-palco__miolo">
+          <p className="rotulo-texto prod-palco__rotulo">A parceria Royals para produtores</p>
+          <h1 className="so-leitor">Parceria Royals para produtores: o seu evento já nasce grande</h1>
+          <Vsl video={VSL.video} capa={VSL.capa} />
+        </div>
+      </section>
+      <script dangerouslySetInnerHTML={{ __html: "try{if(localStorage.getItem('vsl-produtores-livre'))document.documentElement.dataset.vsl='livre'}catch(e){}" }} />
+      <noscript><style>{'.prod-trava{height:auto!important;overflow:visible!important;visibility:visible!important}'}</style></noscript>
+      <div className="prod-trava" id="proposta">{pagina}</div>
     </main>
   );
 }

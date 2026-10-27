@@ -32,7 +32,8 @@
 
 ## Parceria para produtores (/produtores)
 - [x] 26/10/2026 · Página de captura com 10 seções, simulador e formulário; privacidade atualizada; sitemap
-- [ ] VSL: a Royals grava a narração (roteiro em `...\Parceria Produtor\ROTEIRO-VSL.md`) → motion no remotion-studio → preencher `VSL` em src/data/parceria.ts
+- [x] 26/10/2026 · VSL no ar: página em formato de VSL (vídeo primeiro, resto abre 2 s antes do fim, linha de ouro no contorno)
+- [ ] VSL versão Reels (9:16) para divulgar a página
 - [ ] Imagem de compartilhamento (OG) própria da /produtores
 - [ ] Link para /produtores no rodapé ou no menu, se o Humberto quiser
 - [ ] Confirmar com a Royals: quem custeia atração e estrutura em cada modelo (a página não fala disso)
