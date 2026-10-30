@@ -8,6 +8,7 @@ import { INSTAGRAM_URL, proximos } from '@/lib/acervo';
 import { DESCRICAO, NOME, SITE_URL } from '@/lib/site';
 import './globals.css';
 
+// <html suppressHydrationWarning>: páginas como /artistas/lucco marcam a abertura no <html> antes da 1ª pintura.
 // Archivo variável (largura 62–125, peso 100–900): a fonte aprovada no brandbook da Royals.
 const archivo = Archivo({ subsets: ['latin'], axes: ['wdth'], variable: '--font-archivo', display: 'swap' });
 
@@ -29,7 +30,7 @@ const ORGANIZACAO_LD = { '@context': 'https://schema.org', '@type': 'Organizatio
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const proximo = proximos().find((e) => e.ingressos);
   return (
-    <html lang="pt-BR" className={archivo.variable} data-scroll-behavior="smooth">
+    <html lang="pt-BR" className={archivo.variable} data-scroll-behavior="smooth" suppressHydrationWarning>
       <body>
         <a href="#conteudo" className="so-leitor">Pular para o conteúdo</a>
         <Topo ingressos={proximo?.ingressos ? { href: proximo.ingressos, externo: true } : { href: '/eventos' }} />

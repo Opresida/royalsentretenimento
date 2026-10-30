@@ -11,3 +11,8 @@ export const MENU = [
   { rotulo: 'Para produtores', href: '/produtores' },
   { rotulo: 'Sobre', href: '/sobre' },
 ];
+
+/** WhatsApp de booking da Royals (contratação de artistas do casting). Pendente: o Humberto vai passar o número
+ *  (só dígitos, com 55 + DDD). Enquanto for null, o "Contratar" das páginas de artista abre o direct do Instagram. */
+export const WHATSAPP_BOOKING: string | null = null;
+export const linkWhatsApp = (numero: string, mensagem: string) => `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;

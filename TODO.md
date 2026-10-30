@@ -30,6 +30,14 @@
 - [x] 15/10/2026 · 14 eventos levantados das legendas (2019–2026)
 - [x] 15/10/2026 · Todas as páginas do sitemap do brandbook
 
+## Casting · DJ LUCCO (/artistas/lucco)
+- [x] 29/10/2026 · Página do artista: logo vetorizada e animada, abertura, spinner, player (SET SUNRISE + 5 trechos ao vivo com espectro), vídeos, formatos, rider, fotos, pedido de data, OG próprio, sitemap
+- [ ] **Número de WhatsApp de booking da Royals** em `WHATSAPP_BOOKING` (src/lib/site.ts) → só então publicar
+- [ ] Publicar (commit + push na `main`) com o ok do Humberto
+- [ ] Os 3 nomes que faltam no line-up da SUN HYPE On Board (29.11) e o camarim real do artista
+- [ ] Domínio próprio: incluir na regra de CORS do R2 `royals-acervo` (senão os trechos tocam sem o espectro)
+- [ ] Item "Casting" no menu quando houver mais artistas
+
 ## Parceria para produtores (/produtores)
 - [x] 26/10/2026 · Página de captura com 10 seções, simulador e formulário; privacidade atualizada; sitemap
 - [x] 26/10/2026 · VSL no ar: página em formato de VSL (vídeo primeiro, resto abre 2 s antes do fim, linha de ouro no contorno)
