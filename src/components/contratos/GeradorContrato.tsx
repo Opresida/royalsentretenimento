@@ -1,12 +1,13 @@
 'use client';
 /* eslint-disable @next/next/no-img-element -- logos dos artistas em SVG, sem otimização a fazer */
-// Gerador do contrato de venda de show (/contratos). Tudo acontece no navegador: nada vai para servidor ou banco.
-// O rascunho fica salvo só neste aparelho (localStorage) para não perder o que foi digitado.
+// Gerador do contrato de venda de show (/contratos). O contrato é montado no navegador; só a leitura por IA (bloco 0)
+// manda o arquivo ao servidor, sem guardar. O rascunho fica salvo só neste aparelho (localStorage).
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { ArtistaContrato } from '@/data/contratos';
 import { brl, lerValor } from '@/lib/extenso';
 import type { EMPRESA as EmpresaT } from '@/lib/site';
 import { Contrato, type DadosContrato, type Quem, Timbrado } from './Contrato';
+import { type DadosLidos, LeituraIA } from './LeituraIA';
 
 const CHAVE = 'royals-contrato-rascunho-v1';
 const hojeIso = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
@@ -153,11 +154,38 @@ export function GeradorContrato({ artistas, empresa, booking, site }: Props) {
     const t = docRef.current?.querySelector('.cdoc-corpo') as HTMLElement | null;
     try { await navigator.clipboard.writeText(t?.innerText ?? ''); setAviso('Texto copiado.'); } catch { setAviso('Não deu para copiar neste navegador.'); }
   };
+  // junta o que a IA leu: só preenche campo vazio (o que já foi digitado não é trocado)
+  const ROTULOS: Record<string, string> = { nome: 'nome', doc: 'documento', rgIe: 'RG/IE', endereco: 'endereço', representante: 'representante', repCpf: 'CPF do representante', email: 'e-mail', whatsapp: 'WhatsApp', data: 'data', horario: 'horário', local: 'local', cidade: 'cidade', publico: 'público', cache: 'cachê' };
+  const aplicarIA = (d: DadosLidos): string[] => {
+    const feitos: string[] = [];
+    const prox: Form = structuredClone(f);
+    const c = d.contratante ?? {};
+    const contratanteVazio = !prox.contratante.nome.trim() && !prox.contratante.doc.trim();
+    if (contratanteVazio && (c.tipo === 'pj' || c.tipo === 'pf')) prox.contratante.tipo = c.tipo;
+    (['nome', 'doc', 'rgIe', 'endereco', 'representante', 'repCpf', 'email', 'whatsapp'] as const).forEach((k) => {
+      let v = (c[k] ?? '').trim();
+      if (!v || prox.contratante[k].trim()) return;
+      if (k === 'doc') v = mascaraDoc(v, prox.contratante.tipo === 'pj');
+      if (k === 'repCpf') v = mascaraDoc(v, false);
+      prox.contratante[k] = v; feitos.push(`${ROTULOS[k]} do contratante`);
+    });
+    const e = d.evento ?? {};
+    (['nome', 'data', 'horario', 'local', 'endereco', 'cidade', 'publico'] as const).forEach((k) => {
+      const v = (e[k] ?? '').trim();
+      if (!v || prox.evento[k].trim()) return;
+      prox.evento[k] = v; feitos.push(k === 'nome' ? 'nome do evento' : k === 'endereco' ? 'endereço do local' : ROTULOS[k]);
+    });
+    const cache = (d.valores?.cache ?? '').trim();
+    if (cache && !prox.valores.cache.trim() && lerValor(cache)) { prox.valores.cache = cache; feitos.push('cachê'); }
+    setF(prox);
+    return feitos;
+  };
   const limpar = () => { if (window.confirm('Apagar tudo o que foi preenchido?')) setF(VAZIO()); };
 
   return (
     <div className="gc">
       <form className="gc-form" onSubmit={(e) => { e.preventDefault(); baixar(); }}>
+        <LeituraIA onDados={aplicarIA} />
         <fieldset className="gc-bloco">
           <legend><b>1</b> Artista</legend>
           <div className="gc-artistas">
@@ -278,7 +306,7 @@ export function GeradorContrato({ artistas, empresa, booking, site }: Props) {
             <button type="button" className="gc-btn" onClick={copiar}>Copiar texto</button>
             <button type="button" className="gc-btn gc-btn--leve" onClick={limpar}>Limpar</button>
           </div>
-          <p className="gc-dica">No Baixar PDF, escolha <b>Salvar como PDF</b> e deixe <b>Gráficos de plano de fundo</b> ligado. O que você digita fica só neste aparelho.</p>
+          <p className="gc-dica">No Baixar PDF, escolha <b>Salvar como PDF</b> e deixe <b>Gráficos de plano de fundo</b> ligado. O contrato é montado neste aparelho e nada do que você digita fica guardado no servidor.</p>
         </div>
       </form>
 

@@ -61,6 +61,14 @@
 .gc-previa { position: sticky; top: calc(var(--header-height) + 16px); max-height: calc(100svh - var(--header-height) - 32px); overflow: auto; border: 1px solid var(--border-subtle); background: #2a2824; padding: 0; overscroll-behavior: contain; }
 .gc-folha { zoom: var(--escala, 1); width: 210mm; }
 
+.gc-bloco--ia { border-color: var(--border-accent); background: linear-gradient(180deg, #15130f, var(--surface-sunken)); }
+.gc-arquivo input[type="file"] { padding: 8px; font-size: 14px; color: var(--text-secondary); }
+.gc-arquivo input[type="file"]::file-selector-button { font: inherit; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-right: 12px; padding: 8px 12px; border: 1px solid var(--border-strong); background: transparent; color: var(--text-primary); cursor: pointer; }
+.gc-ia-acoes { display: flex; flex-wrap: wrap; gap: 10px; }
+.gc-btn:disabled { opacity: .6; cursor: wait; }
+.gc-ia-msg { padding: 12px 14px; border-left: 2px solid var(--accent); background: var(--surface-page); display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 1.45; color: var(--text-body); }
+.gc-ia-msg--erro { border-left-color: #E0533D; color: #F3B2A6; }
+
 /* ferramenta interna: a barra de ingressos do site não aparece aqui (ficava por cima dos botões) */
 body:has(.gc) .barra-ingressos { display: none; }
 
