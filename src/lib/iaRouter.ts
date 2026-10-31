@@ -33,7 +33,7 @@ async function gemini(modelo: string, sistema: string, texto: string, arquivos: 
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`, {
       method: 'POST',
       signal,
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GEMINI_API_KEY! },
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GEMINI_API_KEY!.trim() },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: sistema }] },
         contents: [{ role: 'user', parts: [...arquivos.map((a) => ({ inlineData: { mimeType: a.mime, data: a.base64 } })), { text: texto }] }],
@@ -51,7 +51,7 @@ async function pollinations(modelo: string, sistema: string, texto: string): Pro
     const res = await fetch('https://gen.pollinations.ai/v1/chat/completions', {
       method: 'POST',
       signal,
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.POLLINATIONS_API_KEY}` },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.POLLINATIONS_API_KEY?.trim()}` },
       body: JSON.stringify({ model: modelo, temperature: 0, messages: [{ role: 'system', content: sistema }, { role: 'user', content: texto }] }),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

@@ -23,7 +23,7 @@ function limitado(ip: string) {
 
 const hash = (s: string) => createHash('sha256').update(s).digest();
 function senhaOk(enviada: string | null) {
-  const certa = process.env.CONTRATOS_SENHA;
+  const certa = process.env.CONTRATOS_SENHA?.trim(); // trim: valor cadastrado pelo terminal pode vir com quebra de linha
   if (!certa || !enviada) return false;
   return timingSafeEqual(hash(enviada), hash(certa));
 }
