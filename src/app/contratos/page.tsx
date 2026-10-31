@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   description: 'Gerador de contrato de apresentação artística da Royals Entretenimento.',
   alternates: { canonical: '/contratos' },
   robots: { index: false, follow: false },
+  // a imagem vem de opengraph-image.jpg nesta pasta (pecas/og-contratos/og.html)
+  openGraph: { title: 'Contrato de venda de show · Royals Entretenimento', description: 'Escolhe o artista, a IA lê os dados do contratante e o contrato sai no papel timbrado da Royals.', url: '/contratos', siteName: 'Royals Entretenimento', locale: 'pt_BR', type: 'website' },
+  twitter: { card: 'summary_large_image', title: 'Contrato de venda de show · Royals Entretenimento', description: 'Escolhe o artista, a IA lê os dados do contratante e o contrato sai no papel timbrado da Royals.' },
 };
 
 export default function PaginaContratos() {

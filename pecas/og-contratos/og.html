@@ -1,0 +1,38 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400;62..125,600;62..125,800;62..125,900&display=block');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1200px; height: 630px; overflow: hidden; background: #050505; }
+body { position: relative; font-family: 'Archivo', sans-serif; color: #F2EEE4; }
+/* diagonais a 45° tiradas da coroa, bem leves */
+.diag { position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent 0 46px, rgba(187,158,56,.06) 46px 48px); }
+.brilho { position: absolute; right: -120px; top: -160px; width: 760px; height: 760px; background: radial-gradient(closest-side, rgba(219,188,88,.20), transparent 70%); }
+.fio { position: absolute; left: 0; right: 0; height: 2px; background: #BB9E38; }
+.esq { position: absolute; left: 72px; top: 70px; width: 560px; }
+.esq img.marca { height: 64px; display: block; }
+.sobre { margin-top: 44px; font-size: 17px; font-weight: 600; letter-spacing: .32em; text-transform: uppercase; color: #BB9E38; }
+h1 { margin-top: 16px; font-size: 76px; line-height: .9; font-weight: 800; font-stretch: 125%; text-transform: uppercase; letter-spacing: -.01em; }
+h1 span { background: linear-gradient(180deg, #A1861E 0%, #E2B653 55%, #C9A845 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.txt { margin-top: 22px; font-size: 21px; line-height: 1.45; color: #D9D4C8; width: 500px; }
+.pe { position: absolute; left: 72px; bottom: 48px; display: flex; align-items: center; gap: 26px; }
+.pe img { height: 34px; } .pe .bs { height: 22px; opacity: .85; } .pe .sep { width: 1px; height: 28px; background: rgba(242,238,228,.25); }
+/* folhas do contrato no papel timbrado */
+.folha { position: absolute; width: 380px; box-shadow: 0 30px 60px rgba(0,0,0,.65), 0 0 0 1px rgba(187,158,56,.35); }
+.f2 { left: 860px; top: 120px; transform: rotate(7deg); opacity: .9; }
+.f1 { left: 700px; top: 66px; transform: rotate(-4deg); }
+.selo { position: absolute; left: 650px; top: 470px; transform: rotate(-8deg); padding: 12px 20px 12px 16px; background: #BB9E38; color: #050505; font-weight: 800; font-stretch: 125%; font-size: 19px; letter-spacing: .06em; text-transform: uppercase; box-shadow: 8px 8px 0 #050505, 8px 8px 0 1px #BB9E38; display: flex; align-items: center; gap: 10px; }
+.selo img { height: 22px; filter: brightness(0); }
+</style></head><body>
+<div class="diag"></div><div class="brilho"></div>
+<div class="fio" style="top:0"></div><div class="fio" style="bottom:0"></div>
+<img class="folha f2" src="folha4.png" alt="">
+<img class="folha f1" src="folha1.png" alt="">
+<div class="selo"><img src="royals-symbol-gold.svg" alt="">PDF pronto pra assinar</div>
+<div class="esq">
+  <img class="marca" src="royals-gold-transparent.svg" alt="Royals Entretenimento">
+  <div class="sobre">Casting Royals · uso interno</div>
+  <h1>Contrato<br>de venda<br><span>de show</span></h1>
+  <p class="txt">Escolhe o artista, a IA lê os dados do contratante e o contrato sai no papel timbrado da Royals.</p>
+</div>
+<div class="pe"><img src="royals-records.png" alt="Royals Records"><span class="sep"></span><img class="bs" src="brandsquad.png" alt="BrandSquad"></div>
+</body></html>
