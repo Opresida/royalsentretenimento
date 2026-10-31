@@ -38,6 +38,11 @@
 - [ ] Domínio próprio: incluir na regra de CORS do R2 `royals-acervo` (senão os trechos tocam sem o espectro)
 - [ ] Item "Casting" no menu quando houver mais artistas
 
+## Casting · DJ BERTOLOSSI
+- [x] 30/10/2026 · Cadastro /cadastro-artista/bertolossi (8 grupos, 36 perguntas; links de todas as plataformas e fotos ao vivo), OG próprio, publicado com o ok do Humberto
+- [ ] Respostas do escritório dele → presskit e página /artistas/bertolossi
+- [ ] Aprovar a direção visual (prancha em `D:\CLIENTES BRANDSQUADS\Royals Entretenimento\DJ BERTOLOSSI\Direcao visual\prancha-v1.jpg`)
+
 ## Parceria para produtores (/produtores)
 - [x] 26/10/2026 · Página de captura com 10 seções, simulador e formulário; privacidade atualizada; sitemap
 - [x] 26/10/2026 · VSL no ar: página em formato de VSL (vídeo primeiro, resto abre 2 s antes do fim, linha de ouro no contorno)

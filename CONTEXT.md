@@ -44,3 +44,8 @@ Royals Entretenimento, produtora de eventos de trap e funk em Manaus (cliente da
 - Contato de contratação = **número da Royals** (escolha dele). O número ainda não foi passado: enquanto `WHATSAPP_BOOKING` (src/lib/site.ts) for null, o formulário copia a mensagem e abre o direct do Instagram da Royals. Publicada em 29/10/2026 sem o número, a pedido dele (o pedido vai pelo direct até o número chegar).
 - Músicas: o SoundCloud dele tem 1 set (SET SUNRISE, 61 min) → player com o set (widget oficial do SoundCloud) + 5 trechos ao vivo tirados dos vídeos do Drive dele. Os trechos têm músicas de outros produtores tocadas no set (como nos vídeos que ele posta); avisado.
 - Conteúdo só do presskit/cadastro. O que ele não respondeu fica genérico (camarim padrão) ou fora (os 3 nomes do line-up de 29.11). Sem preço ("Valores sob consulta").
+
+## Casting · DJ BERTOLOSSI (30/10/2026)
+- Segundo artista do casting: DJ e produtor de funk carioca, cria do Morro do Martins (São Gonçalo-RJ), "Hitmaker". Mesma estrutura do LUCCO: cadastro → presskit → /artistas/bertolossi → artes.
+- Decisões do Humberto: mostrar o artista **como ele é** (sem esconder o catálogo); **a Royals agencia o Bertolossi só no Amazonas**; visual funk, favela, povão, com cor de cinema e copy do jeito que o povo fala (não o café/champanhe do LUCCO).
+- /cadastro-artista/bertolossi: o escritório dele confirma o que levantamos em fonte pública (Spotify, SoundCloud, matéria do O São Gonçalo) e manda os links de todas as plataformas e as fotos ao vivo (só há fotos de estúdio).

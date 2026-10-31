@@ -26,7 +26,7 @@ Lê @royalsentretenimento pela API oficial da Meta (token em `~/.claude/secrets/
 | `/promoters` · `/obrigado` | Programa de promoters (cadastro "em breve") |
 | `/sobre` · `/contato` · `/privacidade` · `/termos` | Institucional e legal |
 | `/artistas/lucco` | Página do artista DJ LUCCO (casting Royals): player com o SET SUNRISE + trechos ao vivo, vídeos, formatos, rider, fotos e pedido de data. Visual próprio do artista, sem o menu da Royals. Mídia: `node scripts/lucco-midia.mjs`; logo: `python scripts/lucco-logo.py` |
-| `/cadastro-artista/lucco` · `/logos` | Links diretos, fora do menu e sem indexação (cadastro do artista; kit de logos) |
+| `/cadastro-artista/lucco` · `/cadastro-artista/bertolossi` · `/logos` | Links diretos, fora do menu e sem indexação (cadastro do artista; kit de logos) |
 
 ## Estado
 No ar desde 16/10/2026: **https://royalsentretenimento.vercel.app**. Código em GitHub `Opresida/royalsentretenimento` (branch `main`); projeto Vercel `opresidas-projects/royalsentretenimento`, conectado ao GitHub: todo push na `main` publica sozinho. Endereço oficial em `src/lib/site.ts` (`SITE_URL`, ou a variável `NEXT_PUBLIC_SITE_URL`).

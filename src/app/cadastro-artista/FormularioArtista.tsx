@@ -68,7 +68,7 @@ export function FormularioArtista({ artista, chave, grupos }: { artista: string;
 
       <label className="cad-campo cad-campo--quem">
         <span>Seu nome (quem está preenchendo)</span>
-        <input value={quem} onChange={(e) => setQuem(e.target.value)} placeholder="ex.: Fulano, produtor do LUCCO" autoComplete="name" />
+        <input value={quem} onChange={(e) => setQuem(e.target.value)} placeholder={`ex.: Fulano, produtor do ${artista.replace(/^DJ /, '')}`} autoComplete="name" />
       </label>
 
       {grupos.map((g, gi) => (
