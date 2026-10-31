@@ -32,6 +32,7 @@
 
 ## Casting · DJ LUCCO (/artistas/lucco)
 - [x] 29/10/2026 · Página do artista: logo vetorizada e animada, abertura, spinner, player (SET SUNRISE + 5 trechos ao vivo com espectro), vídeos, formatos, rider, fotos, pedido de data, OG próprio, sitemap
+- [x] 31/10/2026 · Número oficial da Royals (79) 98116-9231 em `WHATSAPP_BOOKING` e `BOOKING_CONTATOS` (substitui Renan/Ricardo)
 - [x] 31/10/2026 · WhatsApp de booking da Royals em `WHATSAPP_BOOKING`: Renan (92) 98140-4577 (+ Ricardo (47) 99687-7069 em `BOOKING_CONTATOS`)
 - [x] 29/10/2026 · Publicado com o ok do Humberto (commit c568b7a): https://royalsentretenimento.vercel.app/artistas/lucco, ainda sem o WhatsApp da Royals (pedido vai pelo direct)
 - [ ] Os 3 nomes que faltam no line-up da SUN HYPE On Board (29.11) e o camarim real do artista

@@ -12,13 +12,12 @@ export const MENU = [
   { rotulo: 'Sobre', href: '/sobre' },
 ];
 
-/** WhatsApp de booking da Royals (contratação de artistas do casting), só dígitos com 55 + DDD.
- *  Principal: Renan Correa (92) 98140-4577. Segundo contato: Ricardo Garrido (47) 99687-7069 (BOOKING_CONTATOS).
+/** WhatsApp oficial da Royals (contratação de artistas do casting), só dígitos com 55 + DDD.
+ *  Número oficial passado pelo Humberto em 31/10/2026: (79) 98116-9231 (substituiu Renan/Ricardo).
  *  Se voltar a null, o "Contratar" das páginas de artista abre o direct do Instagram. */
-export const WHATSAPP_BOOKING: string | null = '5592981404577';
+export const WHATSAPP_BOOKING: string | null = '5579981169231';
 export const BOOKING_CONTATOS = [
-  { nome: 'Renan Correa', whatsapp: '5592981404577', exibido: '(92) 98140-4577' },
-  { nome: 'Ricardo Garrido', whatsapp: '5547996877069', exibido: '(47) 99687-7069' },
+  { nome: 'Royals Entretenimento', whatsapp: '5579981169231', exibido: '(79) 98116-9231' },
 ] as const;
 export const linkWhatsApp = (numero: string, mensagem: string) => `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
 

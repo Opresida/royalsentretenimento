@@ -46,7 +46,8 @@ Royals Entretenimento, produtora de eventos de trap e funk em Manaus (cliente da
 - Conteúdo só do presskit/cadastro. O que ele não respondeu fica genérico (camarim padrão) ou fora (os 3 nomes do line-up de 29.11). Sem preço ("Valores sob consulta").
 
 ## WhatsApp de booking da Royals (31/10/2026)
-- Passado pelo Humberto: **Renan Correa (92) 98140-4577** (principal, o número de Manaus) e **Ricardo Garrido (47) 99687-7069**. `WHATSAPP_BOOKING` + `BOOKING_CONTATOS` em src/lib/site.ts. Os formulários "contratar" das páginas de artista abrem o WhatsApp do Renan com a mensagem pronta.
+- **Atualizado 31/10/2026: número OFICIAL da Royals = (79) 98116-9231** (`5579981169231`). Substitui Renan/Ricardo em `WHATSAPP_BOOKING` e `BOOKING_CONTATOS` (agora um contato só, "Royals Entretenimento").
+- (histórico) - Passado pelo Humberto: **Renan Correa (92) 98140-4577** (principal, o número de Manaus) e **Ricardo Garrido (47) 99687-7069**. `WHATSAPP_BOOKING` + `BOOKING_CONTATOS` em src/lib/site.ts. Os formulários "contratar" das páginas de artista abrem o WhatsApp do Renan com a mensagem pronta.
 - Regra do Humberto: todo material de artista (cadastro, presskit, página, artes, vídeo) leva as **três marcas: Royals Entretenimento, Royals Records e BrandSquad**.
 
 ## Casting · DJ BERTOLOSSI (30/10/2026)
