@@ -45,8 +45,15 @@ Royals Entretenimento, produtora de eventos de trap e funk em Manaus (cliente da
 - Músicas: o SoundCloud dele tem 1 set (SET SUNRISE, 61 min) → player com o set (widget oficial do SoundCloud) + 5 trechos ao vivo tirados dos vídeos do Drive dele. Os trechos têm músicas de outros produtores tocadas no set (como nos vídeos que ele posta); avisado.
 - Conteúdo só do presskit/cadastro. O que ele não respondeu fica genérico (camarim padrão) ou fora (os 3 nomes do line-up de 29.11). Sem preço ("Valores sob consulta").
 
+## WhatsApp de booking da Royals (31/10/2026)
+- Passado pelo Humberto: **Renan Correa (92) 98140-4577** (principal, o número de Manaus) e **Ricardo Garrido (47) 99687-7069**. `WHATSAPP_BOOKING` + `BOOKING_CONTATOS` em src/lib/site.ts. Os formulários "contratar" das páginas de artista abrem o WhatsApp do Renan com a mensagem pronta.
+- Regra do Humberto: todo material de artista (cadastro, presskit, página, artes, vídeo) leva as **três marcas: Royals Entretenimento, Royals Records e BrandSquad**.
+
 ## Casting · DJ BERTOLOSSI (30/10/2026)
 - Segundo artista do casting: DJ e produtor de funk carioca, cria do Morro do Martins (São Gonçalo-RJ), "Hitmaker". Mesma estrutura do LUCCO: cadastro → presskit → /artistas/bertolossi → artes.
 - Decisões do Humberto: mostrar o artista **como ele é** (sem esconder o catálogo); **a Royals agencia o Bertolossi só no Amazonas**; visual funk, favela, povão, com cor de cinema e copy do jeito que o povo fala (não o café/champanhe do LUCCO).
+- 31/10: cadastro respondido pelo Marcos Paulo (produtor dele) + complemento do Humberto; presskit v2 aprovado (`D:\CLIENTES BRANDSQUADS\Royals Entretenimento\DJ BERTOLOSSI\Presskit`, texto com fonte de cada fato em `copy-v2.txt`). Contato no material = **só a Royals**.
+- Copy: voz "produtor pra produtor" (a Royals falando com dono de casa, como num áudio de WhatsApp), cada frase com um fato. Proibido frase com cara de IA (antítese "não X, é Y", slogan sem fato, pergunta de anúncio). O que o cliente passa como contexto (ex.: aniversário sem atração, lotado) não vira texto. O pixo é a voz da rua em toda a hierarquia.
+- /artistas/bertolossi (31/10): a versão viva do presskit v2. Player com as 4 faixas do SoundCloud escolhidas pelo Humberto (Sequência das Antigas 2, Audio Visual Set 2025, Sequência das Antigas 003, 10 Minutos 2026) + trechos ao vivo. Ensaio digital (IA, rosto conferido) identificado como "ensaio digital" na galeria.
 - /cadastro-artista/bertolossi: o escritório dele confirma o que levantamos em fonte pública (Spotify, SoundCloud, matéria do O São Gonçalo) e manda os links de todas as plataformas e as fotos ao vivo (só há fotos de estúdio).
 - 31/10: o Marcos Paulo (produtor dele) respondeu o cadastro. As respostas mostraram um defeito do FormularioArtista: opção com vírgula no texto ("Sim, todos oficiais") nunca acendia e cada clique somava a resposta de novo. Corrigido: as opções marcadas são separadas por " · ", nunca por vírgula. Regra: ao criar um cadastro novo, testar no navegador que cada opção acende e apaga antes de publicar.

@@ -32,7 +32,7 @@
 
 ## Casting · DJ LUCCO (/artistas/lucco)
 - [x] 29/10/2026 · Página do artista: logo vetorizada e animada, abertura, spinner, player (SET SUNRISE + 5 trechos ao vivo com espectro), vídeos, formatos, rider, fotos, pedido de data, OG próprio, sitemap
-- [ ] **Número de WhatsApp de booking da Royals** em `WHATSAPP_BOOKING` (src/lib/site.ts): o formulário passa a abrir o WhatsApp
+- [x] 31/10/2026 · WhatsApp de booking da Royals em `WHATSAPP_BOOKING`: Renan (92) 98140-4577 (+ Ricardo (47) 99687-7069 em `BOOKING_CONTATOS`)
 - [x] 29/10/2026 · Publicado com o ok do Humberto (commit c568b7a): https://royalsentretenimento.vercel.app/artistas/lucco, ainda sem o WhatsApp da Royals (pedido vai pelo direct)
 - [ ] Os 3 nomes que faltam no line-up da SUN HYPE On Board (29.11) e o camarim real do artista
 - [ ] Domínio próprio: incluir na regra de CORS do R2 `royals-acervo` (senão os trechos tocam sem o espectro)
@@ -40,8 +40,11 @@
 
 ## Casting · DJ BERTOLOSSI
 - [x] 30/10/2026 · Cadastro /cadastro-artista/bertolossi (8 grupos, 36 perguntas; links de todas as plataformas e fotos ao vivo), OG próprio, publicado com o ok do Humberto
-- [ ] Respostas do escritório dele → presskit e página /artistas/bertolossi
-- [ ] Aprovar a direção visual (prancha em `D:\CLIENTES BRANDSQUADS\Royals Entretenimento\DJ BERTOLOSSI\Direcao visual\prancha-v1.jpg`)
+- [x] 30/10/2026 · Direção visual "noite no morro" aprovada
+- [x] 31/10/2026 · Cadastro respondido; presskit v2 aprovado
+- [x] 31/10/2026 · Página /artistas/bertolossi (logo vetorizada com spray, abertura a cada carregamento, player 4 faixas SoundCloud + 5 trechos, parcerias, hits, história, palcos, 7 vídeos, rider, galeria, fechar data no WhatsApp, OG, sitemap). Formulário de contratação virou `src/components/artistas/FormContratar.tsx` (o LUCCO usa o mesmo)
+- [ ] Publicar /artistas/bertolossi (aguardando ok do Humberto)
+- [ ] Artes/carrosséis e vídeo-case do Bertolossi
 
 ## Parceria para produtores (/produtores)
 - [x] 26/10/2026 · Página de captura com 10 seções, simulador e formulário; privacidade atualizada; sitemap

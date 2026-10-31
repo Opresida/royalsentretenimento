@@ -26,6 +26,7 @@ Lê @royalsentretenimento pela API oficial da Meta (token em `~/.claude/secrets/
 | `/promoters` · `/obrigado` | Programa de promoters (cadastro "em breve") |
 | `/sobre` · `/contato` · `/privacidade` · `/termos` | Institucional e legal |
 | `/artistas/lucco` | Página do artista DJ LUCCO (casting Royals): player com o SET SUNRISE + trechos ao vivo, vídeos, formatos, rider, fotos e pedido de data. Visual próprio do artista, sem o menu da Royals. Mídia: `node scripts/lucco-midia.mjs`; logo: `python scripts/lucco-logo.py` |
+| `/artistas/bertolossi` | Página do DJ BERTOLOSSI (casting Royals, contratação no Amazonas): a versão viva do presskit v2, direção "noite no morro" (lambe-lambe e pixo). Player com 4 faixas do SoundCloud + 5 trechos ao vivo, parcerias, hits, palcos, vídeos, rider, fotos e "fechar data" no WhatsApp da Royals. Mídia: `node scripts/bertolossi-midia.mjs` (`--videos=a,b`, `--so-capas`); logo: `python scripts/bertolossi-logo.py` |
 | `/cadastro-artista/lucco` · `/cadastro-artista/bertolossi` · `/logos` | Links diretos, fora do menu e sem indexação (cadastro do artista; kit de logos) |
 
 ## Estado

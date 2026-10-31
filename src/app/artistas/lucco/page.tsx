@@ -3,7 +3,7 @@ import { Cormorant_Garamond, Space_Grotesk } from 'next/font/google';
 import Link from 'next/link';
 import { Revela } from '@/components/Revela';
 import { AberturaLucco, PRE_PINTURA } from '@/components/lucco/AberturaLucco';
-import { FormContratar } from '@/components/lucco/FormContratar';
+import { FormContratar } from '@/components/artistas/FormContratar';
 import { GaleriaLucco } from '@/components/lucco/GaleriaLucco';
 import { AteData, BarraContratar, BotaoOuvir, Letreiro, SeloRolagem, VideoTopo } from '@/components/lucco/Interativos';
 import { LogoLucco } from '@/components/lucco/LogoLucco';
@@ -238,7 +238,7 @@ export default function PaginaLucco() {
         <div className="contratar-l__texto">
           <Cabeca rot="Booking · Royals Entretenimento">Leve o <em>hype</em> para a sua pista</Cabeca>
           <p className="rl">Conte a data, a cidade e o formato. A Royals Entretenimento responde com a proposta e fecha a agenda do LUCCO.</p>
-          <div className="rl"><FormContratar instagramRoyals={PERFIL.usuario} /></div>
+          <div className="rl"><FormContratar artista="DJ LUCCO" pagina="do LUCCO" formatos={['Warm-up', 'Set principal', 'Sunset', 'Closing', 'Ainda não sei']} formatoPadrao={1} instagramRoyals={PERFIL.usuario} /></div>
           <ul className="contatos-l rl">
             <li><span>Royals</span><a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">@{PERFIL.usuario}</a></li>
             <li><span>Artista</span><a href={LUCCO.instagram.url} target="_blank" rel="noopener noreferrer">@{LUCCO.instagram.usuario}</a></li>

@@ -12,7 +12,12 @@ export const MENU = [
   { rotulo: 'Sobre', href: '/sobre' },
 ];
 
-/** WhatsApp de booking da Royals (contratação de artistas do casting). Pendente: o Humberto vai passar o número
- *  (só dígitos, com 55 + DDD). Enquanto for null, o "Contratar" das páginas de artista abre o direct do Instagram. */
-export const WHATSAPP_BOOKING: string | null = null;
+/** WhatsApp de booking da Royals (contratação de artistas do casting), só dígitos com 55 + DDD.
+ *  Principal: Renan Correa (92) 98140-4577. Segundo contato: Ricardo Garrido (47) 99687-7069 (BOOKING_CONTATOS).
+ *  Se voltar a null, o "Contratar" das páginas de artista abre o direct do Instagram. */
+export const WHATSAPP_BOOKING: string | null = '5592981404577';
+export const BOOKING_CONTATOS = [
+  { nome: 'Renan Correa', whatsapp: '5592981404577', exibido: '(92) 98140-4577' },
+  { nome: 'Ricardo Garrido', whatsapp: '5547996877069', exibido: '(47) 99687-7069' },
+] as const;
 export const linkWhatsApp = (numero: string, mensagem: string) => `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
