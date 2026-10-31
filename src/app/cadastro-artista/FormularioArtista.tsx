@@ -9,6 +9,8 @@ export type Pergunta = { id: string; rotulo: string; ajuda?: string; tipo?: 'tex
 export type Grupo = { titulo: string; pagina?: string; perguntas: Pergunta[] };
 
 const separador = '\n';
+// separa as opções marcadas; não pode ser vírgula, porque há opções com vírgula ("Sim, todos oficiais")
+const SEP_OPCOES = ' · ';
 
 export function FormularioArtista({ artista, chave, grupos }: { artista: string; chave: string; grupos: Grupo[] }) {
   const [resp, setResp] = useState<Record<string, string>>({});
@@ -45,8 +47,8 @@ export function FormularioArtista({ artista, chave, grupos }: { artista: string;
 
   const muda = (id: string, v: string) => setResp((r) => ({ ...r, [id]: v }));
   const marca = (id: string, op: string) => {
-    const atual = (resp[id] ?? '').split(', ').filter(Boolean);
-    muda(id, (atual.includes(op) ? atual.filter((x) => x !== op) : [...atual, op]).join(', '));
+    const atual = (resp[id] ?? '').split(SEP_OPCOES).filter(Boolean);
+    muda(id, (atual.includes(op) ? atual.filter((x) => x !== op) : [...atual, op]).join(SEP_OPCOES));
   };
 
   async function copiar() {
@@ -85,7 +87,7 @@ export function FormularioArtista({ artista, chave, grupos }: { artista: string;
               {p.tipo === 'opcoes' && p.opcoes ? (
                 <div className="cad-opcoes" role="group" aria-label={p.rotulo}>
                   {p.opcoes.map((op) => {
-                    const on = (resp[p.id] ?? '').split(', ').includes(op);
+                    const on = (resp[p.id] ?? '').split(SEP_OPCOES).includes(op);
                     return <button type="button" key={op} className={`cad-opcao${on ? ' cad-opcao--on' : ''}`} aria-pressed={on} onClick={() => marca(p.id, op)}>{op}</button>;
                   })}
                 </div>
