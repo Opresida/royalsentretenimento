@@ -52,7 +52,7 @@
 - [x] 31/10/2026 · Papel timbrado (PDF + Word, genérico e por artista) em `D:\CLIENTES BRANDSQUADS\Royals Entretenimento\Papel Timbrado`
 - [x] 31/10/2026 · /contratos publicado com o ok do Humberto
 - [x] 31/10/2026 · Leitura por IA no /contratos (bloco 0): PDF, foto ou texto colado → `/api/contratos/ler` preenche contratante, evento e cachê (só campo vazio). Revezamento no esquema do HCARE (`src/lib/iaRouter.ts`: Gemini grátis → Pollinations). CNPJ achado → razão social e endereço do cadastro público (BrasilAPI, CNPJ.ws). Senha da equipe em `CONTRATOS_SENHA`
-- [ ] Vercel: cadastrar `GEMINI_API_KEY`, `POLLINATIONS_API_KEY` e `CONTRATOS_SENHA` em produção (sem elas a leitura responde "não configurada"; o resto do gerador funciona)
+- [x] 31/10/2026 · Variáveis da leitura por IA cadastradas na Vercel (produção) e testadas no ar; OG próprio da /contratos (`pecas/og-contratos/og.html`)
 - [ ] Revisão do texto do contrato pelo advogado da Royals
 - [ ] Conta / chave Pix da Royals para deixar fixa no contrato (hoje é campo do formulário)
 - [ ] Na Receita o nome fantasia é "Royals Soluções Financeiras" e o CNAE não tem agenciamento artístico: ver com o contador
