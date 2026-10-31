@@ -1,0 +1,137 @@
+/* /contratos — gerador (tema escuro do site) + documento no papel timbrado da Royals (papel claro, A4).
+   O documento (.cdoc) usa medidas de papel (mm/pt) para a prévia e a impressão saírem iguais. */
+
+/* ——— página e formulário ——— */
+.contratos { padding: calc(var(--header-height) + var(--space-10)) 0 var(--space-16); }
+.contratos__topo { margin-bottom: var(--space-8); max-width: 760px; }
+.contratos__sobre { display: block; font-size: 13px; letter-spacing: .3em; text-transform: uppercase; color: var(--text-accent); font-weight: 600; }
+.contratos__topo h1 { font-size: clamp(30px, 5vw, 52px); font-weight: 800; font-stretch: 125%; text-transform: uppercase; line-height: .95; margin: 12px 0; color: var(--text-primary); }
+.contratos__topo p { color: var(--text-secondary); font-size: 17px; line-height: 1.5; }
+
+.gc { display: grid; grid-template-columns: minmax(340px, 440px) minmax(0, 1fr); gap: var(--space-8); align-items: start; }
+.gc-form { display: flex; flex-direction: column; gap: var(--space-5); }
+.gc-bloco { border: 1px solid var(--border-subtle); background: var(--surface-sunken); padding: 18px 18px 20px; margin: 0; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.gc-bloco legend { padding: 0 8px; margin-left: -8px; font-size: 13px; letter-spacing: .24em; text-transform: uppercase; font-weight: 700; color: var(--text-primary); }
+.gc-bloco legend b { color: var(--text-accent); margin-right: 8px; font-stretch: 125%; }
+.gc-linha { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.gc-linha--3 { grid-template-columns: 1fr 1fr 1fr; }
+.gc-campo { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.gc-campo > span { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+.gc-campo > span i { color: var(--text-accent); font-style: normal; }
+.gc-campo input, .gc-campo textarea { width: 100%; min-width: 0; background: var(--surface-page); border: 1px solid var(--border-default); color: var(--text-primary); font: inherit; font-size: 15px; padding: 10px 12px; border-radius: 0; }
+.gc-campo input:focus, .gc-campo textarea:focus { outline: 2px solid var(--focus-ring); outline-offset: 1px; border-color: var(--border-accent); }
+.gc-campo input[type="date"] { color-scheme: dark; }
+.gc-campo--calc output { display: block; padding: 10px 12px; border: 1px dashed var(--border-default); color: var(--text-accent); font-weight: 700; font-size: 15px; }
+.gc-dica { font-size: 13px; line-height: 1.5; color: var(--text-muted); }
+.gc-dica b { color: var(--text-secondary); }
+
+.gc-artistas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gc-artista { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px; background: var(--surface-page); border: 1px solid var(--border-default); color: var(--text-primary); cursor: pointer; text-align: left; font: inherit; }
+.gc-artista img { height: 26px; width: auto; max-width: 100%; filter: invert(1) brightness(1.1); opacity: .9; }
+.gc-artista span { font-weight: 800; font-stretch: 125%; font-size: 14px; text-transform: uppercase; }
+.gc-artista small { font-size: 12px; color: var(--text-muted); line-height: 1.35; }
+.gc-artista:hover { border-color: var(--border-strong); }
+.gc-artista.is-on { border-color: var(--border-accent); box-shadow: inset 0 0 0 1px var(--border-accent); background: #15130f; }
+.gc-artista:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+.gc-seg { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--border-default); }
+.gc-seg label { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 8px; font-size: 14px; color: var(--text-secondary); cursor: pointer; text-align: center; }
+.gc-seg label + label { border-left: 1px solid var(--border-default); }
+.gc-seg label:has(input:checked) { background: var(--accent); color: var(--text-on-accent); font-weight: 700; }
+.gc-seg input { position: absolute; opacity: 0; pointer-events: none; }
+.gc-seg label:has(input:focus-visible) { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+
+.gc-quem { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
+.gc-quem legend { float: left; width: 110px; font-size: 13px; color: var(--text-primary); font-weight: 600; padding: 0; }
+.gc-quem label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); cursor: pointer; }
+.gc-quem input, .gc-check input { accent-color: var(--royal-gold); width: 16px; height: 16px; }
+.gc-check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.4; color: var(--text-secondary); cursor: pointer; }
+.gc-check input { flex: none; margin-top: 2px; }
+
+.gc-acoes { position: sticky; bottom: 0; z-index: 5; background: var(--surface-page); border-top: 1px solid var(--border-accent); padding: 14px 0 16px; display: flex; flex-direction: column; gap: 10px; }
+.gc-acoes > div { display: flex; flex-wrap: wrap; gap: 10px; }
+.gc-status { font-size: 14px; color: var(--text-accent); line-height: 1.4; }
+.gc-btn { font: inherit; font-size: 14px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 12px 18px; border: 1px solid var(--border-strong); background: transparent; color: var(--text-primary); cursor: pointer; }
+.gc-btn:hover { border-color: var(--text-primary); }
+.gc-btn--ouro { background: var(--accent); border-color: var(--accent); color: var(--text-on-accent); }
+.gc-btn--ouro:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.gc-btn--leve { border-color: transparent; color: var(--text-muted); }
+.gc-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+.gc-previa { position: sticky; top: calc(var(--header-height) + 16px); max-height: calc(100svh - var(--header-height) - 32px); overflow: auto; border: 1px solid var(--border-subtle); background: #2a2824; padding: 0; overscroll-behavior: contain; }
+.gc-folha { zoom: var(--escala, 1); width: 210mm; }
+
+/* ferramenta interna: a barra de ingressos do site não aparece aqui (ficava por cima dos botões) */
+body:has(.gc) .barra-ingressos { display: none; }
+
+@media (max-width: 1023px) {
+  .gc { grid-template-columns: 1fr; }
+  .gc-acoes { position: static; }
+  .gc-previa { position: static; max-height: none; overflow: hidden; }
+}
+@media (max-width: 480px) {
+  .gc-linha, .gc-linha--3 { grid-template-columns: 1fr; }
+  .gc-artistas { grid-template-columns: 1fr; }
+  .gc-quem legend { width: 100%; }
+}
+
+/* ——— documento no papel timbrado ——— */
+.cdoc { position: relative; width: 210mm; min-height: 297mm; background: #fff; color: #1d1b17; font-family: var(--font-archivo), Arial, sans-serif; font-stretch: 100%; font-size: 9.8pt; line-height: 1.48; overflow: hidden; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.cdoc-dagua { position: absolute; left: 50%; top: 50%; width: 120mm; transform: translate(-50%, -50%); opacity: .05; pointer-events: none; z-index: 0; }
+.cdoc-folha { position: relative; z-index: 1; width: 100%; border-collapse: collapse; }
+.cdoc-folha > thead td, .cdoc-folha > tfoot td, .cdoc-folha > tbody td { padding: 0 18mm; vertical-align: top; }
+.cdoc-folha > thead td { padding-top: 11mm; }
+.cdoc-folha > tfoot td { padding-bottom: 9mm; }
+
+.cdoc-topo { display: flex; align-items: center; justify-content: space-between; gap: 10mm; height: 16mm; }
+.cdoc-topo__royals { height: 13mm; width: auto; }
+.cdoc-topo__artista { max-height: 8mm; max-width: 62mm; width: auto; }
+.cdoc-topo__casting { font-size: 8pt; letter-spacing: .3em; text-transform: uppercase; color: #6B5A1A; font-weight: 600; }
+.cdoc-faixa { height: 2.6mm; margin: 3mm 0 7mm; border-top: 2px solid #BB9E38; background: repeating-linear-gradient(45deg, transparent 0 2.2mm, rgba(187,158,56,.55) 2.2mm 2.5mm); }
+
+.cdoc-pe { display: flex; align-items: center; gap: 6mm; border-top: 1px solid #BB9E38; padding-top: 3mm; margin-top: 8mm; }
+.cdoc-pe__records { height: 9mm; width: auto; flex: none; }
+.cdoc-pe__txt { display: flex; flex-direction: column; gap: .6mm; font-size: 7.2pt; line-height: 1.35; color: #5d574b; }
+.cdoc-pe__txt b { color: #1d1b17; font-weight: 700; }
+
+.cdoc-corpo { min-height: 200mm; }
+.cdoc-corpo p { margin: 0 0 2.1mm; text-align: justify; hyphens: auto; }
+.cdoc-titulo { text-align: center; margin-bottom: 7mm; }
+.cdoc-sobre { font-size: 7.6pt; letter-spacing: .3em; text-transform: uppercase; color: #6B5A1A; font-weight: 600; }
+.cdoc-titulo h2 { font-size: 17pt; font-weight: 800; font-stretch: 125%; text-transform: uppercase; letter-spacing: -.005em; line-height: 1.05; margin: 2mm 0 1.5mm; color: #0d0c0b; }
+.cdoc-sub { text-align: center !important; font-size: 9.5pt; color: #5d574b; }
+.cdoc-clausula { font-size: 9pt; font-weight: 800; font-stretch: 125%; text-transform: uppercase; letter-spacing: .04em; color: #0d0c0b; margin: 4.6mm 0 2mm; padding-left: 3mm; border-left: 2px solid #BB9E38; break-after: avoid; page-break-after: avoid; }
+.cdoc-clausula--partes { margin-top: 0; }
+.cdoc-ficha { width: 100%; border-collapse: collapse; margin: 1mm 0 3mm; font-size: 9.4pt; break-inside: avoid; }
+.cdoc-ficha th, .cdoc-ficha td { border-bottom: 1px solid #e6dfcc; padding: 1.4mm 2mm; text-align: left; vertical-align: top; }
+.cdoc-ficha th { width: 38mm; font-weight: 700; color: #6B5A1A; font-size: 8.2pt; text-transform: uppercase; letter-spacing: .06em; background: #faf7ef; }
+.cdoc-ficha--logistica th { width: 62mm; }
+.cdoc-lista { margin: 0 0 2.6mm; padding-left: 5mm; }
+.cdoc-lista li { margin-bottom: 1mm; }
+.cdoc-lista li::marker { color: #BB9E38; }
+.cdoc-pre { white-space: pre-line; }
+.cdoc-falta { background: #FFE97A; color: #4a3b00; padding: 0 1mm; font-weight: 600; }
+.cdoc-local { margin-top: 5mm !important; text-align: left !important; }
+.cdoc-assinaturas { display: grid; grid-template-columns: 1fr 1fr; gap: 11mm 12mm; margin-top: 12mm; break-inside: avoid; }
+.cdoc-assinaturas > div { display: flex; flex-direction: column; gap: .8mm; font-size: 8.6pt; color: #3d382e; }
+.cdoc-assinaturas b { font-size: 8pt; letter-spacing: .14em; color: #0d0c0b; }
+.cdoc-linha { display: block; border-top: 1px solid #1d1b17; margin-bottom: 1.5mm; }
+.cdoc-anexo { break-before: page; page-break-before: always; padding-top: 1mm; }
+.cdoc-nota { font-size: 8.6pt; color: #5d574b; }
+.cdoc-rider { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm 10mm; }
+.cdoc-rider h4 { font-size: 8.4pt; text-transform: uppercase; letter-spacing: .12em; color: #6B5A1A; margin: 2mm 0 1.5mm; }
+
+/* ——— impressão: só o documento ——— */
+@page { size: A4; margin: 0 0 7mm; @bottom-right { content: counter(page) " / " counter(pages); font-family: Arial, sans-serif; font-size: 7.5pt; color: #8a7a3a; padding-right: 18mm; vertical-align: top; } }
+@media print {
+  :root, html, body { background: #fff !important; color-scheme: light !important; }
+  body:has(.cdoc) > :not(#conteudo) { display: none !important; }
+  #conteudo { padding: 0 !important; margin: 0 !important; }
+  .contratos { padding: 0; }
+  .contratos__topo, .gc-form { display: none !important; }
+  .contratos > .container, .gc, .gc-previa { display: block; padding: 0; margin: 0; max-width: none; border: 0; background: none; max-height: none; overflow: visible; position: static; }
+  .gc-folha { zoom: 1 !important; width: auto; }
+  .cdoc { width: auto; min-height: 0; overflow: visible; }
+  .cdoc-dagua { position: fixed; }
+  .cdoc-corpo { min-height: 0; }
+}

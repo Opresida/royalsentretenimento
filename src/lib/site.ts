@@ -21,3 +21,19 @@ export const BOOKING_CONTATOS = [
   { nome: 'Ricardo Garrido', whatsapp: '5547996877069', exibido: '(47) 99687-7069' },
 ] as const;
 export const linkWhatsApp = (numero: string, mensagem: string) => `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+
+/** Dados da empresa para contratos e papel timbrado (CNPJ enviado pelo Humberto em 31/10/2026; o resto vem do cadastro
+ *  público da Receita, conferido na BrasilAPI e no CNPJ.ws no mesmo dia). É empresário individual: a razão social é o
+ *  nome do titular, que assina pela empresa. Na Receita o nome fantasia é "Royals Soluções Financeiras"; nos documentos
+ *  a marca usada é Royals Entretenimento. Dados bancários / Pix ainda não informados: o gerador pede no formulário. */
+export const EMPRESA = {
+  marca: 'Royals Entretenimento',
+  razaoSocial: 'RICARDO MAIA GARRIDO DO NASCIMENTO',
+  tipo: 'empresário individual',
+  cnpj: '48.017.851/0001-73',
+  endereco: 'Rua Barão do Rio Branco, 699, Flores, Manaus/AM, CEP 69058-581',
+  cidade: 'Manaus/AM',
+  representante: 'Ricardo Maia Garrido do Nascimento',
+  cargo: 'titular',
+  email: 'ricardo.garrido.adm@gmail.com',
+} as const;

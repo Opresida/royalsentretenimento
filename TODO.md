@@ -46,6 +46,15 @@
 - [ ] Publicar /artistas/bertolossi (aguardando ok do Humberto)
 - [ ] Artes/carrosséis e vídeo-case do Bertolossi
 
+## Contratos e papel timbrado
+- [x] 31/10/2026 · Gerador /contratos (link direto, noindex, fora do menu e do sitemap): escolhe o artista, preenche evento, contratante (PJ/PF), valores e logística, prévia ao vivo no papel timbrado e "Baixar PDF" (impressão A4 com cabeçalho/rodapé repetidos e nº de página). Nada vai a servidor; rascunho no localStorage. `?exemplo=1&artista=<slug>` preenche dados fictícios
+- [x] 31/10/2026 · Dados da empresa em `EMPRESA` (src/lib/site.ts), do cadastro público do CNPJ 48.017.851/0001-73
+- [x] 31/10/2026 · Papel timbrado (PDF + Word, genérico e por artista) em `D:\CLIENTES BRANDSQUADS\Royals Entretenimento\Papel Timbrado`
+- [x] 31/10/2026 · /contratos publicado com o ok do Humberto
+- [ ] Revisão do texto do contrato pelo advogado da Royals
+- [ ] Conta / chave Pix da Royals para deixar fixa no contrato (hoje é campo do formulário)
+- [ ] Na Receita o nome fantasia é "Royals Soluções Financeiras" e o CNAE não tem agenciamento artístico: ver com o contador
+
 ## Parceria para produtores (/produtores)
 - [x] 26/10/2026 · Página de captura com 10 seções, simulador e formulário; privacidade atualizada; sitemap
 - [x] 26/10/2026 · VSL no ar: página em formato de VSL (vídeo primeiro, resto abre 2 s antes do fim, linha de ouro no contorno)
