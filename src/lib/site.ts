@@ -5,6 +5,7 @@ export const DESCRICAO = 'Produtora de eventos de trap e funk em Manaus. Próxim
 
 export const MENU = [
   { rotulo: 'Eventos', href: '/eventos' },
+  { rotulo: 'Artistas', href: '/artistas' },
   { rotulo: 'Relembre momentos', href: '/relembre-momentos' },
   { rotulo: 'Vídeos', href: '/melhores-momentos' },
   { rotulo: 'Promoters', href: '/promoters' },

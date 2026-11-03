@@ -37,7 +37,8 @@
 - [x] 29/10/2026 · Publicado com o ok do Humberto (commit c568b7a): https://royalsentretenimento.vercel.app/artistas/lucco, ainda sem o WhatsApp da Royals (pedido vai pelo direct)
 - [ ] Os 3 nomes que faltam no line-up da SUN HYPE On Board (29.11) e o camarim real do artista
 - [ ] Domínio próprio: incluir na regra de CORS do R2 `royals-acervo` (senão os trechos tocam sem o espectro)
-- [ ] Item "Casting" no menu quando houver mais artistas
+- [x] 03/11/2026 · Página geral /artistas (casting Royals Entretenimento + Royals Records): portas com o vídeo de topo de cada artista, a gravadora (texto do release), um bloco por artista na cor dele (números, trechos ao vivo, vídeo-case de 1 min da BrandSquad, palcos, parcerias, fotos, página completa e WhatsApp) e contratação escolhendo o artista. "Artistas" entrou no menu. Dados em `src/data/casting.ts`; vídeos-case no R2 via `scripts/casting-midia.mjs`; OG em `pecas/og-casting`
+- [x] 03/11/2026 · /artistas publicada com o ok do Humberto (tsc + eslint limpos, mídias e links conferidos)
 
 ## Casting · DJ BERTOLOSSI
 - [x] 30/10/2026 · Cadastro /cadastro-artista/bertolossi (8 grupos, 36 perguntas; links de todas as plataformas e fotos ao vivo), OG próprio, publicado com o ok do Humberto

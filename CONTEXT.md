@@ -50,6 +50,11 @@ Royals Entretenimento, produtora de eventos de trap e funk em Manaus (cliente da
 - (histórico) - Passado pelo Humberto: **Renan Correa (92) 98140-4577** (principal, o número de Manaus) e **Ricardo Garrido (47) 99687-7069**. `WHATSAPP_BOOKING` + `BOOKING_CONTATOS` em src/lib/site.ts. Os formulários "contratar" das páginas de artista abrem o WhatsApp do Renan com a mensagem pronta.
 - Regra do Humberto: todo material de artista (cadastro, presskit, página, artes, vídeo) leva as **três marcas: Royals Entretenimento, Royals Records e BrandSquad**.
 
+## Casting · página geral /artistas (03/11/2026)
+- Porta de entrada do casting, no visual da marca-mãe (preto/ouro, Archivo), com cada artista numa "janela" na cor dele. Fica no menu do site ("Artistas").
+- Conteúdo só dos dados de cada artista (`src/data/artistas`) e do release de imprensa da Royals Records (01/11). Artista novo = item a mais em `CASTING` (`src/data/casting.ts`) + o vídeo-case dele em `scripts/casting-midia.mjs`.
+- O formulário é o mesmo `FormContratar`, com `escolheArtista` (as opções são os artistas).
+
 ## Casting · DJ BERTOLOSSI (30/10/2026)
 - Segundo artista do casting: DJ e produtor de funk carioca, cria do Morro do Martins (São Gonçalo-RJ), "Hitmaker". Mesma estrutura do LUCCO: cadastro → presskit → /artistas/bertolossi → artes.
 - Decisões do Humberto: mostrar o artista **como ele é** (sem esconder o catálogo); **a Royals agencia o Bertolossi só no Amazonas**; visual funk, favela, povão, com cor de cinema e copy do jeito que o povo fala (não o café/champanhe do LUCCO).

@@ -4,9 +4,10 @@ import { linkWhatsApp, WHATSAPP_BOOKING } from '@/lib/site';
 
 /** Pedido de data de um artista do casting: monta a mensagem e abre o WhatsApp de booking da Royals. Sem número em
  *  src/lib/site.ts (WHATSAPP_BOOKING), copia a mensagem e abre o direct do Instagram da Royals.
- *  `classe` é o prefixo BEM do visual de cada página (o LUCCO usa "form"; cada artista tem o seu). */
-export function FormContratar({ artista, pagina, formatos, formatoPadrao = 0, instagramRoyals, classe = 'form', botao, rotulos }: {
-  artista: string; pagina: string; formatos: string[]; formatoPadrao?: number; instagramRoyals: string; classe?: string;
+ *  `classe` é o prefixo BEM do visual de cada página (o LUCCO usa "form"; cada artista tem o seu).
+ *  `escolheArtista`: na página geral do casting (/artistas) as opções são os artistas, não formatos de set. */
+export function FormContratar({ artista, pagina, formatos, formatoPadrao = 0, instagramRoyals, classe = 'form', botao, rotulos, escolheArtista = false }: {
+  artista: string; pagina: string; formatos: string[]; formatoPadrao?: number; instagramRoyals: string; classe?: string; escolheArtista?: boolean;
   botao?: { whatsapp: string; instagram: string };
   rotulos?: Partial<Record<'nome' | 'empresa' | 'data' | 'horario' | 'cidade' | 'formato' | 'obs', string>>;
 }) {
@@ -19,14 +20,15 @@ export function FormContratar({ artista, pagina, formatos, formatoPadrao = 0, in
     const d = new FormData(e.currentTarget);
     const v = (k: string) => String(d.get(k) ?? '').trim();
     const data = v('data') ? new Date(`${v('data')}T12:00:00`).toLocaleDateString('pt-BR') : '';
+    const escolhido = escolheArtista && v('formato') && !/não sei/i.test(v('formato')) ? v('formato') : '';
     const linhas = [
-      `Olá, Royals. Quero contratar o ${artista}.`,
+      escolheArtista ? (escolhido ? `Olá, Royals. Quero contratar o ${escolhido}.` : `Olá, Royals. Quero contratar um artista do casting e ainda não sei qual.`) : `Olá, Royals. Quero contratar o ${artista}.`,
       '',
       `Nome: ${v('nome')}`,
       v('empresa') ? `Casa / evento: ${v('empresa')}` : null,
       `Data: ${data}${v('horario') ? ` · ${v('horario')}` : ''}`,
       `Cidade: ${v('cidade')}`,
-      `Formato: ${v('formato')}`,
+      escolheArtista ? null : `Formato: ${v('formato')}`,
       v('obs') ? `Detalhes: ${v('obs')}` : null,
       '',
       `(enviado pela página ${pagina} no site da Royals)`,

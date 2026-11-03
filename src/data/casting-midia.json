@@ -1,0 +1,18 @@
+{
+ "cases": {
+  "lucco": {
+   "mp4": "https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/artistas/casting/case-lucco-mw0vnir6.mp4",
+   "capa": "https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/artistas/casting/case-lucco-capa-mw0vnir6.webp",
+   "w": 720,
+   "h": 1280,
+   "mb": 7.9
+  },
+  "bertolossi": {
+   "mp4": "https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/artistas/casting/case-bertolossi-mw0voeqh.mp4",
+   "capa": "https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/artistas/casting/case-bertolossi-capa-mw0voeqh.webp",
+   "w": 720,
+   "h": 1280,
+   "mb": 9.3
+  }
+ }
+}
