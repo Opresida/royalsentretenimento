@@ -143,6 +143,7 @@ main { min-height: 60vh; }
   .barra-ingressos { display: flex; position: fixed; inset: auto 0 0; z-index: 40; gap: var(--space-3); align-items: center; padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom)); background: var(--surface-page); border-top: var(--border-rule) solid var(--accent); }
   .barra-ingressos__info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   .barra-ingressos__info strong { font-size: 14px; font-weight: var(--weight-extrabold); text-transform: uppercase; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .barra-ingressos__info strong.barra-ingressos__aviso { white-space: normal; line-height: 1.15; } /* recado sem evento: pode ir para 2 linhas, nunca reticências */
   .barra-ingressos__info span { font-size: 11px; font-weight: var(--weight-semibold); letter-spacing: 0.2em; text-transform: uppercase; color: var(--event-accent); }
   body { padding-bottom: 76px; }
 }
@@ -778,3 +779,21 @@ html.abertura-ativa { overflow: hidden; }
   .assinatura__marcas .assinatura__parceiro { height: 22px; }
   .assinatura__marcas .assinatura__parceiro[alt="Baile do Poderoso"] { height: 19px; }
 }
+
+/* ——— topo do CASTING (sem evento à venda, 15/11/2026): vídeo Royals-Hero-Artistas, LUCCO + BERTOLOSSI em loop ———
+   1. Computador: o 16:9 tem as duas janelas dos artistas na faixa x 1010–1842 de 1920 (84% da altura do vídeo a partir
+      da direita). Em vez de "cobrir" a tela (que cortava as janelas no ultralargo e as jogava em cima do texto em telas
+      mais quadradas), o vídeo fica encostado à direita, na altura da tela, mas nunca mais alto que o espaço que sobra à
+      direita do bloco (54vw − 48px) ÷ 0,843. A sobra fica no preto da página, que é o mesmo fundo do vídeo.
+   2. Celular/tablet em pé: o 9:16 encosta no alto (o nome do artista fica sempre abaixo do menu; o corte vai para baixo,
+      que é a parte coberta pelo bloco do site).
+   3. Título "Nossos artistas" na largura da coluna (o display do evento estourava a coluna de 46vw). */
+@media (min-width: 900px) and (min-aspect-ratio: 6/5) {
+  .hero--casting .hero__midia--lateral video, .hero--casting .hero__midia--lateral img {
+    position: absolute; right: 0; top: 50%; translate: 0 -50%; width: auto; max-width: none; aspect-ratio: 16 / 9;
+    height: min(100%, calc((54vw - 48px) * 1.186)); object-fit: cover;
+  }
+}
+.hero--casting .hero__midia--celular video, .hero--casting .hero__midia--celular img { object-position: 50% 0%; }
+.hero__titulo-casting > .sobe { display: block; }
+@media (min-width: 600px) { .hero__titulo-casting { font-size: clamp(34px, min(6.4vw, 9svh), 80px); } }

@@ -16,6 +16,10 @@ export const MENU = [
 /** WhatsApp oficial da Royals (contratação de artistas do casting), só dígitos com 55 + DDD.
  *  Número oficial passado pelo Humberto em 31/10/2026: (79) 98116-9231 (substituiu Renan/Ricardo).
  *  Se voltar a null, o "Contratar" das páginas de artista abre o direct do Instagram. */
+/** Faixa fixa do rodapé no celular quando não há evento com ingresso à venda (pedido do Humberto, 15/11/2026, depois
+ *  do Baile das Bruxas). Temporária: some sozinha quando o próximo evento com link de ingresso entra em eventos.ts. */
+export const AVISO_SEM_EVENTO = { olho: 'Agenda Royals', frase: 'Nos encontramos novamente em dezembro' };
+
 export const WHATSAPP_BOOKING: string | null = '5579981169231';
 export const BOOKING_CONTATOS = [
   { nome: 'Royals Entretenimento', whatsapp: '5579981169231', exibido: '(79) 98116-9231' },

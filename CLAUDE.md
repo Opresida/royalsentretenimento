@@ -9,3 +9,4 @@
 - Playwright local: `localhost:3500` (no 127.0.0.2 o dev do Next não hidrata).
 - Conferência visual: Playwright em 1440 e 390 px. Atenção: o navegador do Playwright abre o localhost com zoom de 75% (pedir largura × 0,75 e conferir `innerWidth`).
 - Publicação (push na `main` → Vercel) só com o ok do Humberto.
+- Topo da home: é do próximo evento com ingresso; sem evento, é o casting (`HERO_CASTING`, vídeo `Royals-Hero-Artistas-*` do remotion-studio) e a barra do celular mostra `AVISO_SEM_EVENTO`. Evento que passou só sai do topo com um novo deploy (o site é estático).

@@ -19,7 +19,7 @@ Lê @royalsentretenimento pela API oficial da Meta (token em `~/.claude/secrets/
 ## Rotas
 | Rota | O quê |
 |---|---|
-| `/` | Home no wireframe do brandbook (hero do próximo evento, agenda, indicadores, manifesto, acervo, vídeos, promoters, Instagram, contato) |
+| `/` | Home no wireframe do brandbook (hero do próximo evento — sem evento à venda, o casting LUCCO + BERTOLOSSI em loop —, agenda, indicadores, manifesto, acervo, vídeos, promoters, Instagram, contato) |
 | `/eventos` · `/eventos/[slug]` | Próximos eventos (o slug de um evento que já passou redireciona para o acervo) |
 | `/relembre-momentos` · `/relembre-momentos/[slug]` | Linha do tempo e galeria de cada edição |
 | `/melhores-momentos` | Vídeos, com filtro por evento |

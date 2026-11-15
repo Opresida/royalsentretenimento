@@ -11,6 +11,7 @@ import { Galeria } from '@/components/Galeria';
 import { Assinatura, LogoRevela } from '@/components/Marca';
 import { Regua } from '@/components/Regua';
 import { Revela } from '@/components/Revela';
+import { CASTING, HERO_CASTING } from '@/data/casting';
 import { EVENTOS } from '@/data/eventos';
 import { VideoTopo } from '@/components/VideoTopo';
 import { INSTAGRAM_URL, PERFIL, POSTS, capaDoEvento, capaDoVideo, dataCurta, destaqueDoEvento, eventoDoPost, diaSemana, fileirasCheias, nomeCompleto, passados, proximos, tipoDeVideo, umPorEvento, videos } from '@/lib/acervo';
@@ -85,9 +86,23 @@ export default function Home() {
           </Revela>
         </section>
       ) : null}
+      {/* 02 · HERO sem evento à venda (15/11/2026, pedido do Humberto): o casting da Royals em loop, um pouco do DJ LUCCO e um
+          pouco do DJ BERTOLOSSI (remotion-studio: Royals-Hero-Artistas-16x9 / -9x16). Volta a ser do evento quando o próximo entrar. */}
       {destaque && capa ? null : (
-        <section className="hero">
-          <Revela className="container hero__conteudo"><LogoRevela className="manifesto__logo" /></Revela>
+        <section className="hero hero--lateral hero--casting">
+          <VideoTopo capa={HERO_CASTING.celular.capa} desktop={HERO_CASTING.desktop} celular={HERO_CASTING.celular} deitado />
+          <Revela className="container hero__conteudo" aguardaAbertura>
+            <span className="surge"><span className="tag tag--evento">Casting Royals</span></span>
+            <h1 className="display hero__titulo-casting"><span className="sobe"><span>Nossos</span></span><span className="sobe"><span className="ouro-degrade">artistas</span></span></h1>
+            <div className="surge hero__regua">
+              <Regua grande itens={CASTING.map((a) => ({ rotulo: a.nome, valor: a.generos.split(' · ')[0], nota: a.base.split(' · ').slice(-2).join(' · ') }))} />
+            </div>
+            <div className="hero__acoes surge">
+              <Botao href="/artistas" tamanho="lg">Conhecer</Botao>
+              <Botao href="/artistas#contratar" variante="secundario" tamanho="lg">Contratar</Botao>
+            </div>
+            <div className="surge hero__assinatura" style={{ maxWidth: 420 }}><Assinatura rotulo="Casting" /></div>
+          </Revela>
         </section>
       )}
 

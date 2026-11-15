@@ -16,9 +16,13 @@
 - [x] Hero no celular (16/10, refeito): o bloco separado saiu; vídeo 9:16 novo ATRÁS do topo (conteúdo no alto, metade de baixo livre), logo do evento menor e bloco enxuto. Próximos eventos: montar a versão celular no remotion-studio e preencher `videoCelular`
 - [x] Abertura com a logo (home, 2,4 s), spinner da coroa e uma transição de página por rota, da biblioteca de motion (16/10)
 - [x] Vitrines da home (16/10): um item por evento (`umPorEvento`), capas padronizadas, grade sempre fechada (`fileirasCheias`)
-- [ ] Depois de 13/11: novo deploy para o Baile das Bruxas virar acervo; rodar `pnpm instagram`
+- [x] 15/11: novo deploy com o Baile das Bruxas no acervo; topo da home virou o casting (LUCCO + BERTOLOSSI) e a barra do celular diz "Nos encontramos novamente em dezembro"
+- [ ] Rodar `pnpm instagram` para trazer os posts do Baile das Bruxas (13/11) ao acervo
+- [ ] Quando o evento de dezembro tiver data e link de ingresso: entrada em `eventos.ts` (o topo e a barra voltam a ser do evento sozinhos); trocar `AVISO_SEM_EVENTO` (src/lib/site.ts) se o recado mudar
+- [ ] Artista novo no casting: entrar no vídeo do topo (remotion-studio `src/royals/HeroArtistas.tsx`) e subir com nova versão (-v2) em `HERO_CASTING`
 
 ## Concluído
+- [x] 15/11/2026 · Topo do casting (sem evento à venda): vídeo em loop com LUCCO + BERTOLOSSI (16:9 com as duas janelas à direita; 9:16 alternando em tela cheia), "Nossos artistas", régua dos dois e botões Conhecer/Contratar. Conferido em 1920×1080, 2560×1080, 1440×900, 1280×720, 1024×768, 768×1024, 844×390, 390×844 e 360×740. Barra fixa do celular sem evento: "Agenda Royals · Nos encontramos novamente em dezembro" + Seguir (Instagram).
 - [x] 16/10/2026 · Home, caixa de Contato: foto da influencer de imprensa à direita, atrás dos botões (mesmo encaixe da caixa dos Promoters, classe `chamada--contato`). Foto recortada em `public/pessoas/contato-640|1100.webp`; original em `.acervo/influencer/contato-imprensa-original.png`. Conferida em 390, 1024 e 1440 px.
 - [x] 16/10/2026 · Capa padronizada para os 112 vídeos (quadro escolhido + tratamento do brandbook) e molde único (tipo · evento · ano · duração) na home, em /melhores-momentos e nas galerias dos eventos; sorteios de comentários fora da biblioteca
 - [x] 16/10/2026 · Varredura de responsividade (320/360/390/768 px, 12 rotas): títulos, botões e caixas de chamada corrigidos; brilho do fundo dos indicadores suavizado

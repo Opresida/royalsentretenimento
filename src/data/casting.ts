@@ -97,3 +97,13 @@ export const ROYALS_RECORDS = {
     { valor: '2', rotulo: 'artistas no casting' },
   ],
 };
+
+/** Vídeo do topo da home quando não há evento à venda (15/11/2026): o casting em loop, LUCCO + BERTOLOSSI, só imagem real
+ *  dos shows. Fonte: remotion-studio src/royals/HeroArtistas.tsx (Royals-Hero-Artistas-16x9 e -9x16); preparo e envio ao
+ *  R2 por scripts/video-desktop.mjs e scripts/video-celular.mjs. O 16:9 encosta à direita (as janelas dos artistas ficam
+ *  à direita; telas mais quadradas cortam a esquerda, que é vazia). */
+const R2 = 'https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev/eventos';
+export const HERO_CASTING = {
+  desktop: { video: `${R2}/hero-artistas-16x9-v1.mp4`, capa: `${R2}/hero-artistas-16x9-v1-capa.webp`, posicao: '100% 50%' },
+  celular: { video: `${R2}/hero-artistas-9x16-v1.mp4`, capa: `${R2}/hero-artistas-9x16-v1-capa.webp` },
+};
