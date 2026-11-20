@@ -1,0 +1,25 @@
+/* Relatório de prospecção por e-mail (/relatorio/email/bertolossi): números, lista de casas e a cópia do e-mail. */
+.rel-numeros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 0; max-width: 860px; border-top: var(--border-rule) solid var(--accent); }
+.rel-numeros__item { display: flex; flex-direction: column; gap: 6px; padding: var(--space-6) var(--space-4) 0 0; }
+.rel-numeros__item + .rel-numeros__item { padding-left: var(--space-4); border-left: 1px solid var(--border-default); }
+.rel-numeros dt { font-size: 11px; letter-spacing: .25em; text-transform: uppercase; color: var(--text-muted); }
+.rel-numeros dd { order: -1; margin: 0; font-size: clamp(40px, 8vw, 72px); font-weight: var(--weight-extrabold); font-stretch: var(--stretch-title); line-height: .9; color: var(--text-accent); }
+
+.rel-bloco { display: flex; flex-direction: column; gap: var(--space-4); max-width: 860px; }
+.rel-bloco__titulo { margin: 0; padding-top: var(--space-6); border-top: var(--border-rule) solid var(--accent); font-size: var(--text-h4); font-weight: var(--weight-extrabold); font-stretch: var(--stretch-title); text-transform: uppercase; color: var(--text-primary); }
+.rel-bloco__qtd { margin-left: 12px; font-size: 13px; font-weight: var(--weight-bold); letter-spacing: .2em; color: var(--text-accent); }
+.rel-nota { margin: 0; font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+.rel-casas { list-style: none; margin: 0; padding: 0; }
+.rel-casa { display: grid; grid-template-columns: 44px minmax(0, 1fr) minmax(0, 1.2fr); gap: var(--space-4); align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--border-default); }
+.rel-casa__num { font-size: 13px; font-weight: var(--weight-bold); letter-spacing: .2em; color: var(--text-accent); }
+.rel-casa__nome { font-size: 18px; font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: .02em; color: var(--text-primary); }
+.rel-casa__end { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+@media (max-width: 640px) {
+  .rel-casa { grid-template-columns: 36px minmax(0, 1fr); row-gap: 4px; }
+  .rel-casa__end { grid-column: 2; }
+}
+
+.rel-email { display: flex; flex-direction: column; gap: var(--space-3); }
+.rel-email iframe { display: block; width: 100%; max-width: 640px; border: 1px solid var(--border-default); background: #050505; }
+.rel-email__abrir { align-self: flex-start; font-size: 13px; letter-spacing: .06em; color: var(--text-accent); text-decoration: none; border-bottom: 1px solid currentColor; }
