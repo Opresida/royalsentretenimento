@@ -1,7 +1,7 @@
 import { agora } from '@/lib/financeiro/dinheiro';
 import { headers } from 'next/headers';
 import { alternarAdmin, renovarConvite } from '@/app/financeiro/acoes';
-import { CopiarTexto, FormEquipe, FormSenha } from '@/components/financeiro/Formularios';
+import { CopiarTexto, FormEquipe, FormSenha, FormSociosRoyals } from '@/components/financeiro/Formularios';
 import { exigirAdmin } from '@/lib/financeiro/auth';
 import { getDb, schema } from '@/db';
 import { asc } from 'drizzle-orm';
@@ -45,6 +45,11 @@ export default async function Equipe() {
           </ul>
         </section>
         <div>
+          <section className="fin-bloco" id="socios-royals">
+            <h2 className="fin-h2" style={{ marginBottom: 6 }}>Sócios da Royals</h2>
+            <p className="fin-sub" style={{ marginBottom: 16 }}>A % de cada sócio no Caixa Royals. O Caixa mostra quanto do saldo e do resultado do mês cabe a cada um, depois de tudo abatido. Deixe vazio quem não é sócio.</p>
+            <FormSociosRoyals pessoas={admins.filter((a) => a.ativo).map((a) => ({ id: a.id, nome: a.nome, cotaBp: a.cotaBp ?? null, pendente: a.senhaHash === '!' }))} />
+          </section>
           <section className="fin-bloco"><h2 className="fin-h2" style={{ marginBottom: 14 }}>Adicionar pessoa da Royals</h2><FormEquipe /></section>
           <section className="fin-bloco"><h2 className="fin-h2" style={{ marginBottom: 14 }}>Trocar minha senha</h2><FormSenha /></section>
         </div>

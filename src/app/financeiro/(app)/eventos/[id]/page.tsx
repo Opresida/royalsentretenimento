@@ -8,8 +8,9 @@ import { AoVivo } from '@/components/financeiro/AoVivo';
 import { CopiarLink, FormSocio } from '@/components/financeiro/Formularios';
 import { ListaLancamentos } from '@/components/financeiro/ListaLancamentos';
 import { QuadroFontes } from '@/components/financeiro/QuadroFontes';
-import { fontesDoEvento, STATUS_EVENTO, TAXA_ROTULO } from '@/lib/financeiro/calculo';
-import { lerEvento, pessoasConhecidas } from '@/lib/financeiro/dados';
+import { ContaFechamento, linhasPagar, QuantoPagar } from '@/components/financeiro/Fechamento';
+import { fontesDoEvento, STATUS_EVENTO } from '@/lib/financeiro/calculo';
+import { lerEvento, pessoasConhecidas, sociosDaRoyals } from '@/lib/financeiro/dados';
 import { dataLonga, pct, reais } from '@/lib/financeiro/dinheiro';
 
 type Aba = 'resumo' | 'custos' | 'receitas' | 'socios' | 'fechamento';
@@ -57,6 +58,8 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
   const pendentes = lancs.filter((l) => !l.quitado);
   const fontes = fontesDoEvento(lancs);
   const pessoas = aba === 'socios' && !fechado ? await pessoasConhecidas(ev.id) : [];
+  // a Royals não usa link de sócio: os sócios da Royals (Equipe) acompanham tudo pelo login
+  const socR = (aba === 'socios' && socios.some((s) => s.eRoyals)) || aba === 'fechamento' ? await sociosDaRoyals() : null;
 
   return (
     <>
@@ -145,6 +148,26 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
                   <div className="fin-socio__nome">{s.nome}</div>
                   <div className="fin-socio__cota">{pct(s.cotaBp)}</div>
                   <div className="fin-socio__info">aporte {reais(s.aporte)} · {s.eRoyals ? <span className="ouro">Royals</span> : !s.linkAtivo ? <span className="vermelho">link revogado</span> : s.ultimoAcesso ? <span className="verde">viu {new Date(s.ultimoAcesso).toLocaleDateString('pt-BR', { timeZone: 'America/Manaus', day: '2-digit', month: '2-digit' })}</span> : <span className="ambar">ainda não abriu</span>}</div>
+                  {s.eRoyals ? (
+                    <div className="fin-login-royals">
+                      <span className="fin-rot">Acompanham pelo login</span>
+                      <ul>
+                        {(socR?.lista ?? []).map((p) => (
+                          <li key={p.id}><span>{p.nome}{socR?.configurada && p.cotaBp ? <small className="fin-sub"> · {pct(p.cotaBp, 2)} da Royals</small> : null}</span>{p.pendente ? <Link className="ambar" href="/financeiro/equipe">ainda não criou a senha</Link> : <span className="verde">ativo</span>}</li>
+                        ))}
+                      </ul>
+                      <small className="fin-sub" style={{ fontSize: 12 }}>A parte da Royals entra no Caixa Royals no fechamento. Sem link de sócio: quem é da Equipe já vê tudo.</small>
+                      {!fechado ? (
+                        <details className="fin-detalhes" style={{ width: '100%' }}>
+                          <summary className="fin-mini">Editar sócio</summary>
+                          <div style={{ marginTop: 14 }}>
+                            <FormSocio eventoId={ev.id} s={{ id: s.id, nome: s.nome, contato: s.contato, aporteTxt: (s.aporte / 100).toFixed(2).replace('.', ','), cotaTxt: String(s.cotaBp / 100).replace('.', ','), eRoyals: s.eRoyals }} />
+                            <form action={excluirSocio} style={{ marginTop: 10 }}><input type="hidden" name="id" value={s.id} /><button className="fin-mini fin-mini--perigo">Remover sócio</button></form>
+                          </div>
+                        </details>
+                      ) : null}
+                    </div>
+                  ) : (
                   <div className="fin-socio__link">
                     {s.linkAtivo ? <CopiarLink url={`${origem}/socio/${s.token}`} nome={s.nome} evento={ev.nome} contato={s.contato} /> : null}
                     <div className="fin-socio__botoes">
@@ -163,6 +186,7 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
                       ) : null}
                     </div>
                   </div>
+                  )}
                 </div>
               ))}
               {!socios.length ? <p className="fin-vazio">Nenhum sócio ainda. Adicione quem investiu no evento, com o aporte e a cota combinada.</p> : null}
@@ -171,7 +195,7 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
           {!fechado ? (
             <section className="fin-bloco">
               <h2 className="fin-h2" style={{ marginBottom: 6 }}>Adicionar sócio</h2>
-              <p className="fin-sub" style={{ marginBottom: 18 }}>Cada sócio ganha um link pessoal: abre sem senha, só para ver, e você pode revogar quando quiser. No WhatsApp o link chega com a imagem do evento.</p>
+              <p className="fin-sub" style={{ marginBottom: 18 }}>Cada investidor ganha um link pessoal: abre sem senha, só para ver, e você pode revogar quando quiser. No WhatsApp o link chega com a imagem do evento. A Royals entra como um sócio só, sem link: a Equipe acompanha pelo login.</p>
               <FormSocio eventoId={ev.id} pessoas={pessoas} />
             </section>
           ) : null}
@@ -186,30 +210,14 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
             <section className="fin-bloco">
               <h2 className="fin-h2" style={{ marginBottom: 8 }}>Receitas → custos → lucro</h2>
               <Cascata receitas={c.receitas} custos={c.custos} taxa={c.taxa} lucro={c.lucro} />
-              <div className="fin-conta" style={{ marginTop: 18 }}>
-                {porCatRec.map(([k, v]) => <div key={k}><span>{k}</span><span className="verde">{reais(v)}</span></div>)}
-                <div><span>Receitas</span><b className="verde">{reais(c.receitas)}</b></div>
-                <div><span>− Custos</span><b className="vermelho">{reais(c.custos)}</b></div>
-                {ev.taxaTipo !== 'nenhuma' ? <div><span>− Taxa de produção Royals <small className="fin-sub">({ev.taxaTipo === 'fixo' ? 'valor fixo' : `${pct(ev.taxaValor)} ${TAXA_ROTULO[ev.taxaTipo].replace('% ', '')}`})</small></span><b className="ouro">{reais(c.taxa)}</b></div> : null}
-                <div className="fin-conta__total"><span>= Lucro líquido</span><span className={c.lucro >= 0 ? 'verde' : 'vermelho'}>{reais(c.lucro)}</span></div>
-              </div>
+              <div style={{ marginTop: 18 }}><ContaFechamento c={c} ev={ev} /></div>
             </section>
             <QuadroFontes f={fontes} titulo="Bilheteria × Bar no fechamento" />
             </div>
             <section className="fin-bloco">
-              <div className="fin-bloco__cab"><h2 className="fin-h2">Divisão entre sócios</h2>{c.retornoBp !== null ? <span className={`fin-selo ${c.retornoBp >= 0 ? '' : 'fin-selo--ao_vivo'}`} style={{ color: c.retornoBp >= 0 ? 'var(--verde)' : undefined, borderColor: c.retornoBp >= 0 ? 'rgba(95,179,122,.5)' : undefined }}>Retorno {c.retornoBp >= 0 ? '+' : ''}{pct(c.retornoBp)}</span> : null}</div>
-              {socios.length ? (
-                <div className="fin-tabela-rolo">
-                  <table className="fin-tabela fin-tabela--cartoes">
-                    <thead><tr><th>Sócio</th><th>Cota</th><th>Aporte de volta</th><th>Lucro</th><th>Total a receber</th></tr></thead>
-                    <tbody>{c.divisao.map((x) => (
-                      <tr key={x.id}><td>{x.nome}{x.eRoyals && !/royals/i.test(x.nome) ? <span className="ouro"> · Royals</span> : null}</td><td data-r="Cota">{pct(x.cotaBp)}</td><td data-r="Aporte de volta">{reais(x.aporte)}</td><td data-r="Lucro" className={x.lucro >= 0 ? 'verde' : 'vermelho'}>{reais(x.lucro)}</td><td data-r="Total a receber"><b>{reais(x.total)}</b></td></tr>
-                    ))}</tbody>
-                    <tfoot><tr><td>Total</td><td data-r="Cota" className={c.cotasOk ? '' : 'ambar'}>{pct(c.somaCotasBp)}</td><td data-r="Aporte de volta">{reais(c.aportes)}</td><td data-r="Lucro">{reais(c.divisao.reduce((s, x) => s + x.lucro, 0))}</td><td data-r="Total a receber">{reais(c.divisao.reduce((s, x) => s + x.total, 0))}</td></tr></tfoot>
-                  </table>
-                </div>
-              ) : <p className="fin-vazio">Cadastre os sócios na aba Sócios para ver a divisão.</p>}
-              {c.royalsRecebe ? <p className="fin-sub" style={{ marginTop: 14 }}>A Royals fica com <b className="ouro">{reais(c.royalsRecebe)}</b> ({c.taxa ? 'taxa de produção' : ''}{c.taxa && c.royalsRecebe !== c.taxa ? ' + ' : ''}{c.royalsRecebe !== c.taxa ? 'parte do lucro' : ''}). Isso entra no caixa da Royals ao fechar.</p> : null}
+              <div className="fin-bloco__cab"><h2 className="fin-h2">Quanto pagar a cada um</h2>{c.retornoBp !== null ? <span className={`fin-selo ${c.retornoBp >= 0 ? '' : 'fin-selo--ao_vivo'}`} style={{ color: c.retornoBp >= 0 ? 'var(--verde)' : undefined, borderColor: c.retornoBp >= 0 ? 'rgba(95,179,122,.5)' : undefined }}>Retorno {c.retornoBp >= 0 ? '+' : ''}{pct(c.retornoBp)}</span> : null}</div>
+              {socios.length || c.taxa ? <QuantoPagar c={c} linhas={linhasPagar(c, socR)} socR={socR} /> : <p className="fin-vazio">Cadastre os sócios na aba Sócios para ver quanto pagar a cada um.</p>}
+              {c.royalsRecebe ? <p className="fin-sub" style={{ marginTop: 14 }}>A parte da Royals ({reais(c.royalsRecebe)}) entra no Caixa Royals ao fechar o evento.</p> : null}
               {pendentes.length ? <p className="fin-aviso fin-aviso--ambar" style={{ marginTop: 14 }}>{pendentes.length} {pendentes.length === 1 ? 'lançamento ainda está' : 'lançamentos ainda estão'} a pagar ou a receber · {reais(pendentes.reduce((s, l) => s + l.valor, 0))}</p> : null}
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 20 }}>
                 <Link className="botao botao--secundario" href={`/financeiro/eventos/${ev.id}/prestacao`} target="_blank">Gerar PDF</Link>

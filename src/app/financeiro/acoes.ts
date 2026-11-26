@@ -280,6 +280,7 @@ export async function salvarSocio(_: Estado, f: FormData): Promise<Estado> {
     await registrar(admin, eventoId, 'socio_criado', { nome, aporte: reais(aporte), cota: cotaBp / 100 });
   }
   atualizar(eventoId);
+  if (eRoyals) return { ok: id ? 'Royals atualizada.' : 'Royals adicionada. Os sócios da Royals acompanham tudo pelo login, sem link.' };
   return { ok: id ? 'Sócio atualizado.' : 'Sócio adicionado. O link dele já está pronto.' };
 }
 
@@ -410,4 +411,23 @@ export async function alternarAdmin(f: FormData) {
   await db.update(finAdmins).set({ ativo: !a.ativo }).where(eq(finAdmins.id, id));
   await registrar(admin, null, a.ativo ? 'admin_desativado' : 'admin_reativado', { usuario: a.usuario });
   revalidatePath('/financeiro/equipe');
+}
+
+// ——— sócios da Royals (divisão do Caixa Royals entre eles) ———
+export async function salvarSociosRoyals(_: Estado, f: FormData): Promise<Estado> {
+  const admin = await exigirAdmin();
+  const db = await getDb();
+  const ativos = await db.select({ id: finAdmins.id, nome: finAdmins.nome }).from(finAdmins).where(eq(finAdmins.ativo, true));
+  const cotas = ativos.map((a) => {
+    const t = txt(f, `cota_${a.id}`);
+    return { ...a, bp: t ? lerPct(t) : null };
+  });
+  if (cotas.some((c) => c.bp !== null && (!Number.isFinite(c.bp) || c.bp < 0 || c.bp > 10000))) return { erro: 'Cada % vai de 0 a 100.' };
+  const marcados = cotas.filter((c) => c.bp);
+  const soma = marcados.reduce((s, c) => s + (c.bp ?? 0), 0);
+  if (marcados.length && soma !== 10000) return { erro: `As % somam ${String(soma / 100).replace('.', ',')}%. A divisão precisa fechar 100%.` };
+  for (const c of cotas) await db.update(finAdmins).set({ cotaBp: c.bp ? c.bp : null }).where(eq(finAdmins.id, c.id));
+  await registrar(admin, null, 'socios_royals', { divisao: marcados.map((c) => `${c.nome} ${String((c.bp ?? 0) / 100).replace('.', ',')}%`).join(' · ') || 'sem divisão' });
+  revalidatePath('/financeiro', 'layout');
+  return { ok: marcados.length ? 'Divisão salva.' : 'Divisão removida.' };
 }

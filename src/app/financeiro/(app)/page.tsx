@@ -2,8 +2,9 @@ import { exigirAdmin } from '@/lib/financeiro/auth';
 import Link from 'next/link';
 import { ListaLancamentos } from '@/components/financeiro/ListaLancamentos';
 import { CartaoEvento } from '@/components/financeiro/CartaoEvento';
-import { hojeManaus, nomeMes, reais } from '@/lib/financeiro/dinheiro';
-import { lancamentosDoCaixa, listarEventos } from '@/lib/financeiro/dados';
+import { hojeManaus, nomeMes, pct, reais } from '@/lib/financeiro/dinheiro';
+import { lancamentosDoCaixa, listarEventos, sociosDaRoyals } from '@/lib/financeiro/dados';
+import { dividirPorCota } from '@/lib/financeiro/calculo';
 
 export const metadata = { title: 'Caixa Royals' };
 
@@ -18,7 +19,7 @@ export default async function CaixaRoyals({ searchParams }: { searchParams: Prom
   const sp = await searchParams;
   const mesAtual = hojeManaus().slice(0, 7);
   const mes = /^\d{4}-\d{2}$/.test(sp.mes ?? '') ? sp.mes! : mesAtual;
-  const [caixa, eventos] = await Promise.all([lancamentosDoCaixa(), listarEventos()]);
+  const [caixa, eventos, socR] = await Promise.all([lancamentosDoCaixa(), listarEventos(), sociosDaRoyals()]);
 
   const saldo = caixa.filter((l) => l.quitado).reduce((s, l) => s + (l.tipo === 'receita' ? l.valor : -l.valor), 0);
   const doMes = caixa.filter((l) => l.data.startsWith(mes));
@@ -33,6 +34,10 @@ export default async function CaixaRoyals({ searchParams }: { searchParams: Prom
   });
   const maior = Math.max(1, ...meses.flatMap((x) => [x.e, x.s]));
   const abertos = eventos.filter((e) => e.status !== 'fechado');
+  // divisão entre os sócios da Royals: saldo em caixa (tudo abatido) e resultado do mês (entrou − saiu)
+  const cotasR = socR.configurada ? socR.lista.map((s) => s.cotaBp ?? 0) : [];
+  const partesSaldo = dividirPorCota(saldo, cotasR);
+  const partesMes = dividirPorCota(entradas - saidas, cotasR);
 
   return (
     <>
@@ -77,6 +82,31 @@ export default async function CaixaRoyals({ searchParams }: { searchParams: Prom
           <p className="fin-sub" style={{ fontSize: 12 }}><span className="ouro">■</span> entradas · <span className="vermelho">■</span> saídas do caixa da Royals</p>
         </section>
       </div>
+
+      <section className="fin-bloco fin-divisao" style={{ marginTop: 8 }}>
+        <div className="fin-bloco__cab"><h2 className="fin-h2">Divisão entre os sócios da Royals</h2><Link className="fin-mini" href="/financeiro/equipe#socios-royals">{socR.configurada ? 'Ajustar %' : 'Configurar'}</Link></div>
+        {socR.configurada ? (
+          <>
+            {socR.somaBp !== 10000 ? <p className="fin-aviso fin-aviso--ambar" style={{ marginBottom: 12 }}>As % somam {pct(socR.somaBp, 2)}. Ajuste na Equipe para fechar 100%.</p> : null}
+            <div className="fin-divisao__cab"><span>Sócio</span><span>%</span><span>Saldo em caixa</span><span>Resultado de {nomeMes(mes).split(' ')[0].toLowerCase()}</span></div>
+            <div className="fin-divisao__linhas">
+              {socR.lista.map((s, i) => (
+                <div key={s.id} className="fin-divisao__linha">
+                  <span className="fin-divisao__nome">{s.nome}</span>
+                  <span className="fin-divisao__pct">{pct(s.cotaBp ?? 0, 2)}</span>
+                  <span className="fin-divisao__vals">
+                    <span><small>saldo </small><b className={partesSaldo[i] < 0 ? 'vermelho' : ''}>{reais(partesSaldo[i])}</b></span>
+                    <span><small>mês </small><b className={partesMes[i] < 0 ? 'vermelho' : partesMes[i] > 0 ? 'verde' : ''}>{reais(partesMes[i], { sinal: true })}</b></span>
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="fin-sub" style={{ fontSize: 12, marginTop: 10 }}>Saldo em caixa {reais(saldo)} (só o que já foi pago e recebido) · resultado do mês {reais(entradas - saidas, { sinal: true })}.</p>
+          </>
+        ) : (
+          <p className="fin-vazio" style={{ textAlign: 'left' }}>A divisão ainda não foi configurada. Marque na Equipe a % de cada sócio da Royals e este quadro mostra quanto do caixa cabe a cada um.</p>
+        )}
+      </section>
 
       <section className="fin-bloco" style={{ marginTop: 8 }}>
         <div className="fin-bloco__cab">

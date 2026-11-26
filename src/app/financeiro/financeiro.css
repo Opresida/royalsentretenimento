@@ -330,3 +330,60 @@ body:has(.fin) { padding-bottom: 0 !important; }
 .fin-prestacao__topo img { height: 40px; }
 .fin-nao-imprime { margin-bottom: 20px; display: flex; gap: 10px; }
 @media print { .fin-nao-imprime { display: none !important; } .fin-prestacao { padding: 0; } @page { margin: 14mm; } }
+
+/* ——— sócios da Royals: divisão do caixa (Equipe e Caixa Royals) e login no cartão da Royals ——— */
+.fin-divisao-form { display: grid; border-top: 1px solid var(--border-subtle); }
+.fin-divisao-form__linha { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); font-size: 15px; color: var(--text-primary); }
+.fin-divisao-form__linha small { display: block; font-size: 12px; }
+.fin-divisao-form__pct { display: inline-flex; align-items: center; gap: 6px; color: var(--text-secondary); }
+.fin-divisao-form__pct input { width: 84px; text-align: right; padding: 10px 12px; background: var(--neutral-900); color: var(--text-primary); border: 1px solid var(--border-subtle); font: inherit; font-variant-numeric: tabular-nums; }
+.fin-divisao-form__pct input:focus { border-color: var(--royal-gold); }
+.fin-linha-botoes { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.fin-divisao { container-type: inline-size; }
+.fin-divisao__linhas { display: grid; }
+.fin-divisao__linha { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); }
+.fin-divisao__linha:last-child { border-bottom: 0; }
+.fin-divisao__nome { font-weight: 600; color: var(--text-primary); }
+.fin-divisao__pct { color: var(--royal-gold); font-weight: 700; text-align: right; }
+.fin-divisao__vals { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 13px; color: var(--text-secondary); }
+.fin-divisao__vals b { color: var(--text-primary); font-weight: 600; }
+@container (min-width: 560px) {
+  .fin-divisao__linha { grid-template-columns: minmax(0, 1.2fr) 80px 1fr 1fr; align-items: center; }
+  .fin-divisao__vals { display: contents; }
+  .fin-divisao__vals span { text-align: right; }
+  .fin-divisao__cab { display: grid; grid-template-columns: minmax(0, 1.2fr) 80px 1fr 1fr; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle); }
+  .fin-divisao__cab span:not(:first-child) { text-align: right; }
+  .fin-divisao__cab span:nth-child(2) { text-align: right; }
+}
+.fin-divisao__cab { display: none; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--text-muted); }
+@container (min-width: 560px) { .fin-divisao__cab { display: grid; } .fin-divisao__vals small { display: none; } }
+
+.fin-login-royals { grid-column: 1 / -1; margin-top: 10px; padding: 12px 14px; border: 1px solid var(--border-subtle); background: rgba(201,162,39,.05); display: grid; gap: 8px; }
+.fin-login-royals ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.fin-login-royals li { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; color: var(--text-primary); }
+.fin-login-royals li span:last-child { font-size: 12px; }
+
+/* ——— fechamento: quanto pagar a cada um ——— */
+.fin-conta__sub { font-weight: 600; color: var(--text-primary); }
+.fin-pagar .fin-pagar__total { font-size: 15px; }
+.fin-pagar .fin-pagar__total b { color: var(--royal-gold); font-weight: 800; }
+.fin-pagar .fin-pagar__total b.vermelho { color: var(--vermelho); }
+.fin-pagar__royals td { border-bottom-style: dashed; }
+.fin-pagar__interno td { font-size: 13px; color: var(--text-secondary); padding-top: 6px; padding-bottom: 6px; }
+.fin-pagar__interno td:first-child { padding-left: 18px; }
+.fin-pagar__interno .fin-pagar__total b { color: var(--text-primary); font-weight: 700; }
+/* a tabela vira cartões pelo tamanho da coluna (no computador o fechamento divide a tela em duas) */
+.fin-pagar-caixa { container-type: inline-size; }
+@container (max-width: 620px) {
+  .fin-pagar thead { display: none; }
+  .fin-pagar tr { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); }
+  .fin-pagar td { border: 0; padding: 0; text-align: left; white-space: normal; font-size: 13px; color: var(--text-secondary); }
+  .fin-pagar td::before { content: attr(data-r); display: block; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--text-muted); }
+  .fin-pagar td:first-child { grid-column: 1 / -1; font-size: 16px; font-weight: 700; color: var(--text-primary); }
+  .fin-pagar td:first-child::before { display: none; }
+  .fin-pagar tfoot tr { border-bottom: 0; }
+  .fin-pagar tr.fin-pagar__interno { padding: 6px 0 6px 18px; }
+  .fin-pagar tr.fin-pagar__interno td:first-child { font-size: 14px; padding-left: 0; }
+  .fin-pagar .fin-pagar__vazio { display: none; }
+}

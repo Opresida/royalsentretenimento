@@ -1,7 +1,7 @@
 'use client';
 // Formulários pequenos do Financeiro: entrar, evento, sócio, equipe; e o copiar link do sócio.
 import { useActionState, useState, type ChangeEvent } from 'react';
-import { criarAdmin, definirSenha, entrar, salvarEvento, salvarSocio, trocarSenha, type Estado } from '@/app/financeiro/acoes';
+import { criarAdmin, definirSenha, entrar, salvarEvento, salvarSocio, salvarSociosRoyals, trocarSenha, type Estado } from '@/app/financeiro/acoes';
 
 function Aviso({ e }: { e: Estado }) {
   if (e?.erro) return <p className="fin-aviso fin-aviso--erro" role="alert">{e.erro}</p>;
@@ -175,6 +175,53 @@ export function FormSenha() {
       <label className="fin-campo"><span>Nova senha</span><input type="password" name="nova" autoComplete="new-password" required minLength={10} /></label>
       <Aviso e={e} />
       <div><button className="botao botao--secundario" disabled={enviando}>{enviando ? 'Salvando…' : 'Trocar senha'}</button></div>
+    </form>
+  );
+}
+
+// Sócios da Royals (página Equipe): a % de cada um no Caixa Royals. Vazio = não é sócio. A soma aparece ao vivo.
+const bpTxt = (bp: number) => (bp % 100 === 0 ? String(bp / 100) : (bp / 100).toFixed(2).replace('.', ','));
+const txtBp = (t: string) => {
+  const n = Number(t.replace('%', '').replace(',', '.').trim());
+  return t.trim() && Number.isFinite(n) ? Math.round(n * 100) : null;
+};
+
+export function FormSociosRoyals({ pessoas }: { pessoas: { id: number; nome: string; cotaBp: number | null; pendente: boolean }[] }) {
+  const [e, acao, enviando] = useActionState<Estado, FormData>(salvarSociosRoyals, null);
+  const [vals, setVals] = useState<Record<number, string>>(() => Object.fromEntries(pessoas.map((p) => [p.id, p.cotaBp ? bpTxt(p.cotaBp) : ''])));
+  const marcados = pessoas.filter((p) => (vals[p.id] ?? '').trim());
+  const soma = marcados.reduce((s, p) => s + (txtBp(vals[p.id]) ?? 0), 0);
+  const invalido = marcados.some((p) => { const b = txtBp(vals[p.id]); return b === null || b < 0 || b > 10000; });
+  function dividirIgual() {
+    const alvo = marcados.length ? marcados : pessoas;
+    if (!alvo.length) return;
+    const base = Math.floor(10000 / alvo.length);
+    const resto = 10000 - base * alvo.length;
+    const novo: Record<number, string> = Object.fromEntries(pessoas.map((p) => [p.id, '']));
+    alvo.forEach((p, i) => { novo[p.id] = bpTxt(base + (i >= alvo.length - resto ? 1 : 0)); });
+    setVals(novo);
+  }
+  return (
+    <form action={acao} className="fin-form">
+      <div className="fin-divisao-form">
+        {pessoas.map((p) => (
+          <label key={p.id} className="fin-divisao-form__linha">
+            <span>{p.nome}{p.pendente ? <small className="ambar"> ainda não criou a senha</small> : null}</span>
+            <span className="fin-divisao-form__pct">
+              <input name={`cota_${p.id}`} inputMode="decimal" value={vals[p.id] ?? ''} placeholder="—" aria-label={`% de ${p.nome}`}
+                onChange={(x) => setVals((v) => ({ ...v, [p.id]: x.target.value }))} />%
+            </span>
+          </label>
+        ))}
+      </div>
+      <p className={`fin-aviso ${!marcados.length ? '' : soma === 10000 && !invalido ? 'fin-aviso--ok' : 'fin-aviso--ambar'}`} role="status">
+        {!marcados.length ? 'Ninguém marcado: o Caixa Royals não mostra divisão.' : invalido ? 'Confira os números: cada % vai de 0 a 100.' : soma === 10000 ? `Soma 100%. Fechado.` : `Soma ${bpTxt(soma)}%. Precisa fechar 100%.`}
+      </p>
+      <Aviso e={e} />
+      <div className="fin-linha-botoes">
+        <button type="button" className="botao botao--secundario" onClick={dividirIgual}>Dividir igual</button>
+        <button className="botao" disabled={enviando || invalido || (marcados.length > 0 && soma !== 10000)}>{enviando ? 'Salvando…' : 'Salvar divisão'}</button>
+      </div>
     </form>
   );
 }

@@ -11,6 +11,8 @@ export const finAdmins = pgTable('fin_admins', {
   // primeiro acesso: link de uso único para a pessoa criar a própria senha (nenhuma senha passa por mensagem)
   convite: text('convite'),
   conviteExpira: timestamp('convite_expira', { withTimezone: true }),
+  // sócio da Royals: a parte dele no Caixa Royals, em pontos-base (3334 = 33,34%). null = não é sócio da Royals.
+  cotaBp: integer('cota_bp'),
   criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [uniqueIndex('fin_admins_usuario').on(t.usuario)]);
 

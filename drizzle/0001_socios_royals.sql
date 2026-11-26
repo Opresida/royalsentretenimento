@@ -1,0 +1,1 @@
+ALTER TABLE "fin_admins" ADD COLUMN "cota_bp" integer;

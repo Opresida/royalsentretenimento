@@ -99,3 +99,15 @@ export const CATEGORIAS = {
   caixaCusto: ['Aluguel', 'Salários', 'Impostos', 'Ferramentas', 'Divulgação', 'Aporte em evento', 'Outros'],
   caixaReceita: ['Resultado de evento', 'Taxa de produção', 'Serviço', 'Outros'],
 };
+
+/** Divide um valor (centavos) pelas cotas (pontos-base). Com as cotas somando 100%, o centavo que sobrar do
+ *  arredondamento vai para o maior cotista, como no calcular(). Usado na divisão entre os sócios da Royals. */
+export function dividirPorCota(total: number, cotasBp: number[]): number[] {
+  const partes = cotasBp.map((c) => Math.trunc((total * c) / 10000));
+  const soma = cotasBp.reduce((a, b) => a + b, 0);
+  if (cotasBp.length && soma === 10000) {
+    const maior = cotasBp.reduce((iM, c, i) => (c > cotasBp[iM] ? i : iM), 0);
+    partes[maior] += total - partes.reduce((a, b) => a + b, 0);
+  }
+  return partes;
+}

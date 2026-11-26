@@ -2,8 +2,9 @@ import { exigirAdmin } from '@/lib/financeiro/auth';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Imprimir } from '@/components/financeiro/AoVivo';
-import { fontesDoEvento, STATUS_EVENTO, TAXA_ROTULO } from '@/lib/financeiro/calculo';
-import { lerEvento } from '@/lib/financeiro/dados';
+import { fontesDoEvento, STATUS_EVENTO } from '@/lib/financeiro/calculo';
+import { lerEvento, sociosDaRoyals } from '@/lib/financeiro/dados';
+import { linhasPagar, taxaTexto, totalADistribuir } from '@/components/financeiro/Fechamento';
 import { dataCurta, dataLonga, pct, reais } from '@/lib/financeiro/dinheiro';
 
 export const metadata = { title: 'Prestação de contas' };
@@ -14,6 +15,9 @@ export default async function Prestacao({ params }: { params: Promise<{ id: stri
   const d = await lerEvento(Number((await params).id));
   if (!d) notFound();
   const { ev, lancs, conta: c } = d;
+  const socR = await sociosDaRoyals();
+  const linhas = linhasPagar(c, socR);
+  const totalPg = (v: number) => (v < 0 ? `deve repor ${reais(-v)}` : reais(v));
   const hoje = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Manaus' });
   const f = fontesDoEvento(lancs);
   const tabela = (tipo: string) => lancs.filter((l) => l.tipo === tipo).sort((a, b) => a.data.localeCompare(b.data));
@@ -29,13 +33,16 @@ export default async function Prestacao({ params }: { params: Promise<{ id: stri
         <img src="/marca/royals-gold-on-light.svg" alt="Royals Entretenimento" />
       </div>
 
-      <h2>Resumo</h2>
+      <h2>Conta do evento</h2>
       <table><tbody>
-        <tr><td>Aporte dos sócios</td><td className="n">{reais(c.aportes)}</td></tr>
-        <tr><td>Receitas</td><td className="n">{reais(c.receitas)}</td></tr>
-        <tr><td>Custos</td><td className="n">− {reais(c.custos)}</td></tr>
-        {ev.taxaTipo !== 'nenhuma' ? <tr><td>Taxa de produção Royals ({ev.taxaTipo === 'fixo' ? 'valor fixo' : `${pct(ev.taxaValor)} ${TAXA_ROTULO[ev.taxaTipo].replace('% ', '')}`})</td><td className="n">− {reais(c.taxa)}</td></tr> : null}
-        <tr><td><b>Lucro líquido</b></td><td className="n"><b>{reais(c.lucro)}</b></td></tr>
+        <tr><td>Receitas (entradas)</td><td className="n">{reais(c.receitas)}</td></tr>
+        <tr><td>− Custos (todas as saídas)</td><td className="n">− {reais(c.custos)}</td></tr>
+        <tr><td><b>= Resultado bruto</b></td><td className="n"><b>{reais(c.resultado)}</b></td></tr>
+        {ev.taxaTipo !== 'nenhuma' ? <tr><td>− Taxa de produção Royals ({taxaTexto(ev)})</td><td className="n">− {reais(c.taxa)}</td></tr> : null}
+        <tr><td><b>= Lucro líquido</b></td><td className="n"><b>{reais(c.lucro)}</b></td></tr>
+        <tr><td>+ Capital dos investidores devolvido (soma dos aportes)</td><td className="n">{reais(c.aportes)}</td></tr>
+        {c.taxa ? <tr><td>+ Taxa de produção (vai para a Royals)</td><td className="n">{reais(c.taxa)}</td></tr> : null}
+        <tr><td><b>= Total a distribuir</b></td><td className="n"><b>{reais(totalADistribuir(c))}</b></td></tr>
         {c.retornoBp !== null ? <tr><td>Retorno sobre o aporte</td><td className="n">{pct(c.retornoBp)}</td></tr> : null}
       </tbody></table>
 
@@ -50,10 +57,15 @@ export default async function Prestacao({ params }: { params: Promise<{ id: stri
         {f.outros ? <tr><td>Outras receitas</td><td className="n">{reais(f.outros)}</td></tr> : null}
       </tbody></table>
 
-      <h2>Divisão entre sócios</h2>
+      <h2>Quanto pagar a cada um</h2>
+      {c.lucro < 0 ? <p style={{ fontSize: 12, margin: '0 0 8px' }}>Prejuízo de {reais(-c.lucro)}, dividido pela cota de cada sócio: o total a pagar é o aporte menos a parte do prejuízo. Valor negativo = o sócio deve repor.</p> : null}
       <table>
-        <thead><tr><th>Sócio</th><th className="n">Cota</th><th className="n">Aporte de volta</th><th className="n">Lucro</th><th className="n">Total a receber</th></tr></thead>
-        <tbody>{c.divisao.map((x) => <tr key={x.id}><td>{x.nome}</td><td className="n">{pct(x.cotaBp)}</td><td className="n">{reais(x.aporte)}</td><td className="n">{reais(x.lucro)}</td><td className="n"><b>{reais(x.total)}</b></td></tr>)}</tbody>
+        <thead><tr><th>Sócio</th><th className="n">Cota</th><th className="n">Aporte de volta</th><th className="n">{c.lucro >= 0 ? 'Parte do lucro' : 'Parte do prejuízo'}</th><th className="n">Total a pagar</th></tr></thead>
+        <tbody>{linhas.map((x) => [
+          <tr key={x.id}><td>{x.nome}{x.taxa ? ` (inclui taxa de produção ${reais(x.taxa)})` : ''}</td><td className="n">{x.cotaBp ? pct(x.cotaBp) : '—'}</td><td className="n">{reais(x.aporte)}</td><td className="n">{reais(x.lucro)}</td><td className="n"><b>{totalPg(x.total)}</b></td></tr>,
+          ...x.interno.map((p) => <tr key={`i${x.id}-${p.id}`}><td style={{ paddingLeft: 18 }}>↳ {p.nome} ({pct(p.cotaBp, 2)} da Royals)</td><td /><td /><td /><td className="n">{totalPg(p.valor)}</td></tr>),
+        ])}</tbody>
+        <tfoot><tr><td><b>Total</b></td><td className="n">{pct(c.somaCotasBp)}</td><td className="n">{reais(c.aportes)}</td><td className="n">{reais(c.lucro)}</td><td className="n"><b>{reais(linhas.reduce((s2, x) => s2 + x.total, 0))}</b></td></tr></tfoot>
       </table>
 
       {(['receita', 'custo'] as const).map((t) => (

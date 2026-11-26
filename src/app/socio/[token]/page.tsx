@@ -5,8 +5,9 @@ import { eq } from 'drizzle-orm';
 import { getDb, schema } from '@/db';
 import { AoVivo } from '@/components/financeiro/AoVivo';
 import { Clipe } from '@/components/financeiro/icones';
+import { ContaFechamento } from '@/components/financeiro/Fechamento';
 import { QuadroFontes } from '@/components/financeiro/QuadroFontes';
-import { fontesDoEvento, STATUS_EVENTO, TAXA_ROTULO } from '@/lib/financeiro/calculo';
+import { fontesDoEvento, STATUS_EVENTO } from '@/lib/financeiro/calculo';
 import { lerEvento, socioPorToken } from '@/lib/financeiro/dados';
 import { dataCurta, dataLonga, pct, reais } from '@/lib/financeiro/dinheiro';
 import '../../financeiro/financeiro.css';
@@ -79,7 +80,7 @@ export default async function AreaDoSocio({ params, searchParams }: { params: Pr
               </div>
               <div className="fin-voce__recebe">
                 <span className="fin-rot">{fechado ? 'Você recebe' : 'Você recebe (previsão)'}</span>
-                <b className={eu.total >= s.aporte ? 'verde' : 'vermelho'}>{reais(eu.total)}</b>
+                <b className={eu.total >= s.aporte ? 'verde' : 'vermelho'}>{eu.total < 0 ? `deve repor ${reais(-eu.total)}` : reais(eu.total)}</b>
                 <small>aporte {reais(s.aporte)} {eu.lucro >= 0 ? '+ lucro' : '− prejuízo'} {reais(Math.abs(eu.lucro))}</small>
               </div>
             </div>
@@ -89,7 +90,11 @@ export default async function AreaDoSocio({ params, searchParams }: { params: Pr
               <div><span className="fin-rot">Custos</span><b className="vermelho">{reais(c.custos, { inteiro: true })}</b></div>
               <div><span className="fin-rot">Lucro</span><b className={c.lucro >= 0 ? 'verde' : 'vermelho'}>{reais(c.lucro, { sinal: true, inteiro: true })}</b></div>
             </div>
-            {c.taxa ? <p className="fin-sub" style={{ fontSize: 13, marginTop: -12, marginBottom: 20 }}>Lucro já descontada a taxa de produção da Royals: {reais(c.taxa)} ({ev.taxaTipo === 'fixo' ? 'valor fixo' : `${pct(ev.taxaValor)} ${TAXA_ROTULO[ev.taxaTipo].replace('% ', '')}`}).</p> : null}
+            <section className="fin-bloco" style={{ marginBottom: 20 }}>
+              <h2 className="fin-h2" style={{ fontSize: 14, marginBottom: 6 }}>A conta do evento</h2>
+              <ContaFechamento c={c} ev={ev} capital={false} />
+              {c.lucro < 0 ? <p className="fin-sub" style={{ fontSize: 13, marginTop: 10 }}>O prejuízo é dividido pela cota de cada sócio: você recebe o seu aporte menos a sua parte do prejuízo.</p> : null}
+            </section>
             <QuadroFontes f={fontesDoEvento(lancs)} />
             {!fechado && (c.custosPendentes || c.receitasPendentes) ? <p className="fin-aviso fin-aviso--ambar" style={{ marginBottom: 20, fontSize: 13 }}>Previsão: ainda há {c.custosPendentes ? `${reais(c.custosPendentes)} a pagar` : ''}{c.custosPendentes && c.receitasPendentes ? ' e ' : ''}{c.receitasPendentes ? `${reais(c.receitasPendentes)} a receber` : ''}. Os valores mudam até o fechamento.</p> : null}
           </div>

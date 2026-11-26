@@ -102,3 +102,15 @@ export async function listarAdmins() {
   return db.select({ id: finAdmins.id, usuario: finAdmins.usuario, nome: finAdmins.nome, ativo: finAdmins.ativo, criadoEm: finAdmins.criadoEm })
     .from(finAdmins).orderBy(asc(finAdmins.id));
 }
+
+export type SocioRoyals = { id: number; nome: string; usuario: string; cotaBp: number | null; pendente: boolean };
+
+/** Sócios da Royals (Equipe ativa com % marcada na página Equipe). Sem divisão configurada, `configurada` é false e
+ *  a lista traz a Equipe ativa inteira: é quem acompanha os eventos pelo login. */
+export async function sociosDaRoyals(): Promise<{ configurada: boolean; somaBp: number; lista: SocioRoyals[] }> {
+  const db = await getDb();
+  const admins = await db.select().from(finAdmins).where(eq(finAdmins.ativo, true)).orderBy(asc(finAdmins.id));
+  const todos = admins.map((a) => ({ id: a.id, nome: a.nome, usuario: a.usuario, cotaBp: a.cotaBp ?? null, pendente: a.senhaHash === '!' }));
+  const com = todos.filter((a) => a.cotaBp !== null && a.cotaBp > 0);
+  return com.length ? { configurada: true, somaBp: com.reduce((s, a) => s + (a.cotaBp ?? 0), 0), lista: com } : { configurada: false, somaBp: 0, lista: todos };
+}
