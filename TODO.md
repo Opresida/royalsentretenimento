@@ -1,7 +1,8 @@
 # TODO
 
 ## Pendente
-- [ ] **Financeiro Royals (/financeiro):** pronto e testado no PC (26/11). Para publicar com o STARK: banco Neon (DATABASE_URL), `FIN_SESSAO_SEGREDO` na Vercel, push, `pnpm financeiro:admin` no banco de produção e mandar o link de primeiro acesso ao Humberto. Depois: domínio próprio (os links dos sócios usam o host atual).
+- [x] 26/11/2026 · **Financeiro Royals NO AR** (STARK): banco `royals` no projeto Neon da BrandSquad (credenciais em `~/.claude/secrets/royals-financeiro.env`), `DATABASE_URL` + `FIN_SESSAO_SEGREDO` na Vercel (produção), testado no ar e zerado; convite de primeiro acesso do admin `humberto` enviado.
+- [ ] Financeiro: domínio próprio (os links dos sócios usam o host atual; trocar de domínio = reenviar links). Comprovantes ficam no banco (base64): se crescer muito, mudar para R2 privado.
 - [x] Publicado em 16/10/2026 com o ok do Humberto: GitHub `Opresida/royalsentretenimento` (branch `main`) + Vercel `opresidas-projects/royalsentretenimento` → https://royalsentretenimento.vercel.app (push na `main` publica sozinho). OG novo (remotion-studio `Royals-OG`)
 - [ ] Domínio próprio e e-mail de contato da Royals (hoje o contato é só o Instagram)
 - [ ] Regras do programa de promoters e quem recebe os cadastros → abrir o formulário (e atualizar a política de privacidade antes)
