@@ -17,6 +17,7 @@ pnpm instagram      # = node scripts/instagram-sync.mjs  (só baixa e sobe o que
 Lê @royalsentretenimento pela API oficial da Meta (token em `~/.claude/secrets/meta.env`, fora do repo), converte a mídia (webp 600/1600, vídeo 720p) e sobe para o bucket público R2 `royals-acervo` (`https://pub-46e61d386ffa419b95ae09d732d774af.r2.dev`). Depois: commit do `src/data/instagram.json` e push.
 
 ## Rotas
+- `/financeiro` (uso interno, login) e `/socio/<link>` (sócio do evento, só leitura): ver ARCHITECTURE › Financeiro Royals.
 | Rota | O quê |
 |---|---|
 | `/` | Home no wireframe do brandbook (hero do próximo evento — sem evento à venda, o casting LUCCO + BERTOLOSSI em loop —, agenda, indicadores, manifesto, acervo, vídeos, promoters, Instagram, contato) |

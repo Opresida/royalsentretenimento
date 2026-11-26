@@ -68,3 +68,8 @@ Royals Entretenimento, produtora de eventos de trap e funk em Manaus (cliente da
 - O Baile das Bruxas (Chefin, 13/11) passou e ainda não há a data de dezembro. Pedido do Humberto: no lugar do topo do Chefin, o topo dos artistas da Royals, em loop, um pouco do DJ LUCCO e um pouco do DJ BERTOLOSSI; na barra fixa do celular, temporariamente, "Nos encontramos novamente em dezembro".
 - O topo e a barra voltam a ser do evento sozinhos quando o próximo evento com ingresso entrar em `eventos.ts`.
 - No vídeo só entram trechos com o artista aparecendo de rosto (na praia aberta e na pista cheia do LUCCO o rosto fica escondido: fora). Nenhuma logo de marca de terceiros em destaque (o painel do sol do LUCCO tem a logo de uma cerveja: fora).
+
+## Financeiro Royals (25–26/11/2026)
+- Pedido: financeiro digital da Royals (caixa da produtora) e de cada evento, com sócios investidores diferentes por evento; convite do sócio por link com OG do evento; acompanhamento em tempo real; comprovante opcional em cada lançamento; responsivo de verdade no celular e no computador.
+- Decisões do Humberto (26/11): divisão do lucro pela **% combinada** com cada sócio; **só a Royals lança**; **ele escolhe quais comprovantes** o sócio vê; a Royals cobra **taxa de produção, mas opcional** por evento; rota **/financeiro** já com admin.
+- Storyboard aprovado: `D:\CLIENTES BRANDSQUADS\Royals Entretenimento\Financeiro Royals\storyboard\`.

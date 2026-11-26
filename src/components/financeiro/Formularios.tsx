@@ -1,0 +1,156 @@
+'use client';
+// Formulários pequenos do Financeiro: entrar, evento, sócio, equipe; e o copiar link do sócio.
+import { useActionState, useState } from 'react';
+import { criarAdmin, definirSenha, entrar, salvarEvento, salvarSocio, trocarSenha, type Estado } from '@/app/financeiro/acoes';
+
+function Aviso({ e }: { e: Estado }) {
+  if (e?.erro) return <p className="fin-aviso fin-aviso--erro" role="alert">{e.erro}</p>;
+  if (e?.ok) return <p className="fin-aviso fin-aviso--ok" role="status">{e.ok}</p>;
+  return null;
+}
+
+export function FormEntrar() {
+  const [e, acao, enviando] = useActionState<Estado, FormData>(entrar, null);
+  return (
+    <form action={acao} className="fin-form">
+      <label className="fin-campo"><span>Usuário</span><input name="usuario" autoComplete="username" autoCapitalize="none" required /></label>
+      <label className="fin-campo"><span>Senha</span><input type="password" name="senha" autoComplete="current-password" required /></label>
+      <Aviso e={e} />
+      <button className="botao botao--lg" disabled={enviando}>{enviando ? 'Entrando…' : 'Entrar'}</button>
+    </form>
+  );
+}
+
+type Ev = { id?: number; nome?: string; data?: string | null; local?: string | null; status?: string; taxaTipo?: string; taxaValorTxt?: string; observacoes?: string | null };
+
+export function FormEvento({ ev }: { ev: Ev }) {
+  const [e, acao, enviando] = useActionState<Estado, FormData>(salvarEvento, null);
+  const [taxa, setTaxa] = useState(ev.taxaTipo ?? 'nenhuma');
+  return (
+    <form action={acao} className="fin-form">
+      {ev.id ? <input type="hidden" name="id" value={ev.id} /> : null}
+      <label className="fin-campo"><span>Nome do evento</span><input name="nome" defaultValue={ev.nome} required maxLength={80} placeholder="Ex.: Baile das Bruxas 2027" /></label>
+      <div className="fin-linha2">
+        <label className="fin-campo"><span>Data</span><input type="date" name="data" defaultValue={ev.data ?? ''} /></label>
+        <label className="fin-campo"><span>Local</span><input name="local" defaultValue={ev.local ?? ''} maxLength={80} /></label>
+      </div>
+      {ev.status !== 'fechado' ? (
+        <label className="fin-campo"><span>Situação</span>
+          <select name="status" defaultValue={ev.status ?? 'montagem'}>
+            <option value="montagem">Em montagem</option>
+            <option value="ao_vivo">Ao vivo (acontecendo ou acertando contas)</option>
+          </select>
+        </label>
+      ) : null}
+      <fieldset className="fin-campo" style={{ border: 0, padding: 0, margin: 0 }}>
+        <legend className="fin-legenda" style={{ marginBottom: 8 }}>Taxa de produção da Royals (opcional)</legend>
+        <select name="taxaTipo" value={taxa} onChange={(x) => setTaxa(x.target.value)}>
+          <option value="nenhuma">Sem taxa</option>
+          <option value="pct_receita">% sobre a receita do evento</option>
+          <option value="pct_lucro">% sobre o lucro do evento</option>
+          <option value="fixo">Valor fixo</option>
+        </select>
+        {taxa !== 'nenhuma' ? (
+          <input name="taxaValor" inputMode="decimal" defaultValue={ev.taxaValorTxt} placeholder={taxa === 'fixo' ? 'Valor em R$' : 'Percentual, ex.: 10'} required style={{ marginTop: 10 }} />
+        ) : null}
+        <small>Sai antes da divisão entre os sócios e entra no caixa da Royals quando o evento for fechado.</small>
+      </fieldset>
+      <label className="fin-campo"><span>Observações</span><textarea name="observacoes" defaultValue={ev.observacoes ?? ''} maxLength={600} /></label>
+      <Aviso e={e} />
+      <div className="fin-salvar"><button className="botao botao--lg" disabled={enviando}>{enviando ? 'Salvando…' : ev.id ? 'Salvar evento' : 'Criar evento'}</button></div>
+    </form>
+  );
+}
+
+type So = { id?: number; nome?: string; contato?: string | null; aporteTxt?: string; cotaTxt?: string; eRoyals?: boolean };
+
+export function FormSocio({ eventoId, s, onFeito }: { eventoId: number; s?: So; onFeito?: () => void }) {
+  const [e, acao, enviando] = useActionState<Estado, FormData>(async (p, f) => {
+    const r = await salvarSocio(p, f);
+    if (r?.ok) onFeito?.();
+    return r;
+  }, null);
+  return (
+    <form action={acao} className="fin-form" style={{ maxWidth: 'none' }}>
+      <input type="hidden" name="eventoId" value={eventoId} />
+      {s?.id ? <input type="hidden" name="id" value={s.id} /> : null}
+      <label className="fin-campo"><span>Nome</span><input name="nome" defaultValue={s?.nome} required maxLength={60} /></label>
+      <div className="fin-linha2">
+        <label className="fin-campo"><span>Aporte (R$)</span><input name="aporte" inputMode="decimal" defaultValue={s?.aporteTxt} placeholder="0,00" /></label>
+        <label className="fin-campo"><span>Cota combinada (%)</span><input name="cota" inputMode="decimal" defaultValue={s?.cotaTxt} placeholder="Ex.: 40" required /></label>
+      </div>
+      <label className="fin-campo"><span>WhatsApp (opcional)</span><input name="contato" inputMode="tel" defaultValue={s?.contato ?? ''} placeholder="Para enviar o link direto" maxLength={30} /></label>
+      <label className="fin-check"><input type="checkbox" name="eRoyals" defaultChecked={s?.eRoyals} /><span>É a própria Royals<small>A parte do lucro entra no caixa da Royals no fechamento.</small></span></label>
+      <Aviso e={e} />
+      <div><button className="botao" disabled={enviando}>{enviando ? 'Salvando…' : s?.id ? 'Salvar sócio' : 'Adicionar sócio'}</button></div>
+    </form>
+  );
+}
+
+export function CopiarLink({ url, nome, evento, contato }: { url: string; nome: string; evento: string; contato?: string | null }) {
+  const [copiado, setCopiado] = useState(false);
+  const texto = `Olá, ${nome}! Aqui está o seu acesso ao financeiro do evento ${evento}, da Royals. Você acompanha tudo em tempo real por este link pessoal: ${url}`;
+  const numero = (contato ?? '').replace(/\D/g, '');
+  const zap = `https://wa.me/${numero ? (numero.length <= 11 ? '55' + numero : numero) : ''}?text=${encodeURIComponent(texto)}`;
+  return (
+    <>
+      <div className="fin-copiar">
+        <input readOnly value={url} aria-label={`Link de ${nome}`} onFocus={(e) => e.currentTarget.select()} />
+        <button type="button" className="fin-mini fin-mini--ouro" style={{ height: 44 }} onClick={async () => { await navigator.clipboard.writeText(url); setCopiado(true); setTimeout(() => setCopiado(false), 1800); }}>
+          {copiado ? 'Copiado' : 'Copiar'}
+        </button>
+      </div>
+      <a className="fin-mini fin-mini--zap" href={zap} target="_blank" rel="noreferrer">Enviar no WhatsApp</a>
+    </>
+  );
+}
+
+export function FormEquipe() {
+  const [e, acao, enviando] = useActionState<Estado, FormData>(criarAdmin, null);
+  return (
+    <form action={acao} className="fin-form">
+      <div className="fin-linha2">
+        <label className="fin-campo"><span>Nome</span><input name="nome" required maxLength={60} /></label>
+        <label className="fin-campo"><span>Usuário</span><input name="usuario" required autoCapitalize="none" maxLength={32} /></label>
+      </div>
+      <small className="fin-sub" style={{ marginTop: -6 }}>A pessoa recebe um link de primeiro acesso e cria a própria senha. Nenhuma senha passa por mensagem.</small>
+      <Aviso e={e} />
+      <div><button className="botao" disabled={enviando}>{enviando ? 'Salvando…' : 'Gerar convite'}</button></div>
+    </form>
+  );
+}
+
+export function FormDefinirSenha({ convite }: { convite: string }) {
+  const [e, acao, enviando] = useActionState<Estado, FormData>(definirSenha, null);
+  return (
+    <form action={acao} className="fin-form">
+      <input type="hidden" name="convite" value={convite} />
+      <label className="fin-campo"><span>Nova senha</span><input type="password" name="senha" autoComplete="new-password" required minLength={10} /><small>Pelo menos 10 caracteres.</small></label>
+      <label className="fin-campo"><span>Repita a senha</span><input type="password" name="confirmar" autoComplete="new-password" required minLength={10} /></label>
+      <Aviso e={e} />
+      <button className="botao botao--lg" disabled={enviando}>{enviando ? 'Salvando…' : 'Criar senha e entrar'}</button>
+    </form>
+  );
+}
+
+export function CopiarTexto({ valor, rotulo }: { valor: string; rotulo: string }) {
+  const [ok, setOk] = useState(false);
+  return (
+    <div className="fin-copiar" style={{ marginTop: 8 }}>
+      <input readOnly value={valor} aria-label={rotulo} onFocus={(x) => x.currentTarget.select()} />
+      <button type="button" className="fin-mini fin-mini--ouro" style={{ height: 44 }} onClick={async () => { await navigator.clipboard.writeText(valor); setOk(true); setTimeout(() => setOk(false), 1800); }}>{ok ? 'Copiado' : 'Copiar'}</button>
+    </div>
+  );
+}
+
+export function FormSenha() {
+  const [e, acao, enviando] = useActionState<Estado, FormData>(trocarSenha, null);
+  return (
+    <form action={acao} className="fin-form">
+      <label className="fin-campo"><span>Senha atual</span><input type="password" name="atual" autoComplete="current-password" required /></label>
+      <label className="fin-campo"><span>Nova senha</span><input type="password" name="nova" autoComplete="new-password" required minLength={10} /></label>
+      <Aviso e={e} />
+      <div><button className="botao botao--secundario" disabled={enviando}>{enviando ? 'Salvando…' : 'Trocar senha'}</button></div>
+    </form>
+  );
+}

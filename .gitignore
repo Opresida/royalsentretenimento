@@ -49,3 +49,6 @@ next-env.d.ts
 
 # mídia baixada do Instagram (vai para o R2, não para o repositório)
 /.acervo/
+
+# banco local do Financeiro (PGlite)
+/.data/

@@ -4,14 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3500",
-    "build": "next build",
+    "build": "tsx scripts/migrate.ts && next build",
     "start": "next start -p 3500",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "instagram": "node scripts/instagram-sync.mjs",
-    "acervo": "node scripts/acervo-classificar.mjs"
+    "acervo": "node scripts/acervo-classificar.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "financeiro:admin": "tsx scripts/financeiro-admin.ts"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.5.17",
+    "@neondatabase/serverless": "^1.2.1",
+    "drizzle-orm": "^0.45.4",
     "next": "16.3.8",
     "react": "19.2.8",
     "react-dom": "19.2.8"
@@ -20,11 +26,13 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
-    "typescript": "^5",
     "ffmpeg-static": "^5.2.0",
-    "sharp": "^0.34.0"
+    "sharp": "^0.34.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
   },
   "packageManager": "pnpm@12.8.1"
 }
