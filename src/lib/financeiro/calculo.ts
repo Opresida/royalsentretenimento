@@ -56,6 +56,34 @@ export function calcular(ev: EventoCalc, lancs: LancCalc[], socios: SocioCalc[])
   };
 }
 
+// Bilheteria × Bar (pedido do Humberto, 26/11/2026): de onde veio o dinheiro do evento e quanto sobrou do bar.
+export type Fontes = {
+  bilheteria: number;
+  camarote: number;
+  bar: { vendas: number; custo: number; sobra: number };
+  patrocinio: number;
+  outros: number; // receitas de outras categorias
+  receitas: number;
+};
+
+export function fontesDoEvento(lancs: { tipo: string; categoria: string; valor: number }[]): Fontes {
+  const f: Fontes = { bilheteria: 0, camarote: 0, bar: { vendas: 0, custo: 0, sobra: 0 }, patrocinio: 0, outros: 0, receitas: 0 };
+  const chave = (c: string) => c.normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase();
+  for (const l of lancs) {
+    const c = chave(l.categoria);
+    if (l.tipo === 'receita') {
+      f.receitas += l.valor;
+      if (c === 'bilheteria') f.bilheteria += l.valor;
+      else if (c === 'camarote') f.camarote += l.valor;
+      else if (c === 'bar') f.bar.vendas += l.valor;
+      else if (c === 'patrocinio') f.patrocinio += l.valor;
+      else f.outros += l.valor;
+    } else if (c === 'bar') f.bar.custo += l.valor;
+  }
+  f.bar.sobra = f.bar.vendas - f.bar.custo;
+  return f;
+}
+
 export const TAXA_ROTULO: Record<string, string> = {
   nenhuma: 'Sem taxa de produção',
   pct_receita: '% sobre a receita',

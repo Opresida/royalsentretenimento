@@ -5,7 +5,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { getDb, schema } from '@/db';
 import { apagarSessao, conferirSenha, exigirAdmin, gravarSessao, hashSenha, novoTokenSocio, type Admin } from '@/lib/financeiro/auth';
-import { calcular } from '@/lib/financeiro/calculo';
+import { CATEGORIAS, calcular } from '@/lib/financeiro/calculo';
+import { ehCsv, ErroImportar, lerComIA, MAX_IMPORTAR, TIPOS_ACEITOS, type Leitura } from '@/lib/financeiro/importar';
 import { hojeManaus, lerPct, lerReais, reais } from '@/lib/financeiro/dinheiro';
 
 const { finAdmins, finEventos, finLancamentos, finSocios, finComprovantes, finHistorico } = schema;
@@ -23,6 +24,15 @@ async function registrar(admin: Admin, eventoId: number | null, acao: string, de
 function atualizar(eventoId?: number | null) {
   revalidatePath('/financeiro', 'layout');
   if (eventoId) revalidatePath(`/financeiro/eventos/${eventoId}`);
+}
+
+// o comprovante de uma importação é dividido por vários lançamentos: só apaga quando ninguém mais usa
+async function apagarComprovanteSeSolto(id: number | null | undefined, menosLancamento?: number) {
+  if (!id) return;
+  const db = await getDb();
+  const usos = await db.select({ id: finLancamentos.id }).from(finLancamentos).where(eq(finLancamentos.comprovanteId, id));
+  if (usos.some((u) => u.id !== menosLancamento)) return;
+  await db.delete(finComprovantes).where(eq(finComprovantes.id, id));
 }
 
 async function eventoAberto(id: number) {
@@ -92,9 +102,10 @@ export async function excluirEvento(f: FormData) {
   if (txt(f, 'confirmar').toUpperCase() !== 'EXCLUIR') redirect(`/financeiro/eventos/${id}/editar?erro=confirmar`);
   const db = await getDb();
   const comps = (await db.select({ c: finLancamentos.comprovanteId }).from(finLancamentos).where(eq(finLancamentos.eventoId, id))).map((x) => x.c).filter((x): x is number => !!x);
+  const compsUnicos = [...new Set(comps)];
   await db.delete(finLancamentos).where(eq(finLancamentos.origemEventoId, id));
   await db.delete(finEventos).where(eq(finEventos.id, id)); // lançamentos e sócios vão junto (cascade)
-  if (comps.length) await db.delete(finComprovantes).where(inArray(finComprovantes.id, comps));
+  if (compsUnicos.length) await db.delete(finComprovantes).where(inArray(finComprovantes.id, compsUnicos));
   await registrar(admin, null, 'evento_excluido', { id });
   atualizar();
   redirect('/financeiro');
@@ -123,7 +134,7 @@ export async function salvarLancamento(_: Estado, f: FormData): Promise<Estado> 
   if (id) {
     [anterior] = await db.select().from(finLancamentos).where(eq(finLancamentos.id, id)).limit(1);
     if (!anterior) return { erro: 'Lançamento não encontrado.' };
-    if (anterior.origem !== 'manual') return { erro: 'Este lançamento foi criado pelo fechamento de um evento.' };
+    if (anterior.origem === 'fechamento') return { erro: 'Este lançamento foi criado pelo fechamento de um evento.' };
     if (anterior.eventoId && !(await eventoAberto(anterior.eventoId))) return { erro: 'Este evento está fechado. Reabra para editar.' };
   }
 
@@ -134,10 +145,10 @@ export async function salvarLancamento(_: Estado, f: FormData): Promise<Estado> 
     if (!/^image\/(jpeg|png|webp|heic|heif|gif)$|^application\/pdf$/.test(arq.type)) return { erro: 'O comprovante precisa ser foto (JPG, PNG, WEBP, HEIC) ou PDF.' };
     const dados = Buffer.from(await arq.arrayBuffer()).toString('base64');
     const [c] = await db.insert(finComprovantes).values({ nome: arq.name || 'comprovante', mime: arq.type, tamanho: arq.size, dados }).returning({ id: finComprovantes.id });
-    if (comprovanteId) await db.delete(finComprovantes).where(eq(finComprovantes.id, comprovanteId));
+    await apagarComprovanteSeSolto(comprovanteId, id ?? undefined);
     comprovanteId = c.id;
   } else if (f.get('removerComprovante') === 'on' && comprovanteId) {
-    await db.delete(finComprovantes).where(eq(finComprovantes.id, comprovanteId));
+    await apagarComprovanteSeSolto(comprovanteId, id ?? undefined);
     comprovanteId = null;
   }
 
@@ -160,9 +171,9 @@ export async function excluirLancamento(f: FormData) {
   const [l] = await db.select().from(finLancamentos).where(eq(finLancamentos.id, id)).limit(1);
   if (!l) redirect('/financeiro');
   if (l.eventoId && !(await eventoAberto(l.eventoId))) redirect(`/financeiro/eventos/${l.eventoId}?erro=fechado`);
-  if (l.origem !== 'manual') redirect('/financeiro');
+  if (l.origem === 'fechamento') redirect('/financeiro');
   await db.delete(finLancamentos).where(eq(finLancamentos.id, id));
-  if (l.comprovanteId) await db.delete(finComprovantes).where(eq(finComprovantes.id, l.comprovanteId));
+  await apagarComprovanteSeSolto(l.comprovanteId);
   await registrar(admin, l.eventoId, 'lancamento_excluido', { id, descricao: l.descricao, valor: reais(l.valor), tipo: l.tipo });
   atualizar(l.eventoId);
   redirect(l.eventoId ? `/financeiro/eventos/${l.eventoId}?aba=${l.tipo === 'receita' ? 'receitas' : 'custos'}` : '/financeiro');
@@ -178,6 +189,72 @@ export async function alternarMostrar(f: FormData) {
   await db.update(finLancamentos).set({ mostrarAoSocio: !l.mostrarAoSocio }).where(eq(finLancamentos.id, id));
   await registrar(admin, l.eventoId, l.mostrarAoSocio ? 'comprovante_ocultado' : 'comprovante_mostrado', { id, descricao: l.descricao });
   atualizar(l.eventoId);
+}
+
+// ——— importar com IA ———
+// 1º passo: a IA lê o arquivo e devolve a proposta (nada é gravado). O admin confere na tela.
+export type RespostaLeitura = { erro: string } | { leitura: Leitura };
+
+export async function lerArquivoImportar(f: FormData): Promise<RespostaLeitura> {
+  await exigirAdmin();
+  const eventoId = Number(txt(f, 'eventoId'));
+  const ev = await eventoAberto(eventoId);
+  if (!ev) return { erro: 'Este evento está fechado. Reabra para importar.' };
+  const arq = f.get('arquivo');
+  if (!(arq instanceof File) || !arq.size) return { erro: 'Escolha um arquivo.' };
+  if (arq.size > MAX_IMPORTAR) return { erro: 'O arquivo passa de 4 MB. Separe em partes menores ou mande um PDF mais leve.' };
+  const mime = arq.type || (/\.csv$/i.test(arq.name) ? 'text/csv' : '');
+  if (/\.xlsx?$/i.test(arq.name) && !ehCsv(arq.name, mime)) return { erro: 'Planilha do Excel ainda não. No Excel: Arquivo › Salvar como › CSV, e suba o CSV. Ou mande em PDF.' };
+  if (!TIPOS_ACEITOS.test(mime)) return { erro: 'Mande um CSV, PDF ou foto (JPG, PNG, WEBP, HEIC).' };
+  try {
+    const leitura = await lerComIA({ nome: arq.name, mime, buf: Buffer.from(await arq.arrayBuffer()) }, { nome: ev.nome, data: ev.data });
+    if (!leitura.itens.length) return { erro: `A IA não achou lançamentos neste arquivo.${leitura.observacoes ? ` ${leitura.observacoes}` : ''}` };
+    return { leitura };
+  } catch (e) {
+    if (e instanceof ErroImportar) return { erro: e.message };
+    console.error('importar: falha inesperada', e instanceof Error ? e.name : 'erro'); // sem conteúdo do arquivo no log
+    return { erro: 'Não deu para ler o arquivo agora. Tente de novo em instantes.' };
+  }
+}
+
+// 2º passo: grava só os itens que o admin marcou, com o arquivo original anexado UMA vez como comprovante.
+export async function lancarImportados(_: Estado, f: FormData): Promise<Estado> {
+  const admin = await exigirAdmin();
+  const eventoId = Number(txt(f, 'eventoId'));
+  const ev = await eventoAberto(eventoId);
+  if (!ev) return { erro: 'Este evento está fechado. Reabra para importar.' };
+  let brutos: unknown;
+  try { brutos = JSON.parse(String(f.get('itens') ?? '[]')); } catch { return { erro: 'Não deu para ler a lista. Recarregue a página.' }; }
+  if (!Array.isArray(brutos) || !brutos.length) return { erro: 'Marque pelo menos um lançamento.' };
+  if (brutos.length > 300) return { erro: 'São mais de 300 lançamentos. Agrupe antes de importar.' };
+  const hoje = hojeManaus();
+  const itens: { tipo: string; descricao: string; categoria: string; valor: number; quitado: boolean; data: string }[] = [];
+  for (const b of brutos) {
+    const o = (b ?? {}) as Record<string, unknown>;
+    const tipo = o.tipo === 'custo' ? 'custo' : 'receita';
+    const valor = lerReais(String(o.valor ?? ''));
+    const descricao = String(o.descricao ?? '').trim().slice(0, 120);
+    const lista: string[] = tipo === 'custo' ? CATEGORIAS.custo : CATEGORIAS.receita;
+    const categoria = lista.includes(String(o.categoria)) ? String(o.categoria) : 'Outros';
+    const data = typeof o.data === 'string' && dataOk(o.data) ? o.data : ev.data && dataOk(ev.data) ? ev.data : hoje;
+    if (!descricao) return { erro: 'Tem lançamento sem descrição.' };
+    if (!Number.isFinite(valor) || valor <= 0) return { erro: `Confira o valor de "${descricao}".` };
+    itens.push({ tipo, descricao, categoria, valor, quitado: o.quitado !== false, data });
+  }
+  const db = await getDb();
+  let comprovanteId: number | null = null;
+  const arq = f.get('arquivo');
+  if (arq instanceof File && arq.size > 0 && arq.size <= MAX_IMPORTAR) {
+    const mime = arq.type || (/\.csv$/i.test(arq.name) ? 'text/csv' : 'application/octet-stream');
+    const [c] = await db.insert(finComprovantes).values({ nome: arq.name || 'importado', mime, tamanho: arq.size, dados: Buffer.from(await arq.arrayBuffer()).toString('base64') }).returning({ id: finComprovantes.id });
+    comprovanteId = c.id;
+  }
+  await db.insert(finLancamentos).values(itens.map((i) => ({ ...i, eventoId, comprovanteId, mostrarAoSocio: false, origem: 'importacao', criadoPor: admin.id })));
+  const total = itens.reduce((s, i) => s + (i.tipo === 'receita' ? i.valor : -i.valor), 0);
+  await registrar(admin, eventoId, 'lancamentos_importados', { descricao: `${itens.length} lançamento${itens.length > 1 ? 's' : ''} de ${arq instanceof File ? arq.name : 'arquivo'}`, valor: reais(total) });
+  atualizar(eventoId);
+  const soReceita = itens.every((i) => i.tipo === 'receita');
+  redirect(`/financeiro/eventos/${eventoId}?aba=${soReceita ? 'receitas' : itens.every((i) => i.tipo === 'custo') ? 'custos' : 'resumo'}&importados=${itens.length}`);
 }
 
 // ——— sócios ———

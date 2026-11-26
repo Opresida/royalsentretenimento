@@ -2,7 +2,7 @@ import { exigirAdmin } from '@/lib/financeiro/auth';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Imprimir } from '@/components/financeiro/AoVivo';
-import { STATUS_EVENTO, TAXA_ROTULO } from '@/lib/financeiro/calculo';
+import { fontesDoEvento, STATUS_EVENTO, TAXA_ROTULO } from '@/lib/financeiro/calculo';
 import { lerEvento } from '@/lib/financeiro/dados';
 import { dataCurta, dataLonga, pct, reais } from '@/lib/financeiro/dinheiro';
 
@@ -15,6 +15,7 @@ export default async function Prestacao({ params }: { params: Promise<{ id: stri
   if (!d) notFound();
   const { ev, lancs, conta: c } = d;
   const hoje = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Manaus' });
+  const f = fontesDoEvento(lancs);
   const tabela = (tipo: string) => lancs.filter((l) => l.tipo === tipo).sort((a, b) => a.data.localeCompare(b.data));
   return (
     <div className="fin-prestacao" style={{ position: 'fixed', inset: 0, overflow: 'auto', zIndex: 100 }}>
@@ -36,6 +37,17 @@ export default async function Prestacao({ params }: { params: Promise<{ id: stri
         {ev.taxaTipo !== 'nenhuma' ? <tr><td>Taxa de produção Royals ({ev.taxaTipo === 'fixo' ? 'valor fixo' : `${pct(ev.taxaValor)} ${TAXA_ROTULO[ev.taxaTipo].replace('% ', '')}`})</td><td className="n">− {reais(c.taxa)}</td></tr> : null}
         <tr><td><b>Lucro líquido</b></td><td className="n"><b>{reais(c.lucro)}</b></td></tr>
         {c.retornoBp !== null ? <tr><td>Retorno sobre o aporte</td><td className="n">{pct(c.retornoBp)}</td></tr> : null}
+      </tbody></table>
+
+      <h2>Bilheteria × Bar</h2>
+      <table><tbody>
+        <tr><td>Bilheteria</td><td className="n">{reais(f.bilheteria)}</td></tr>
+        {f.camarote ? <tr><td>Camarote</td><td className="n">{reais(f.camarote)}</td></tr> : null}
+        <tr><td>Bar · vendas</td><td className="n">{reais(f.bar.vendas)}</td></tr>
+        <tr><td>Bar · custo</td><td className="n">− {reais(f.bar.custo)}</td></tr>
+        <tr><td><b>Sobra do bar</b></td><td className="n"><b>{reais(f.bar.sobra)}</b>{f.bar.vendas > 0 ? ` (${Math.round((f.bar.sobra / f.bar.vendas) * 100)}%)` : ''}</td></tr>
+        {f.patrocinio ? <tr><td>Patrocínio</td><td className="n">{reais(f.patrocinio)}</td></tr> : null}
+        {f.outros ? <tr><td>Outras receitas</td><td className="n">{reais(f.outros)}</td></tr> : null}
       </tbody></table>
 
       <h2>Divisão entre sócios</h2>

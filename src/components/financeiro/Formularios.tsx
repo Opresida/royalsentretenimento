@@ -1,6 +1,6 @@
 'use client';
 // Formulários pequenos do Financeiro: entrar, evento, sócio, equipe; e o copiar link do sócio.
-import { useActionState, useState } from 'react';
+import { useActionState, useState, type ChangeEvent } from 'react';
 import { criarAdmin, definirSenha, entrar, salvarEvento, salvarSocio, trocarSenha, type Estado } from '@/app/financeiro/acoes';
 
 function Aviso({ e }: { e: Estado }) {
@@ -63,17 +63,41 @@ export function FormEvento({ ev }: { ev: Ev }) {
 }
 
 type So = { id?: number; nome?: string; contato?: string | null; aporteTxt?: string; cotaTxt?: string; eRoyals?: boolean };
+type Pessoa = { nome: string; contato: string | null; eRoyals: boolean; origem: 'royals' | 'equipe' | 'socio' };
+const GRUPO = { royals: 'A própria Royals', equipe: 'Equipe da Royals', socio: 'Já foram sócios' } as const;
 
-export function FormSocio({ eventoId, s, onFeito }: { eventoId: number; s?: So; onFeito?: () => void }) {
+export function FormSocio({ eventoId, s, onFeito, pessoas }: { eventoId: number; s?: So; onFeito?: () => void; pessoas?: Pessoa[] }) {
   const [e, acao, enviando] = useActionState<Estado, FormData>(async (p, f) => {
     const r = await salvarSocio(p, f);
     if (r?.ok) onFeito?.();
     return r;
   }, null);
+  // escolher alguém já cadastrado preenche nome, WhatsApp e "é a Royals"; aporte e cota continuam a ser digitados
+  const escolher = (x: ChangeEvent<HTMLSelectElement>) => {
+    const p = pessoas?.[Number(x.target.value)];
+    const form = x.target.form;
+    if (!p || !form) return;
+    (form.elements.namedItem('nome') as HTMLInputElement).value = p.nome;
+    (form.elements.namedItem('contato') as HTMLInputElement).value = p.contato ?? '';
+    (form.elements.namedItem('eRoyals') as HTMLInputElement).checked = p.eRoyals;
+    (form.elements.namedItem('aporte') as HTMLInputElement).focus();
+  };
+  const grupos = (['royals', 'equipe', 'socio'] as const).map((g) => [g, (pessoas ?? []).map((p, i) => ({ ...p, i })).filter((p) => p.origem === g)] as const).filter(([, l]) => l.length);
   return (
     <form action={acao} className="fin-form" style={{ maxWidth: 'none' }}>
       <input type="hidden" name="eventoId" value={eventoId} />
       {s?.id ? <input type="hidden" name="id" value={s.id} /> : null}
+      {!s?.id && grupos.length ? (
+        <label className="fin-campo"><span>Escolher pessoa já cadastrada</span>
+          <select defaultValue="" onChange={escolher} aria-describedby="fin-escolher-ajuda">
+            <option value="" disabled>Selecione ou digite um nome novo abaixo</option>
+            {grupos.map(([g, l]) => (
+              <optgroup key={g} label={GRUPO[g]}>{l.map((p) => <option key={p.i} value={p.i}>{p.nome}{p.contato ? ` · ${p.contato}` : ''}</option>)}</optgroup>
+            ))}
+          </select>
+          <small id="fin-escolher-ajuda">Quem está na Equipe e quem já foi sócio em outro evento aparece aqui. Aporte e cota são deste evento.</small>
+        </label>
+      ) : null}
       <label className="fin-campo"><span>Nome</span><input name="nome" defaultValue={s?.nome} required maxLength={60} /></label>
       <div className="fin-linha2">
         <label className="fin-campo"><span>Aporte (R$)</span><input name="aporte" inputMode="decimal" defaultValue={s?.aporteTxt} placeholder="0,00" /></label>

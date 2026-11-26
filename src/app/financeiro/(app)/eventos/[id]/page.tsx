@@ -7,8 +7,9 @@ import { excluirSocio, fecharEvento, gerenciarLink, reabrirEvento } from '@/app/
 import { AoVivo } from '@/components/financeiro/AoVivo';
 import { CopiarLink, FormSocio } from '@/components/financeiro/Formularios';
 import { ListaLancamentos } from '@/components/financeiro/ListaLancamentos';
-import { STATUS_EVENTO, TAXA_ROTULO } from '@/lib/financeiro/calculo';
-import { lerEvento } from '@/lib/financeiro/dados';
+import { QuadroFontes } from '@/components/financeiro/QuadroFontes';
+import { fontesDoEvento, STATUS_EVENTO, TAXA_ROTULO } from '@/lib/financeiro/calculo';
+import { lerEvento, pessoasConhecidas } from '@/lib/financeiro/dados';
 import { dataLonga, pct, reais } from '@/lib/financeiro/dinheiro';
 
 type Aba = 'resumo' | 'custos' | 'receitas' | 'socios' | 'fechamento';
@@ -18,7 +19,7 @@ const ACOES: Record<string, string> = {
   evento_criado: 'criou o evento', evento_editado: 'editou o evento', lancamento_criado: 'lançou', lancamento_editado: 'alterou',
   lancamento_excluido: 'excluiu', socio_criado: 'adicionou o sócio', socio_editado: 'alterou o sócio', socio_excluido: 'removeu o sócio',
   link_revogar: 'revogou o link de', link_novo: 'gerou link novo para', link_reativar: 'reativou o link de', evento_fechado: 'fechou o evento',
-  evento_reaberto: 'reabriu o evento', comprovante_mostrado: 'mostrou aos sócios o comprovante de', comprovante_ocultado: 'escondeu dos sócios o comprovante de',
+  evento_reaberto: 'reabriu o evento', lancamentos_importados: 'importou com IA', comprovante_mostrado: 'mostrou aos sócios o comprovante de', comprovante_ocultado: 'escondeu dos sócios o comprovante de',
 };
 
 function detalheTxt(d: unknown): string {
@@ -36,7 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return { title: d?.ev.nome ?? 'Evento' };
 }
 
-export default async function PaginaEvento({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ aba?: string; salvo?: string; erro?: string }> }) {
+export default async function PaginaEvento({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ aba?: string; salvo?: string; erro?: string; importados?: string }> }) {
   await exigirAdmin(); // a página confere sozinha: o layout roda em paralelo e não protege o conteúdo
   const { id } = await params;
   const sp = await searchParams;
@@ -54,6 +55,8 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
   const maiorCat = Math.max(1, ...porCat.map((x) => x[1]));
   const temSocios = socios.length > 0;
   const pendentes = lancs.filter((l) => !l.quitado);
+  const fontes = fontesDoEvento(lancs);
+  const pessoas = aba === 'socios' && !fechado ? await pessoasConhecidas(ev.id) : [];
 
   return (
     <>
@@ -69,11 +72,13 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
         <div className="fin-cab__acoes">
           <Link className="botao botao--secundario botao--sm" href={`/financeiro/eventos/${ev.id}/editar`}>Editar</Link>
           {!fechado ? <Link className="botao botao--secundario botao--sm" href={`/financeiro/eventos/${ev.id}?aba=socios`}>Convidar sócio</Link> : null}
+          {!fechado ? <Link className="botao botao--secundario botao--sm" href={`/financeiro/eventos/${ev.id}/importar`}>Importar planilha ou PDF</Link> : null}
           {!fechado ? <Link className="botao botao--sm" href={`/financeiro/lancar?evento=${ev.id}`}>+ Lançamento</Link> : null}
         </div>
       </div>
 
       {sp.salvo ? <p className="fin-aviso fin-aviso--ok" role="status" style={{ marginBottom: 16 }}>Lançamento salvo.</p> : null}
+      {sp.importados ? <p className="fin-aviso fin-aviso--ok" role="status" style={{ marginBottom: 16 }}>{sp.importados} {sp.importados === '1' ? 'lançamento importado' : 'lançamentos importados'}. O arquivo original ficou anexado como comprovante.</p> : null}
       {sp.erro === 'fechado' ? <p className="fin-aviso fin-aviso--erro" style={{ marginBottom: 16 }}>O evento está fechado. Reabra na aba Fechamento para mexer.</p> : null}
 
       <nav className="fin-abas" aria-label="Seções do evento">
@@ -94,6 +99,7 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
             <ListaLancamentos lancs={lancs.slice(0, 8)} vazio="Nada lançado ainda. Use o + para lançar o primeiro custo ou receita." socios={temSocios} travado={fechado} />
           </section>
           <div>
+            <QuadroFontes f={fontes} />
             <section className="fin-bloco">
               <h2 className="fin-h2" style={{ fontSize: 14, marginBottom: 14 }}>Custos por categoria</h2>
               {porCat.length ? <div className="fin-cats">{porCat.map(([k, v]) => <div key={k}><span>{k}</span><b>{reais(v, { inteiro: true })}</b><div className="fin-barra"><i style={{ width: `${(v / maiorCat) * 100}%` }} /></div></div>)}</div> : <p className="fin-vazio">Sem custos ainda.</p>}
@@ -113,7 +119,12 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
         <section className="fin-bloco">
           <div className="fin-bloco__cab">
             <h2 className="fin-h2">{aba === 'custos' ? `Custos · ${reais(c.custos)}` : `Receitas · ${reais(c.receitas)}`}</h2>
-            {!fechado ? <Link className="fin-mini fin-mini--ouro" href={`/financeiro/lancar?evento=${ev.id}&tipo=${aba === 'custos' ? 'custo' : 'receita'}`}>+ {aba === 'custos' ? 'Custo' : 'Receita'}</Link> : null}
+            {!fechado ? (
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <Link className="fin-mini" href={`/financeiro/eventos/${ev.id}/importar`}>Importar com IA</Link>
+                <Link className="fin-mini fin-mini--ouro" href={`/financeiro/lancar?evento=${ev.id}&tipo=${aba === 'custos' ? 'custo' : 'receita'}`}>+ {aba === 'custos' ? 'Custo' : 'Receita'}</Link>
+              </div>
+            ) : null}
           </div>
           {aba === 'receitas' && porCatRec.length ? <p className="fin-sub" style={{ marginTop: -4, marginBottom: 10 }}>{porCatRec.map(([k, v]) => `${k} ${reais(v, { inteiro: true })}`).join(' · ')}</p> : null}
           <ListaLancamentos lancs={aba === 'custos' ? custos : receitas} vazio={aba === 'custos' ? 'Nenhum custo lançado.' : 'Nenhuma receita lançada.'} socios={temSocios} travado={fechado} />
@@ -161,7 +172,7 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
             <section className="fin-bloco">
               <h2 className="fin-h2" style={{ marginBottom: 6 }}>Adicionar sócio</h2>
               <p className="fin-sub" style={{ marginBottom: 18 }}>Cada sócio ganha um link pessoal: abre sem senha, só para ver, e você pode revogar quando quiser. No WhatsApp o link chega com a imagem do evento.</p>
-              <FormSocio eventoId={ev.id} />
+              <FormSocio eventoId={ev.id} pessoas={pessoas} />
             </section>
           ) : null}
         </div>
@@ -171,6 +182,7 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
         <>
           {sp.erro === 'cotas' ? <p className="fin-aviso fin-aviso--erro" style={{ marginBottom: 16 }}>As cotas dos sócios somam {pct(c.somaCotasBp)}. Ajuste para 100% antes de fechar.</p> : null}
           <div className="fin-duas fin-duas--meio">
+            <div>
             <section className="fin-bloco">
               <h2 className="fin-h2" style={{ marginBottom: 8 }}>Receitas → custos → lucro</h2>
               <Cascata receitas={c.receitas} custos={c.custos} taxa={c.taxa} lucro={c.lucro} />
@@ -182,6 +194,8 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
                 <div className="fin-conta__total"><span>= Lucro líquido</span><span className={c.lucro >= 0 ? 'verde' : 'vermelho'}>{reais(c.lucro)}</span></div>
               </div>
             </section>
+            <QuadroFontes f={fontes} titulo="Bilheteria × Bar no fechamento" />
+            </div>
             <section className="fin-bloco">
               <div className="fin-bloco__cab"><h2 className="fin-h2">Divisão entre sócios</h2>{c.retornoBp !== null ? <span className={`fin-selo ${c.retornoBp >= 0 ? '' : 'fin-selo--ao_vivo'}`} style={{ color: c.retornoBp >= 0 ? 'var(--verde)' : undefined, borderColor: c.retornoBp >= 0 ? 'rgba(95,179,122,.5)' : undefined }}>Retorno {c.retornoBp >= 0 ? '+' : ''}{pct(c.retornoBp)}</span> : null}</div>
               {socios.length ? (

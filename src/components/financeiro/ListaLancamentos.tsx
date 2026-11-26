@@ -14,7 +14,7 @@ export function ListaLancamentos({ lancs, vazio, socios, travado }: { lancs: Fin
         {lancs.map((l) => {
           const pend = !l.quitado;
           const sit = l.tipo === 'custo' ? (pend ? 'A pagar' : 'Pago') : pend ? 'A receber' : 'Recebido';
-          const editavel = l.origem === 'manual' && !travado;
+          const editavel = l.origem !== 'fechamento' && !travado;
           return (
             <li key={l.id} className="fin-item">
               {editavel ? <Link className="fin-item__desc" href={`/financeiro/lancar?id=${l.id}`}>{l.descricao}</Link> : <span className="fin-item__desc">{l.descricao}</span>}

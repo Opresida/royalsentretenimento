@@ -21,7 +21,7 @@ export default async function Lancar({ searchParams }: { searchParams: Promise<{
     const r = await lerLancamento(Number(sp.id));
     if (!r) notFound();
     const { l, comprovante } = r;
-    if (l.origem !== 'manual') redirect(l.eventoId ? `/financeiro/eventos/${l.eventoId}` : '/financeiro');
+    if (l.origem === 'fechamento') redirect(l.eventoId ? `/financeiro/eventos/${l.eventoId}` : '/financeiro');
     const ev = l.eventoId ? await lerEvento(l.eventoId) : null;
     if (ev?.ev.status === 'fechado') redirect(`/financeiro/eventos/${ev.ev.id}?erro=fechado`);
     const cats = ev ? { custo: CATEGORIAS.custo, receita: CATEGORIAS.receita } : { custo: CATEGORIAS.caixaCusto, receita: CATEGORIAS.caixaReceita };

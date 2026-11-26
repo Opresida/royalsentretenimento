@@ -5,7 +5,8 @@ import { eq } from 'drizzle-orm';
 import { getDb, schema } from '@/db';
 import { AoVivo } from '@/components/financeiro/AoVivo';
 import { Clipe } from '@/components/financeiro/icones';
-import { STATUS_EVENTO, TAXA_ROTULO } from '@/lib/financeiro/calculo';
+import { QuadroFontes } from '@/components/financeiro/QuadroFontes';
+import { fontesDoEvento, STATUS_EVENTO, TAXA_ROTULO } from '@/lib/financeiro/calculo';
 import { lerEvento, socioPorToken } from '@/lib/financeiro/dados';
 import { dataCurta, dataLonga, pct, reais } from '@/lib/financeiro/dinheiro';
 import '../../financeiro/financeiro.css';
@@ -89,6 +90,7 @@ export default async function AreaDoSocio({ params, searchParams }: { params: Pr
               <div><span className="fin-rot">Lucro</span><b className={c.lucro >= 0 ? 'verde' : 'vermelho'}>{reais(c.lucro, { sinal: true, inteiro: true })}</b></div>
             </div>
             {c.taxa ? <p className="fin-sub" style={{ fontSize: 13, marginTop: -12, marginBottom: 20 }}>Lucro já descontada a taxa de produção da Royals: {reais(c.taxa)} ({ev.taxaTipo === 'fixo' ? 'valor fixo' : `${pct(ev.taxaValor)} ${TAXA_ROTULO[ev.taxaTipo].replace('% ', '')}`}).</p> : null}
+            <QuadroFontes f={fontesDoEvento(lancs)} />
             {!fechado && (c.custosPendentes || c.receitasPendentes) ? <p className="fin-aviso fin-aviso--ambar" style={{ marginBottom: 20, fontSize: 13 }}>Previsão: ainda há {c.custosPendentes ? `${reais(c.custosPendentes)} a pagar` : ''}{c.custosPendentes && c.receitasPendentes ? ' e ' : ''}{c.receitasPendentes ? `${reais(c.receitasPendentes)} a receber` : ''}. Os valores mudam até o fechamento.</p> : null}
           </div>
 

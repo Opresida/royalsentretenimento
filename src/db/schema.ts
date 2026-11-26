@@ -53,7 +53,7 @@ export const finComprovantes = pgTable('fin_comprovantes', {
 });
 
 // eventoId nulo = lançamento do caixa da própria Royals.
-// origem: manual · fechamento (criado ao fechar um evento; some ao reabrir)
+// origem: manual · importacao (Importar com IA; vários podem dividir o mesmo comprovante) · fechamento (criado ao fechar um evento; some ao reabrir)
 export const finLancamentos = pgTable('fin_lancamentos', {
   id: serial('id').primaryKey(),
   eventoId: integer('evento_id').references(() => finEventos.id, { onDelete: 'cascade' }),

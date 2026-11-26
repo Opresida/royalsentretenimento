@@ -59,6 +59,44 @@ export async function socioPorToken(token: string) {
   return s ?? null;
 }
 
+// Pessoas que podem ser escolhidas como sócio num evento (pedido do Humberto, 26/11/2026): quem está na Equipe
+// (ativos, inclusive quem ainda não criou a senha) + quem já foi sócio em outro evento. Sem repetir nome.
+export type PessoaConhecida = { nome: string; contato: string | null; eRoyals: boolean; origem: 'royals' | 'equipe' | 'socio' };
+
+export async function pessoasConhecidas(eventoId?: number): Promise<PessoaConhecida[]> {
+  const db = await getDb();
+  const [admins, socios] = await Promise.all([
+    db.select({ nome: finAdmins.nome }).from(finAdmins).where(eq(finAdmins.ativo, true)).orderBy(asc(finAdmins.nome)),
+    db.select({ nome: finSocios.nome, contato: finSocios.contato, eRoyals: finSocios.eRoyals, eventoId: finSocios.eventoId, id: finSocios.id })
+      .from(finSocios).orderBy(desc(finSocios.id)),
+  ]);
+  const chave = (n: string) => n.normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase().replace(/\s+/g, ' ');
+  const jaNoEvento = new Set(socios.filter((s) => s.eventoId === eventoId).map((s) => chave(s.nome)));
+  const mapa = new Map<string, PessoaConhecida>();
+  // o sócio mais recente traz o WhatsApp mais atual
+  for (const s of socios) {
+    const k = chave(s.nome);
+    if (!k || jaNoEvento.has(k)) continue;
+    const atual = mapa.get(k);
+    if (!atual) mapa.set(k, { nome: s.nome.trim(), contato: s.contato, eRoyals: s.eRoyals, origem: 'socio' });
+    else if (!atual.contato && s.contato) atual.contato = s.contato;
+  }
+  for (const a of admins) {
+    const k = chave(a.nome);
+    if (!k || jaNoEvento.has(k)) continue;
+    const atual = mapa.get(k);
+    if (atual) atual.origem = 'equipe';
+    else mapa.set(k, { nome: a.nome.trim(), contato: null, eRoyals: false, origem: 'equipe' });
+  }
+  const lista = [...mapa.values()];
+  const ordem = { royals: 0, equipe: 1, socio: 2 };
+  // a própria Royals sempre dá pra escolher (marca "É a própria Royals" sozinho), a não ser que já seja sócia deste evento
+  const royalsNoEvento = socios.some((s) => s.eventoId === eventoId && s.eRoyals);
+  if (!royalsNoEvento && !lista.some((p) => p.eRoyals)) lista.push({ nome: 'Royals Entretenimento', contato: null, eRoyals: true, origem: 'royals' });
+  for (const p of lista) if (p.eRoyals) p.origem = 'royals';
+  return lista.filter((p) => !(royalsNoEvento && p.eRoyals)).sort((a, b) => ordem[a.origem] - ordem[b.origem] || a.nome.localeCompare(b.nome, 'pt-BR'));
+}
+
 export async function listarAdmins() {
   const db = await getDb();
   return db.select({ id: finAdmins.id, usuario: finAdmins.usuario, nome: finAdmins.nome, ativo: finAdmins.ativo, criadoEm: finAdmins.criadoEm })
