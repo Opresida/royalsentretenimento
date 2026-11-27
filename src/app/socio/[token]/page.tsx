@@ -59,11 +59,14 @@ export default async function AreaDoSocio({ params, searchParams }: { params: Pr
   const lista = filtro ? lancs.filter((l) => l.tipo === filtro) : lancs;
   const fechado = ev.status === 'fechado';
   const primeiro = s.nome.trim().split(/\s+/)[0];
+  // edição de série: volta para o link da série (todas as edições), se o sócio da série ainda tem link ativo
+  const [daSerie] = s.serieSocioId ? await db.select({ token: schema.finSerieSocios.token, linkAtivo: schema.finSerieSocios.linkAtivo }).from(schema.finSerieSocios).where(eq(schema.finSerieSocios.id, s.serieSocioId)).limit(1) : [];
 
   return (
     <div className="fin">
       <main className="fin-socio-pag">
         <div className="fin-socio-topo"><img src="/marca/royals-gold-transparent.svg" alt="Royals Entretenimento" /><span className="fin-rot">Área do sócio</span></div>
+        {daSerie?.linkAtivo ? <p className="fin-trilha" style={{ marginBottom: 14 }}><Link href={`/socio/serie/${daSerie.token}`}>← Todas as edições</Link></p> : null}
         <div className="fin-socio-grade">
           <div>
             <h1 className="fin-titulo" style={{ fontSize: 'clamp(28px, 7vw, 44px)' }}>{ev.nome}</h1>

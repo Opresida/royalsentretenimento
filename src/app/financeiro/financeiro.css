@@ -394,3 +394,28 @@ body:has(.fin) { padding-bottom: 0 !important; }
   .fin-pagar tr.fin-pagar__interno td:first-child { font-size: 14px; padding-left: 0; }
   .fin-pagar .fin-pagar__vazio { display: none; }
 }
+
+/* ——— séries recorrentes (27/11/2026) ——— */
+.fin-selo--serie { border-color: rgba(187,158,56,.5); color: var(--royal-gold); }
+.fin-alternar--3 { grid-template-columns: repeat(3, 1fr); }
+.fin-ev--serie { border-top-style: double; border-top-width: 4px; }
+@media (min-width: 900px) { .fin-ev--serie { grid-template-columns: minmax(0, 1.4fr) auto; } }
+.fin-proxima { display: grid; gap: 12px; align-items: center; padding: 16px; margin-bottom: 24px; border: 1px solid var(--royal-gold); background: rgba(187, 158, 56, .06); }
+.fin-proxima__txt { display: grid; gap: 4px; }
+.fin-proxima__txt small { font-size: 13px; color: var(--text-secondary); }
+.fin-proxima__data { height: 48px; }
+@media (min-width: 760px) { .fin-proxima { grid-template-columns: 1fr 190px auto; padding: 18px 22px; } }
+.fin-edicao { display: grid; gap: 2px; text-decoration: none; color: var(--text-primary); }
+.fin-edicao small { font-size: 12px; color: var(--text-muted); }
+.fin-edicao:hover b { color: var(--royal-gold); }
+.fin-tabela--edicoes td .fin-selo { height: 22px; font-size: 10px; }
+.fin-socio--saiu { opacity: .55; }
+.fin-item__link { display: contents; color: inherit; text-decoration: none; }
+.fin-item__link:hover .fin-item__desc { color: var(--royal-gold); }
+.fin-item--fixo .fin-item__meta { align-items: center; gap: 10px; flex-wrap: wrap; }
+.fin-proxima > * { min-width: 0; }
+.fin-proxima__data { width: 100%; }
+@media (max-width: 599px) {
+  .fin-tabela--edicoes th:nth-child(3), .fin-tabela--edicoes td:nth-child(3),
+  .fin-tabela--edicoes th:nth-child(4), .fin-tabela--edicoes td:nth-child(4) { display: none; }
+}

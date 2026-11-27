@@ -10,7 +10,7 @@ import { ListaLancamentos } from '@/components/financeiro/ListaLancamentos';
 import { QuadroFontes } from '@/components/financeiro/QuadroFontes';
 import { ContaFechamento, linhasPagar, QuantoPagar } from '@/components/financeiro/Fechamento';
 import { fontesDoEvento, STATUS_EVENTO } from '@/lib/financeiro/calculo';
-import { lerEvento, pessoasConhecidas, sociosDaRoyals } from '@/lib/financeiro/dados';
+import { lerEvento, lerSerieCurta, pessoasConhecidas, sociosDaRoyals } from '@/lib/financeiro/dados';
 import { dataLonga, pct, reais } from '@/lib/financeiro/dinheiro';
 
 type Aba = 'resumo' | 'custos' | 'receitas' | 'socios' | 'fechamento';
@@ -20,7 +20,7 @@ const ACOES: Record<string, string> = {
   evento_criado: 'criou o evento', evento_editado: 'editou o evento', lancamento_criado: 'lançou', lancamento_editado: 'alterou',
   lancamento_excluido: 'excluiu', socio_criado: 'adicionou o sócio', socio_editado: 'alterou o sócio', socio_excluido: 'removeu o sócio',
   link_revogar: 'revogou o link de', link_novo: 'gerou link novo para', link_reativar: 'reativou o link de', evento_fechado: 'fechou o evento',
-  evento_reaberto: 'reabriu o evento', lancamentos_importados: 'importou com IA', comprovante_mostrado: 'mostrou aos sócios o comprovante de', comprovante_ocultado: 'escondeu dos sócios o comprovante de',
+  evento_reaberto: 'reabriu o evento', edicao_criada: 'criou a edição', lancamentos_importados: 'importou com IA', comprovante_mostrado: 'mostrou aos sócios o comprovante de', comprovante_ocultado: 'escondeu dos sócios o comprovante de',
 };
 
 function detalheTxt(d: unknown): string {
@@ -38,13 +38,14 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return { title: d?.ev.nome ?? 'Evento' };
 }
 
-export default async function PaginaEvento({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ aba?: string; salvo?: string; erro?: string; importados?: string }> }) {
+export default async function PaginaEvento({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ aba?: string; salvo?: string; erro?: string; importados?: string; nova?: string }> }) {
   await exigirAdmin(); // a página confere sozinha: o layout roda em paralelo e não protege o conteúdo
   const { id } = await params;
   const sp = await searchParams;
   const d = await lerEvento(Number(id));
   if (!d) notFound();
   const { ev, lancs, socios, historico, conta: c } = d;
+  const serie = ev.serieId ? await lerSerieCurta(ev.serieId) : null;
   const aba: Aba = (ABAS.map((a) => a[0]) as string[]).includes(sp.aba ?? '') ? (sp.aba as Aba) : 'resumo';
   const fechado = ev.status === 'fechado';
   const h = await headers();
@@ -63,7 +64,7 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
 
   return (
     <>
-      <p className="fin-trilha"><Link href="/financeiro/eventos">Eventos</Link> / {ev.nome}</p>
+      <p className="fin-trilha"><Link href="/financeiro/eventos">Eventos</Link> / {serie ? <><Link href={`/financeiro/series/${serie.id}`}>{serie.nome}</Link> / Edição {ev.edicao}</> : ev.nome}</p>
       <div className="fin-cab" style={{ marginTop: 8 }}>
         <div>
           <div className="fin-cab__titulo">
@@ -80,6 +81,7 @@ export default async function PaginaEvento({ params, searchParams }: { params: P
         </div>
       </div>
 
+      {sp.nova ? <p className="fin-aviso fin-aviso--ok" role="status" style={{ marginBottom: 16 }}>Edição criada{socios.length ? ` com ${socios.length} ${socios.length === 1 ? 'sócio' : 'sócios'}` : ''}{lancs.length ? ` e ${lancs.length} ${lancs.length === 1 ? 'custo fixo' : 'custos fixos'} a pagar` : ''}. Ajuste o que mudou nesta data.</p> : null}
       {sp.salvo ? <p className="fin-aviso fin-aviso--ok" role="status" style={{ marginBottom: 16 }}>Lançamento salvo.</p> : null}
       {sp.importados ? <p className="fin-aviso fin-aviso--ok" role="status" style={{ marginBottom: 16 }}>{sp.importados} {sp.importados === '1' ? 'lançamento importado' : 'lançamentos importados'}. O arquivo original ficou anexado como comprovante.</p> : null}
       {sp.erro === 'fechado' ? <p className="fin-aviso fin-aviso--erro" style={{ marginBottom: 16 }}>O evento está fechado. Reabra na aba Fechamento para mexer.</p> : null}

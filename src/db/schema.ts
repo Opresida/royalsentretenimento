@@ -28,8 +28,56 @@ export const finEventos = pgTable('fin_eventos', {
   taxaValor: bigint('taxa_valor', { mode: 'number' }).notNull().default(0), // pontos-base ou centavos (fixo)
   observacoes: text('observacoes'),
   fechadoEm: timestamp('fechado_em', { withTimezone: true }),
+  // edição de uma série recorrente (null = evento avulso)
+  serieId: integer('serie_id'),
+  edicao: integer('edicao'),
+  criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index('fin_eventos_serie').on(t.serieId)]);
+
+// Série = evento recorrente (Varandinha toda semana etc.). Pedido do Humberto em 26/11/2026.
+// Cada data vira uma EDIÇÃO (um fin_eventos com serie_id) com lançamentos e fechamento próprios.
+// Sócios e custos fixos da série são o MODELO: a edição copia na hora em que é criada ("Próxima edição");
+// mudar a série vale para as próximas edições, as que já existem ficam como foram.
+export const finSeries = pgTable('fin_series', {
+  id: serial('id').primaryKey(),
+  nome: text('nome').notNull(),
+  frequencia: text('frequencia').notNull().default('semanal'), // semanal · quinzenal · mensal
+  primeiraData: text('primeira_data'), // AAAA-MM-DD, sugestão da 1ª edição
+  local: text('local'),
+  taxaTipo: text('taxa_tipo').notNull().default('nenhuma'),
+  taxaValor: bigint('taxa_valor', { mode: 'number' }).notNull().default(0),
+  observacoes: text('observacoes'),
+  ativa: boolean('ativa').notNull().default(true), // encerrada = some o "Próxima edição"
   criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
 });
+
+// sócio da série: ativo = entra nas próximas edições. Quem sai fica inativo (o link da série continua mostrando as edições dele).
+export const finSerieSocios = pgTable('fin_serie_socios', {
+  id: serial('id').primaryKey(),
+  serieId: integer('serie_id').notNull().references(() => finSeries.id, { onDelete: 'cascade' }),
+  nome: text('nome').notNull(),
+  contato: text('contato'),
+  aporte: bigint('aporte', { mode: 'number' }).notNull().default(0), // aporte padrão por edição
+  cotaBp: integer('cota_bp').notNull().default(0),
+  eRoyals: boolean('e_royals').notNull().default(false),
+  ativo: boolean('ativo').notNull().default(true),
+  token: text('token').notNull(),
+  linkAtivo: boolean('link_ativo').notNull().default(true),
+  ultimoAcesso: timestamp('ultimo_acesso', { withTimezone: true }),
+  criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [uniqueIndex('fin_serie_socios_token').on(t.token), index('fin_serie_socios_serie').on(t.serieId)]);
+
+// custos fixos de toda edição: entram como "a pagar" na edição nova
+export const finSerieCustos = pgTable('fin_serie_custos', {
+  id: serial('id').primaryKey(),
+  serieId: integer('serie_id').notNull().references(() => finSeries.id, { onDelete: 'cascade' }),
+  descricao: text('descricao').notNull(),
+  categoria: text('categoria').notNull(),
+  valor: bigint('valor', { mode: 'number' }).notNull(),
+  quantidade: numeric('quantidade', { precision: 14, scale: 3 }),
+  valorUnitario: numeric('valor_unitario', { precision: 16, scale: 4 }),
+  criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index('fin_serie_custos_serie').on(t.serieId)]);
 
 export const finSocios = pgTable('fin_socios', {
   id: serial('id').primaryKey(),
@@ -42,6 +90,7 @@ export const finSocios = pgTable('fin_socios', {
   token: text('token').notNull(),
   linkAtivo: boolean('link_ativo').notNull().default(true),
   ultimoAcesso: timestamp('ultimo_acesso', { withTimezone: true }),
+  serieSocioId: integer('serie_socio_id'), // veio do sócio da série (liga as edições no link da série)
   criadoEm: timestamp('criado_em', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [uniqueIndex('fin_socios_token').on(t.token), index('fin_socios_evento').on(t.eventoId)]);
 
@@ -90,3 +139,6 @@ export const finHistorico = pgTable('fin_historico', {
 export type FinEvento = typeof finEventos.$inferSelect;
 export type FinSocio = typeof finSocios.$inferSelect;
 export type FinLancamento = typeof finLancamentos.$inferSelect;
+export type FinSerie = typeof finSeries.$inferSelect;
+export type FinSerieSocio = typeof finSerieSocios.$inferSelect;
+export type FinSerieCusto = typeof finSerieCustos.$inferSelect;

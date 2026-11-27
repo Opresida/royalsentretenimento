@@ -114,3 +114,64 @@ export async function sociosDaRoyals(): Promise<{ configurada: boolean; somaBp: 
   const com = todos.filter((a) => a.cotaBp !== null && a.cotaBp > 0);
   return com.length ? { configurada: true, somaBp: com.reduce((s, a) => s + (a.cotaBp ?? 0), 0), lista: com } : { configurada: false, somaBp: 0, lista: todos };
 }
+
+// ——— séries recorrentes ———
+const { finSeries, finSerieSocios, finSerieCustos } = schema;
+
+/** Séries com as edições (cada uma com a conta) e os números somados. */
+export async function listarSeries() {
+  const db = await getDb();
+  const [series, eventos] = await Promise.all([
+    db.select().from(finSeries).orderBy(desc(finSeries.ativa), asc(finSeries.nome)),
+    listarEventos(),
+  ]);
+  return series.map((s) => {
+    const edicoes = eventos.filter((e) => e.serieId === s.id).sort((a, b) => (a.data ?? '').localeCompare(b.data ?? '') || (a.edicao ?? 0) - (b.edicao ?? 0));
+    return { ...s, edicoes, ...somaEdicoes(edicoes) };
+  });
+}
+
+function somaEdicoes(edicoes: { status: string; data: string | null; conta: Conta }[]) {
+  const receitas = edicoes.reduce((t, e) => t + e.conta.receitas, 0);
+  const custos = edicoes.reduce((t, e) => t + e.conta.custos, 0);
+  const lucro = edicoes.reduce((t, e) => t + e.conta.lucro, 0);
+  const ultimaData = edicoes.reduce<string | null>((u, e) => (e.data && (!u || e.data > u) ? e.data : u), null);
+  return { receitas, custos, lucro, ultimaData, abertas: edicoes.filter((e) => e.status !== 'fechado').length };
+}
+
+export async function lerSerie(id: number) {
+  const db = await getDb();
+  const [serie] = await db.select().from(finSeries).where(eq(finSeries.id, id)).limit(1);
+  if (!serie) return null;
+  const [socios, custosFixos, eventos] = await Promise.all([
+    db.select().from(finSerieSocios).where(eq(finSerieSocios.serieId, id)).orderBy(desc(finSerieSocios.ativo), desc(finSerieSocios.cotaBp), asc(finSerieSocios.id)),
+    db.select().from(finSerieCustos).where(eq(finSerieCustos.serieId, id)).orderBy(asc(finSerieCustos.id)),
+    listarEventos(),
+  ]);
+  const edicoes = eventos.filter((e) => e.serieId === id).sort((a, b) => (b.data ?? '').localeCompare(a.data ?? '') || (b.edicao ?? 0) - (a.edicao ?? 0));
+  return { serie, socios, custosFixos, edicoes, ...somaEdicoes(edicoes) };
+}
+
+export async function serieSocioPorToken(token: string) {
+  if (!/^[A-Za-z0-9_-]{16,64}$/.test(token)) return null;
+  const db = await getDb();
+  const [s] = await db.select().from(finSerieSocios).where(eq(finSerieSocios.token, token)).limit(1);
+  return s ?? null;
+}
+
+/** Edições em que o sócio da série entrou (pelo vínculo serie_socio_id), com a parte dele em cada uma. */
+export async function edicoesDoSocioDaSerie(serieSocioId: number) {
+  const db = await getDb();
+  const meus = await db.select().from(finSocios).where(eq(finSocios.serieSocioId, serieSocioId));
+  const lidos = await Promise.all(meus.map(async (m) => ({ m, d: await lerEvento(m.eventoId) })));
+  return lidos.filter((x) => x.d).map(({ m, d }) => {
+    const parte = d!.conta.divisao.find((x) => x.id === m.id);
+    return { socio: m, ev: d!.ev, conta: d!.conta, parte: parte ?? null };
+  }).sort((a, b) => (b.ev.data ?? '').localeCompare(a.ev.data ?? '') || (b.ev.edicao ?? 0) - (a.ev.edicao ?? 0));
+}
+
+export async function lerSerieCurta(id: number) {
+  const db = await getDb();
+  const [s] = await db.select({ id: finSeries.id, nome: finSeries.nome, frequencia: finSeries.frequencia }).from(finSeries).where(eq(finSeries.id, id)).limit(1);
+  return s ?? null;
+}

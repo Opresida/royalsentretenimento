@@ -9,7 +9,7 @@ export function Navegacao({ nome }: { nome: string }) {
   const caminho = usePathname();
   const ev = caminho.match(/^\/financeiro\/eventos\/(\d+)/)?.[1];
   const lancar = ev ? `/financeiro/lancar?evento=${ev}` : '/financeiro/lancar';
-  const atual = (h: string, exato = false) => (exato ? caminho === h : caminho.startsWith(h)) ? 'page' : undefined;
+  const atual = (h: string, exato = false) => (exato ? caminho === h : caminho.startsWith(h) || (h === '/financeiro/eventos' && caminho.startsWith('/financeiro/series'))) ? 'page' : undefined;
   return (
     <>
       <aside className="fin-lateral">

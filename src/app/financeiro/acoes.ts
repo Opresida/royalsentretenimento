@@ -8,6 +8,7 @@ import { apagarSessao, conferirSenha, exigirAdmin, gravarSessao, hashSenha, novo
 import { CATEGORIAS, calcular } from '@/lib/financeiro/calculo';
 import { ehCsv, ErroImportar, lerComIA, MAX_IMPORTAR, TIPOS_ACEITOS, type Leitura } from '@/lib/financeiro/importar';
 import { hojeManaus, lerNumero, lerPct, lerReais, reais, totalUnidade } from '@/lib/financeiro/dinheiro';
+import { nomeEdicao } from '@/lib/financeiro/serie';
 
 const { finAdmins, finEventos, finLancamentos, finSocios, finComprovantes, finHistorico } = schema;
 export type Estado = { erro?: string; ok?: string } | null;
@@ -438,4 +439,175 @@ export async function salvarSociosRoyals(_: Estado, f: FormData): Promise<Estado
   await registrar(admin, null, 'socios_royals', { divisao: marcados.map((c) => `${c.nome} ${String((c.bp ?? 0) / 100).replace('.', ',')}%`).join(' · ') || 'sem divisão' });
   revalidatePath('/financeiro', 'layout');
   return { ok: marcados.length ? 'Divisão salva.' : 'Divisão removida.' };
+}
+
+// ——— séries recorrentes (pedido do Humberto, 26/11/2026) ———
+// A série guarda o MODELO (sócios, custos fixos, taxa). "Próxima edição" cria um evento normal copiando o modelo.
+const { finSeries, finSerieSocios, finSerieCustos } = schema;
+const FREQS = ['semanal', 'quinzenal', 'mensal'];
+
+function lerTaxa(f: FormData): { taxaTipo: string; taxaValor: number } | { erro: string } {
+  const taxaTipo = ['nenhuma', 'pct_receita', 'pct_lucro', 'fixo'].includes(txt(f, 'taxaTipo')) ? txt(f, 'taxaTipo') : 'nenhuma';
+  let taxaValor = 0;
+  if (taxaTipo === 'fixo') taxaValor = lerReais(txt(f, 'taxaValor'));
+  else if (taxaTipo !== 'nenhuma') taxaValor = lerPct(txt(f, 'taxaValor'));
+  if (taxaTipo !== 'nenhuma' && (!Number.isFinite(taxaValor) || taxaValor < 0)) return { erro: 'Confira o valor da taxa de produção.' };
+  if (taxaTipo.startsWith('pct') && taxaValor > 10000) return { erro: 'A taxa não pode passar de 100%.' };
+  return { taxaTipo, taxaValor: taxaTipo === 'nenhuma' ? 0 : taxaValor };
+}
+
+export async function salvarSerie(_: Estado, f: FormData): Promise<Estado> {
+  const admin = await exigirAdmin();
+  const id = Number(txt(f, 'id')) || null;
+  const nome = txt(f, 'nome');
+  const frequencia = FREQS.includes(txt(f, 'frequencia')) ? txt(f, 'frequencia') : 'semanal';
+  const primeiraData = txt(f, 'primeiraData') || null;
+  if (!nome) return { erro: 'Dê um nome à série.' };
+  if (primeiraData && !dataOk(primeiraData)) return { erro: 'Data inválida.' };
+  const taxa = lerTaxa(f);
+  if ('erro' in taxa) return taxa;
+  const valores = { nome, frequencia, primeiraData, local: txt(f, 'local') || null, ...taxa, observacoes: txt(f, 'observacoes') || null };
+  const db = await getDb();
+  let serieId = id;
+  if (id) {
+    await db.update(finSeries).set({ ...valores, ativa: txt(f, 'ativa') !== 'nao' }).where(eq(finSeries.id, id));
+    await registrar(admin, null, 'serie_editada', { nome, frequencia });
+  } else {
+    const [n] = await db.insert(finSeries).values(valores).returning({ id: finSeries.id });
+    serieId = n.id;
+    await registrar(admin, null, 'serie_criada', { nome, frequencia });
+  }
+  atualizar();
+  redirect(`/financeiro/series/${serieId}${id ? '' : '?aba=socios&nova=1'}`);
+}
+
+export async function excluirSerie(f: FormData) {
+  const admin = await exigirAdmin();
+  const id = Number(txt(f, 'id'));
+  if (txt(f, 'confirmar').toUpperCase() !== 'EXCLUIR') redirect(`/financeiro/series/${id}/editar?erro=confirmar`);
+  const db = await getDb();
+  const ed = await db.select({ id: finEventos.id }).from(finEventos).where(eq(finEventos.serieId, id)).limit(1);
+  if (ed.length) redirect(`/financeiro/series/${id}/editar?erro=edicoes`);
+  const [s] = await db.select().from(finSeries).where(eq(finSeries.id, id)).limit(1);
+  await db.delete(finSeries).where(eq(finSeries.id, id)); // sócios e custos fixos vão junto (cascade)
+  await registrar(admin, null, 'serie_excluida', { nome: s?.nome });
+  atualizar();
+  redirect('/financeiro/eventos');
+}
+
+export async function salvarSocioSerie(_: Estado, f: FormData): Promise<Estado> {
+  const admin = await exigirAdmin();
+  const id = Number(txt(f, 'id')) || null;
+  const serieId = Number(txt(f, 'serieId'));
+  const nome = txt(f, 'nome');
+  const aporte = lerReais(txt(f, 'aporte') || '0');
+  const cotaBp = lerPct(txt(f, 'cota'));
+  const eRoyals = f.get('eRoyals') === 'on';
+  if (!nome) return { erro: 'Escreva o nome do sócio.' };
+  if (!Number.isFinite(aporte) || aporte < 0) return { erro: 'Confira o aporte.' };
+  if (!Number.isFinite(cotaBp) || cotaBp < 0 || cotaBp > 10000) return { erro: 'A cota vai de 0 a 100%.' };
+  const db = await getDb();
+  const [serie] = await db.select().from(finSeries).where(eq(finSeries.id, serieId)).limit(1);
+  if (!serie) return { erro: 'Série não encontrada.' };
+  const valores = { nome, contato: txt(f, 'contato') || null, aporte, cotaBp, eRoyals };
+  if (id) {
+    await db.update(finSerieSocios).set(valores).where(and(eq(finSerieSocios.id, id), eq(finSerieSocios.serieId, serieId)));
+    await registrar(admin, null, 'serie_socio_editado', { serie: serie.nome, nome, cota: cotaBp / 100 });
+  } else {
+    await db.insert(finSerieSocios).values({ ...valores, serieId, token: novoTokenSocio() });
+    await registrar(admin, null, 'serie_socio_criado', { serie: serie.nome, nome, cota: cotaBp / 100 });
+  }
+  atualizar();
+  return { ok: id ? 'Sócio atualizado. Vale a partir da próxima edição.' : 'Sócio adicionado à série. Entra a partir da próxima edição.' };
+}
+
+// sair/voltar da série (quem sai não entra nas próximas edições; o histórico fica) e o link do sócio da série
+export async function gerenciarSocioSerie(f: FormData) {
+  const admin = await exigirAdmin();
+  const id = Number(txt(f, 'id'));
+  const acao = txt(f, 'acao');
+  const db = await getDb();
+  const [s] = await db.select().from(finSerieSocios).where(eq(finSerieSocios.id, id)).limit(1);
+  if (!s) return;
+  const mudar: Partial<typeof finSerieSocios.$inferInsert> =
+    acao === 'sair' ? { ativo: false } : acao === 'voltar' ? { ativo: true } : acao === 'revogar' ? { linkAtivo: false }
+    : acao === 'reativar' ? { linkAtivo: true } : acao === 'novo' ? { linkAtivo: true, token: novoTokenSocio() } : {};
+  if (!Object.keys(mudar).length) return;
+  // quem ainda não entrou em nenhuma edição sai de vez; quem já entrou fica inativo (o link da série mostra o histórico)
+  if (acao === 'sair') {
+    const usado = await db.select({ id: finSocios.id }).from(finSocios).where(eq(finSocios.serieSocioId, id)).limit(1);
+    if (!usado.length) await db.delete(finSerieSocios).where(eq(finSerieSocios.id, id));
+    else await db.update(finSerieSocios).set(mudar).where(eq(finSerieSocios.id, id));
+  } else await db.update(finSerieSocios).set(mudar).where(eq(finSerieSocios.id, id));
+  await registrar(admin, null, `serie_socio_${acao}`, { nome: s.nome });
+  atualizar();
+}
+
+export async function salvarCustoSerie(_: Estado, f: FormData): Promise<Estado> {
+  await exigirAdmin();
+  const id = Number(txt(f, 'id')) || null;
+  const serieId = Number(txt(f, 'serieId'));
+  const descricao = txt(f, 'descricao');
+  const categoria = txt(f, 'categoria') || 'Outros';
+  const porUnidade = txt(f, 'modo') === 'unidade';
+  const qtd = porUnidade ? lerNumero(txt(f, 'quantidade')) : NaN;
+  const unit = porUnidade ? lerNumero(txt(f, 'valorUnitario')) : NaN;
+  if (!descricao) return { erro: 'Escreva a descrição do custo.' };
+  if (porUnidade && (!Number.isFinite(qtd) || qtd <= 0 || !Number.isFinite(unit) || unit <= 0)) return { erro: 'Confira o valor unitário e a quantidade.' };
+  const valor = porUnidade ? totalUnidade(qtd, unit) : lerReais(txt(f, 'valor'));
+  if (!Number.isFinite(valor) || valor <= 0) return { erro: 'Informe um valor maior que zero.' };
+  const valores = {
+    descricao: descricao.slice(0, 140), categoria: categoria.slice(0, 40), valor,
+    quantidade: porUnidade ? String(Math.round(qtd * 1000) / 1000) : null,
+    valorUnitario: porUnidade ? String(Math.round(unit * 10000) / 10000) : null,
+  };
+  const db = await getDb();
+  if (id) await db.update(finSerieCustos).set(valores).where(and(eq(finSerieCustos.id, id), eq(finSerieCustos.serieId, serieId)));
+  else await db.insert(finSerieCustos).values({ ...valores, serieId });
+  atualizar();
+  return { ok: id ? 'Custo fixo atualizado.' : 'Custo fixo adicionado. Entra como "a pagar" em cada edição nova.' };
+}
+
+export async function excluirCustoSerie(f: FormData) {
+  await exigirAdmin();
+  const db = await getDb();
+  await db.delete(finSerieCustos).where(eq(finSerieCustos.id, Number(txt(f, 'id'))));
+  atualizar();
+}
+
+// "Próxima edição": cria o evento da data escolhida com os sócios ativos e os custos fixos da série (a pagar).
+export async function criarEdicao(f: FormData) {
+  const admin = await exigirAdmin();
+  const serieId = Number(txt(f, 'serieId'));
+  const data = txt(f, 'data');
+  const db = await getDb();
+  const [serie] = await db.select().from(finSeries).where(eq(finSeries.id, serieId)).limit(1);
+  if (!serie) redirect('/financeiro/eventos');
+  if (!serie.ativa) redirect(`/financeiro/series/${serieId}?erro=encerrada`);
+  if (!dataOk(data)) redirect(`/financeiro/series/${serieId}?erro=data`);
+  const anteriores = await db.select({ edicao: finEventos.edicao, data: finEventos.data }).from(finEventos).where(eq(finEventos.serieId, serieId));
+  if (anteriores.some((e) => e.data === data)) redirect(`/financeiro/series/${serieId}?erro=repetida`);
+  const edicao = anteriores.reduce((m, e) => Math.max(m, e.edicao ?? 0), 0) + 1;
+  const [socios, custos] = await Promise.all([
+    db.select().from(finSerieSocios).where(and(eq(finSerieSocios.serieId, serieId), eq(finSerieSocios.ativo, true))),
+    db.select().from(finSerieCustos).where(eq(finSerieCustos.serieId, serieId)),
+  ]);
+  const [ev] = await db.insert(finEventos).values({
+    nome: nomeEdicao(serie.nome, data), data, local: serie.local, status: 'montagem', taxaTipo: serie.taxaTipo, taxaValor: serie.taxaValor,
+    observacoes: serie.observacoes, serieId, edicao,
+  }).returning({ id: finEventos.id });
+  if (socios.length) {
+    await db.insert(finSocios).values(socios.map((s) => ({
+      eventoId: ev.id, nome: s.nome, contato: s.contato, aporte: s.aporte, cotaBp: s.cotaBp, eRoyals: s.eRoyals, token: novoTokenSocio(), serieSocioId: s.id,
+    })));
+  }
+  if (custos.length) {
+    await db.insert(finLancamentos).values(custos.map((c) => ({
+      eventoId: ev.id, tipo: 'custo', descricao: c.descricao, categoria: c.categoria, valor: c.valor, quantidade: c.quantidade, valorUnitario: c.valorUnitario,
+      quitado: false, data, vencimento: data, criadoPor: admin.id,
+    })));
+  }
+  await registrar(admin, ev.id, 'edicao_criada', { nome: `${serie.nome} · edição ${edicao}` });
+  atualizar(ev.id);
+  redirect(`/financeiro/eventos/${ev.id}?nova=1`);
 }
