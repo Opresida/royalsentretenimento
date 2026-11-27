@@ -1,8 +1,14 @@
 import Link from 'next/link';
 import { alternarMostrar } from '@/app/financeiro/acoes';
 import type { FinLancamento } from '@/db/schema';
-import { dataCurta, reais } from '@/lib/financeiro/dinheiro';
+import { dataCurta, detalheUnidade, reais } from '@/lib/financeiro/dinheiro';
 import { Clipe, Olho, OlhoFechado } from './icones';
+
+// "300 × R$ 0,70" logo abaixo da descrição, nos lançamentos por unidade
+export function un(l: { quantidade?: string | null; valorUnitario?: string | null }) {
+  const d = detalheUnidade(l);
+  return d ? <small className="fin-item__un">{d}</small> : null;
+}
 
 // Lista de lançamentos: cartão no celular, tabela no computador (mesmo HTML, CSS muda).
 export function ListaLancamentos({ lancs, vazio, socios, travado }: { lancs: FinLancamento[]; vazio: string; socios: boolean; travado?: boolean }) {
@@ -17,7 +23,7 @@ export function ListaLancamentos({ lancs, vazio, socios, travado }: { lancs: Fin
           const editavel = l.origem !== 'fechamento' && !travado;
           return (
             <li key={l.id} className="fin-item">
-              {editavel ? <Link className="fin-item__desc" href={`/financeiro/lancar?id=${l.id}`}>{l.descricao}</Link> : <span className="fin-item__desc">{l.descricao}</span>}
+              {editavel ? <Link className="fin-item__desc" href={`/financeiro/lancar?id=${l.id}`}>{l.descricao}{un(l)}</Link> : <span className="fin-item__desc">{l.descricao}{un(l)}</span>}
               <span className={`fin-item__valor ${l.tipo === 'receita' ? 'verde' : 'vermelho'}`}>{l.tipo === 'receita' ? '+ ' : '− '}{reais(l.valor)}</span>
               <span className="fin-item__meta">
                 <span className="fin-item__data">{dataCurta(l.data)}</span>

@@ -5,7 +5,7 @@ import { Imprimir } from '@/components/financeiro/AoVivo';
 import { fontesDoEvento, STATUS_EVENTO } from '@/lib/financeiro/calculo';
 import { lerEvento, sociosDaRoyals } from '@/lib/financeiro/dados';
 import { linhasPagar, taxaTexto, totalADistribuir } from '@/components/financeiro/Fechamento';
-import { dataCurta, dataLonga, pct, reais } from '@/lib/financeiro/dinheiro';
+import { dataCurta, dataLonga, detalheUnidade, pct, reais } from '@/lib/financeiro/dinheiro';
 
 export const metadata = { title: 'Prestação de contas' };
 
@@ -74,7 +74,7 @@ export default async function Prestacao({ params }: { params: Promise<{ id: stri
           <table>
             <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Situação</th><th>Comprov.</th><th className="n">Valor</th></tr></thead>
             <tbody>{tabela(t).map((l) => (
-              <tr key={l.id}><td>{dataCurta(l.data)}</td><td>{l.descricao}</td><td>{l.categoria}</td><td>{l.quitado ? (t === 'custo' ? 'Pago' : 'Recebido') : t === 'custo' ? 'A pagar' : 'A receber'}</td><td>{l.comprovanteId ? 'sim' : '—'}</td><td className="n">{reais(l.valor)}</td></tr>
+              <tr key={l.id}><td>{dataCurta(l.data)}</td><td>{l.descricao}{detalheUnidade(l) ? ` · ${detalheUnidade(l)}` : ''}</td><td>{l.categoria}</td><td>{l.quitado ? (t === 'custo' ? 'Pago' : 'Recebido') : t === 'custo' ? 'A pagar' : 'A receber'}</td><td>{l.comprovanteId ? 'sim' : '—'}</td><td className="n">{reais(l.valor)}</td></tr>
             ))}</tbody>
           </table>
         </div>

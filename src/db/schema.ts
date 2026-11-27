@@ -1,6 +1,6 @@
 // Banco do Financeiro Royals (/financeiro e /socio). Pedido do Humberto em 25/11/2026.
 // Valores em centavos (inteiro). Cota e taxa percentual em pontos-base (5000 = 50%).
-import { bigint, boolean, index, integer, jsonb, pgTable, serial, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
+import { bigint, boolean, index, integer, jsonb, numeric, pgTable, serial, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
 
 export const finAdmins = pgTable('fin_admins', {
   id: serial('id').primaryKey(),
@@ -63,6 +63,9 @@ export const finLancamentos = pgTable('fin_lancamentos', {
   descricao: text('descricao').notNull(),
   categoria: text('categoria').notNull(),
   valor: bigint('valor', { mode: 'number' }).notNull(),
+  // lançamento por unidade (opcional): valor = quantidade × valor unitário (em reais, até 4 casas), arredondado em centavos
+  quantidade: numeric('quantidade', { precision: 14, scale: 3 }),
+  valorUnitario: numeric('valor_unitario', { precision: 16, scale: 4 }),
   quitado: boolean('quitado').notNull().default(true), // pago / recebido
   data: text('data').notNull(), // AAAA-MM-DD
   vencimento: text('vencimento'),

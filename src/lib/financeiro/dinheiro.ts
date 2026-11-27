@@ -23,6 +23,36 @@ export function lerReais(txt: string | null | undefined): number {
   return Number.isFinite(n) ? Math.round(n * 100) : NaN;
 }
 
+// Número livre (quantidade, valor unitário): "300" · "1.000" · "2,5" · "0,035" · "0.70" → número. Inválido → NaN.
+// Ponto só vira milhar quando o grupo de cima não começa com 0 ("1.000" = mil; "0.700" = 0,7).
+export function lerNumero(txt: string | null | undefined): number {
+  if (!txt) return NaN;
+  let s = String(txt).replace(/[R$\s]/g, '');
+  if (!s) return NaN;
+  if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+  else if (/^[1-9]\d{0,2}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
+  const n = Number(s);
+  return Number.isFinite(n) ? n : NaN;
+}
+
+// total em centavos de quantidade × valor unitário (em reais); arredonda em micro-reais antes para fugir do erro de ponto flutuante
+export function totalUnidade(quantidade: number, unitario: number): number {
+  return Math.round(Math.round(quantidade * unitario * 1e6) / 1e4);
+}
+
+const QTD = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 3 });
+const UNIT = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 4 });
+export const qtdTxt = (n: number) => QTD.format(n);
+export const unitTxt = (n: number) => UNIT.format(n).replace(/ /g, ' ');
+
+// "300 × R$ 0,70" nos lançamentos feitos por unidade; null nos de valor total
+export function detalheUnidade(l: { quantidade?: string | null; valorUnitario?: string | null }): string | null {
+  if (l.quantidade == null || l.valorUnitario == null) return null;
+  const q = Number(l.quantidade), u = Number(l.valorUnitario);
+  if (!Number.isFinite(q) || !Number.isFinite(u)) return null;
+  return `${qtdTxt(q)} × ${unitTxt(u)}`;
+}
+
 export function pct(bp: number, casas = 1): string {
   const v = bp / 100;
   return (Number.isInteger(v) ? String(v) : v.toFixed(casas).replace('.', ',')) + '%';

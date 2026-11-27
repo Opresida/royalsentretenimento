@@ -7,7 +7,7 @@ import { getDb, schema } from '@/db';
 import { apagarSessao, conferirSenha, exigirAdmin, gravarSessao, hashSenha, novoTokenSocio, type Admin } from '@/lib/financeiro/auth';
 import { CATEGORIAS, calcular } from '@/lib/financeiro/calculo';
 import { ehCsv, ErroImportar, lerComIA, MAX_IMPORTAR, TIPOS_ACEITOS, type Leitura } from '@/lib/financeiro/importar';
-import { hojeManaus, lerPct, lerReais, reais } from '@/lib/financeiro/dinheiro';
+import { hojeManaus, lerNumero, lerPct, lerReais, reais, totalUnidade } from '@/lib/financeiro/dinheiro';
 
 const { finAdmins, finEventos, finLancamentos, finSocios, finComprovantes, finHistorico } = schema;
 export type Estado = { erro?: string; ok?: string } | null;
@@ -117,7 +117,15 @@ export async function salvarLancamento(_: Estado, f: FormData): Promise<Estado> 
   const id = Number(txt(f, 'id')) || null;
   const eventoId = Number(txt(f, 'eventoId')) || null;
   const tipo = txt(f, 'tipo') === 'receita' ? 'receita' : 'custo';
-  const valor = lerReais(txt(f, 'valor'));
+  // por unidade: o servidor recalcula o total (quantidade × unitário), não confia no total mostrado na tela
+  const porUnidade = txt(f, 'modo') === 'unidade';
+  const qtd = porUnidade ? lerNumero(txt(f, 'quantidade')) : NaN;
+  const unit = porUnidade ? lerNumero(txt(f, 'valorUnitario')) : NaN;
+  if (porUnidade && (!Number.isFinite(qtd) || qtd <= 0 || qtd > 1e9)) return { erro: 'Informe a quantidade (maior que zero).' };
+  if (porUnidade && (!Number.isFinite(unit) || unit <= 0 || unit > 1e9)) return { erro: 'Informe o valor da unidade (maior que zero).' };
+  const valor = porUnidade ? totalUnidade(qtd, unit) : lerReais(txt(f, 'valor'));
+  const quantidade = porUnidade ? String(Math.round(qtd * 1000) / 1000) : null;
+  const valorUnitario = porUnidade ? String(Math.round(unit * 10000) / 10000) : null;
   const descricao = txt(f, 'descricao');
   const categoria = txt(f, 'categoriaOutra') || txt(f, 'categoria') || 'Outros';
   const quitado = txt(f, 'quitado') !== 'nao';
@@ -152,7 +160,7 @@ export async function salvarLancamento(_: Estado, f: FormData): Promise<Estado> 
     comprovanteId = null;
   }
 
-  const valores = { eventoId, tipo, descricao, categoria, valor, quitado, data, vencimento: quitado ? null : vencimento, comprovanteId, mostrarAoSocio, atualizadoEm: new Date() };
+  const valores = { eventoId, tipo, descricao, categoria, valor, quantidade, valorUnitario, quitado, data, vencimento: quitado ? null : vencimento, comprovanteId, mostrarAoSocio, atualizadoEm: new Date() };
   if (id) {
     await db.update(finLancamentos).set(valores).where(eq(finLancamentos.id, id));
     await registrar(admin, eventoId, 'lancamento_editado', { id, descricao, de: anterior ? reais(anterior.valor) : null, para: reais(valor), tipo });

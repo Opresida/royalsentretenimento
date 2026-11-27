@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import { getDb, schema } from '@/db';
 import { AoVivo } from '@/components/financeiro/AoVivo';
 import { Clipe } from '@/components/financeiro/icones';
+import { un } from '@/components/financeiro/ListaLancamentos';
 import { ContaFechamento } from '@/components/financeiro/Fechamento';
 import { QuadroFontes } from '@/components/financeiro/QuadroFontes';
 import { fontesDoEvento, STATUS_EVENTO } from '@/lib/financeiro/calculo';
@@ -112,7 +113,7 @@ export default async function AreaDoSocio({ params, searchParams }: { params: Pr
               <ul className="fin-lista">
                 {lista.map((l) => (
                   <li key={l.id} className="fin-item" style={{ gridTemplateColumns: '1fr auto' }}>
-                    <span className="fin-item__desc">{l.descricao}</span>
+                    <span className="fin-item__desc">{l.descricao}{un(l)}</span>
                     <span className={`fin-item__valor ${l.tipo === 'receita' ? 'verde' : 'vermelho'}`}>{l.tipo === 'receita' ? '+ ' : '− '}{reais(l.valor)}</span>
                     <span className="fin-item__meta" style={{ display: 'flex' }}>
                       <span>{dataCurta(l.data)}</span><span className="fin-cat">{l.categoria}</span>

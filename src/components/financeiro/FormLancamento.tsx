@@ -3,10 +3,12 @@
 // comprovante opcional (câmera ou arquivo). Foto é reduzida no próprio aparelho antes de subir (máx. 1600 px, JPEG).
 import { useActionState, useRef, useState } from 'react';
 import { salvarLancamento, type Estado } from '@/app/financeiro/acoes';
+import { lerNumero, qtdTxt, reais, totalUnidade, unitTxt } from '@/lib/financeiro/dinheiro';
 import { Arquivo, Camera, Clipe } from './icones';
 
 type Inicial = {
   id?: number; tipo: 'custo' | 'receita'; descricao?: string; categoria?: string; valor?: string; quitado?: boolean;
+  quantidade?: string; valorUnitario?: string; // preenchidos = lançamento por unidade
   data: string; vencimento?: string | null; mostrarAoSocio?: boolean; comprovante?: { id: number; nome: string } | null;
 };
 
@@ -35,6 +37,12 @@ export function FormLancamento({ eventoId, eventoNome, categorias, inicial, soci
   const [cat, setCat] = useState(catInicial);
   const [arquivo, setArquivo] = useState<string | null>(null);
   const campoArq = useRef<HTMLInputElement>(null);
+  // por unidade: valor unitário × quantidade, total na hora (o servidor recalcula ao salvar)
+  const [modo, setModo] = useState<'total' | 'unidade'>(inicial.quantidade && inicial.valorUnitario ? 'unidade' : 'total');
+  const [unit, setUnit] = useState(inicial.valorUnitario ?? '');
+  const [qtd, setQtd] = useState(inicial.quantidade ?? '');
+  const u = lerNumero(unit), q = lerNumero(qtd);
+  const totalOk = Number.isFinite(u) && u > 0 && Number.isFinite(q) && q > 0;
 
   async function escolher(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -56,12 +64,34 @@ export function FormLancamento({ eventoId, eventoNome, categorias, inicial, soci
         <label><input type="radio" name="tipo" value="receita" checked={tipo === 'receita'} onChange={() => { setTipo('receita'); setCat(categorias.receita[0]); }} /><span>Receita</span></label>
       </div>
 
-      <label className="fin-campo"><span>Valor (R$)</span>
-        <input name="valor" inputMode="decimal" autoComplete="off" placeholder="0,00" defaultValue={inicial.valor} required className="fin-valor-grande" />
-      </label>
+      <div className="fin-alternar fin-alternar--baixo" role="radiogroup" aria-label="Como lançar o valor">
+        <label><input type="radio" name="modo" value="total" checked={modo === 'total'} onChange={() => setModo('total')} /><span>Valor total</span></label>
+        <label><input type="radio" name="modo" value="unidade" checked={modo === 'unidade'} onChange={() => setModo('unidade')} /><span>Por unidade</span></label>
+      </div>
+
+      {modo === 'total' ? (
+        <label className="fin-campo"><span>Valor (R$)</span>
+          <input name="valor" inputMode="decimal" autoComplete="off" placeholder="0,00" defaultValue={inicial.valor} required className="fin-valor-grande" />
+        </label>
+      ) : (
+        <div className="fin-unidade">
+          <div className="fin-linha2">
+            <label className="fin-campo"><span>Valor unitário (R$)</span>
+              <input name="valorUnitario" inputMode="decimal" autoComplete="off" placeholder="0,70" value={unit} onChange={(e) => setUnit(e.target.value)} required />
+            </label>
+            <label className="fin-campo"><span>Quantidade</span>
+              <input name="quantidade" inputMode="decimal" autoComplete="off" placeholder="300" value={qtd} onChange={(e) => setQtd(e.target.value)} required />
+            </label>
+          </div>
+          <div className="fin-unidade__total" aria-live="polite">
+            <span>{totalOk ? `${qtdTxt(q)} × ${unitTxt(u)}` : 'Valor da unidade × quantidade'}</span>
+            <b>{totalOk ? reais(totalUnidade(q, u)) : 'R$ 0,00'}</b>
+          </div>
+        </div>
+      )}
 
       <label className="fin-campo"><span>Descrição</span>
-        <input name="descricao" defaultValue={inicial.descricao} placeholder={tipo === 'custo' ? 'Ex.: Cachê do DJ · 2ª parcela' : 'Ex.: Bilheteria do 1º lote'} required maxLength={140} />
+        <input name="descricao" defaultValue={inicial.descricao} placeholder={modo === 'unidade' ? (tipo === 'custo' ? 'Ex.: Pulseira' : 'Ex.: Ingresso 1º lote') : tipo === 'custo' ? 'Ex.: Cachê do DJ · 2ª parcela' : 'Ex.: Bilheteria do 1º lote'} required maxLength={140} />
       </label>
 
       <fieldset className="fin-campo" style={{ border: 0, padding: 0, margin: 0 }}>

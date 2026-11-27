@@ -9,6 +9,15 @@ import { hojeManaus } from '@/lib/financeiro/dinheiro';
 
 export const metadata = { title: 'Lançamento' };
 
+// numeric do banco ("300.000", "0.7000") → texto do campo ("300", "0,70")
+function virgula(n: string | null): string | undefined {
+  if (n == null) return undefined;
+  const v = Number(n);
+  if (!Number.isFinite(v)) return undefined;
+  const t = String(v);
+  return (/\.\d$/.test(t) ? t + '0' : t).replace('.', ',');
+}
+
 // /financeiro/lancar                 → escolhe onde lançar (caixa ou evento aberto)
 // /financeiro/lancar?evento=7        → novo lançamento no evento
 // /financeiro/lancar?caixa=1         → novo lançamento no caixa da Royals
@@ -30,7 +39,7 @@ export default async function Lancar({ searchParams }: { searchParams: Promise<{
         <p className="fin-trilha">{ev ? <><Link href={`/financeiro/eventos/${ev.ev.id}`}>{ev.ev.nome}</Link> / Editar lançamento</> : <><Link href="/financeiro">Caixa Royals</Link> / Editar lançamento</>}</p>
         <h1 className="fin-titulo" style={{ marginBottom: 20 }}>Editar lançamento</h1>
         <FormLancamento eventoId={l.eventoId} eventoNome={ev?.ev.nome ?? 'Caixa Royals'} categorias={cats} socios={!!ev?.socios.length}
-          inicial={{ id: l.id, tipo: l.tipo as 'custo' | 'receita', descricao: l.descricao, categoria: l.categoria, valor: (l.valor / 100).toFixed(2).replace('.', ','), quitado: l.quitado, data: l.data, vencimento: l.vencimento, mostrarAoSocio: l.mostrarAoSocio, comprovante }} />
+          inicial={{ id: l.id, tipo: l.tipo as 'custo' | 'receita', descricao: l.descricao, categoria: l.categoria, valor: (l.valor / 100).toFixed(2).replace('.', ','), quantidade: virgula(l.quantidade), valorUnitario: virgula(l.valorUnitario), quitado: l.quitado, data: l.data, vencimento: l.vencimento, mostrarAoSocio: l.mostrarAoSocio, comprovante }} />
         <details className="fin-detalhes" style={{ marginTop: 32, maxWidth: 640 }}>
           <summary className="fin-mini fin-mini--perigo">Excluir lançamento</summary>
           <form action={excluirLancamento} style={{ marginTop: 12 }}>
